@@ -54,6 +54,9 @@ class Gentop():
         self.step = properties.get('step', None)
         self.path = properties.get('path', '')
 
+        # Check the properties
+        fu.check_properties(self, properties)
+
     def launch(self):
         """Launches the execution of the PMX gentop module."""
         out_log, err_log = fu.get_logs(path=self.path, prefix=self.prefix, step=self.step, can_write_console=self.can_write_console_log)
