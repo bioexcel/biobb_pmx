@@ -1,0 +1,34 @@
+
+working_dir_path: /tmp/biobb/unitests
+
+mutate:
+  paths:
+    input_structure_path: file:test_data_dir/pmx/frame99.pdb
+    output_structure_path: output_structure.pdb
+    ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure.pdb
+  properties:
+    mutation_list: Val2Ala, Ile3Val
+    gmxlib: /Users/pau/other_projects/pmx/pmx/data/mutff45
+    force_field: amber99sb-star-ildn-mut
+    pmx_cli_path: /Users/pau/other_projects/pmx/pmx/scripts/cli.py
+
+gentop:
+  paths:
+    input_top_zip_path: file:test_data_dir/pmx/topology.zip
+    output_top_zip_path: output_topology.zip
+    output_log_path: gentop.log
+    ref_output_top_zip_path: file:test_reference_dir/pmx/ref_output_topology.zip
+  properties:
+    gmxlib: /Users/pau/other_projects/pmx/pmx/data/mutff45
+    force_field: amber99sbmut
+    pmx_cli_path: /Users/pau/other_projects/pmx/pmx/scripts/cli.py
+
+analyse:
+  paths:
+    input_A_xvg_zip_path: file:test_data_dir/pmx/xvg_A.zip
+    input_B_xvg_zip_path: file:test_data_dir/pmx/xvg_B.zip
+    output_result_path: result.txt
+    output_work_plot_path: plot.png
+    ref_output_result_path: file:test_reference_dir/pmx/ref_result.txt
+  properties:
+    pmx_cli_path: /Users/pau/other_projects/pmx/pmx/scripts/cli.py
