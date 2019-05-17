@@ -3,6 +3,7 @@
 """Module containing the PMX gentop class and the command line interface."""
 import argparse
 import os
+import shutil
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.command_wrapper import cmd_wrapper
@@ -62,12 +63,16 @@ class Gentop():
         out_log, err_log = fu.get_logs(path=self.path, prefix=self.prefix, step=self.step, can_write_console=self.can_write_console_log)
 
         # Unzip topology to topology_out
+        out_dir = fu.create_unique_dir()
         top_file = fu.unzip_top(zip_file=self.input_top_zip_path, out_log=out_log)
         top_dir = os.path.dirname(top_file)
         selected_list = set([os.path.basename(top_file)] + [top_itp_file for word in self.keyword_list for top_itp_file in os.listdir(top_dir) if word.lower() in top_itp_file.lower() ])
-
+        out_files_dict = {}
+        fu.log('Gentop will be executed on this list of files: ', out_log, self.global_log)
+        fu.log(str(selected_list), out_log, self.global_log)
         for selected_file in selected_list:
-            output_path = fu.create_name(prefix=self.prefix, step=self.step, name=selected_file)
+            output_path = fu.create_name(path=out_dir, prefix=self.prefix, step=self.step, name=selected_file)
+            out_files_dict[selected_file] = os.path.basename(output_path)
             cmd = [self.pmx_cli_path, 'gentop',
                    '-o', output_path,
                    '-ff', self.force_field,
@@ -94,6 +99,25 @@ class Gentop():
                 new_env['GMXLIB'] = self.gmxlib
 
             returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
+
+        #Adding modified out_itp_files to output_top_file
+        fu.log('Dictionary of itp replacements: ', out_log, self.global_log)
+        fu.log(str(out_files_dict), out_log, self.global_log)
+        for in_file, out_file in out_files_dict.items():
+            with open(os.path.join(out_dir, out_file), 'r') as otf:
+                content = otf.readlines()
+            for index, line in enumerate(content):
+                if line.startswith('#include'):
+                    for old_file, new_file in out_files_dict.items():
+                        if old_file in line:
+                            content[index] = line.replace(old_file, new_file)
+            with open(os.path.join(out_dir, out_file), 'w') as otf:
+                otf.write("".join(content))
+
+        #Copy the not selected_files of the topology outside
+        for f_top in os.listdir(top_dir):
+            if f_top not in selected_list:
+                shutil.copy2(os.path.join(top_dir,f_top), out_dir)
 
         # zip topology
         fu.log('Compressing topology to: %s' % self.output_top_zip_path, out_log, self.global_log)
