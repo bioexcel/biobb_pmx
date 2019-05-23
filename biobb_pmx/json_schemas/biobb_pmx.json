@@ -1,0 +1,39 @@
+{
+    "_id": "biobb_pmx",
+    "desc": "Biobb_pmx is the Biobb module collection to perform PMX executions.",
+    "github": "https://github.com/bioexcel/biobb_pmx",
+    "readthedocs": "",
+    "conda": "https://anaconda.org/bioconda/biobb_pmx",
+    "docker": "",
+    "singularity": "https://www.singularity-hub.org/collections/2735/usage",
+    "version": "1.0.0",
+    "tools" : [
+        {
+            "block" : "Mutate", 
+            "tool" : "pmx", 
+            "desc" : "pmx tool to insert mutated residues in structure files for free energy simulations"
+        }, 
+        {
+            "block" : "Gentop", 
+            "tool" : "pmx", 
+            "desc" : "pmx tool to generate hybrid GROMACS topologies: adding a B state to an .itp or .top file for a hybrid residue"
+        }, 
+        {
+            "block" : "Analyse", 
+            "tool" : "pmx", 
+            "desc" : "pmx tool to calculate free energies from fast growth thermodynamic integration simulations."
+        }
+    ],
+    "dep_pypi" : [
+        "install_requires=['biobb_common==1.1.6']", 
+        "python_requires='==3.6.*'"
+    ], 
+    "dep_conda" : [
+        "python ==3.6.*", 
+        "biobb_common ==1.1.6"
+    ],
+    "keywords" : [
+        "pmx", 
+        "energy"
+    ]
+}
