@@ -3,6 +3,7 @@
 """Module containing the PMX mutate class and the command line interface."""
 import os
 import re
+import shutil
 import argparse
 from  Bio.PDB.Polypeptide import three_to_one
 from biobb_common.configuration import  settings
@@ -62,7 +63,8 @@ class Mutate():
 
         #Check if executable is exists
         if not os.path.isfile(self.pmx_cli_path):
-            raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
+            if not shutil.which(self.pmx_cli_path):
+                raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
 
 
         #Generate mutations file

@@ -66,12 +66,13 @@ class Gentop():
         out_dir = fu.create_unique_dir()
         top_file = fu.unzip_top(zip_file=self.input_top_zip_path, out_log=out_log)
         top_dir = os.path.dirname(top_file)
-        selected_list = set([os.path.basename(top_file)] + [top_itp_file for word in self.keyword_list for top_itp_file in os.listdir(top_dir) if word.lower() in top_itp_file.lower() ])
-        out_files_dict = {}
+        selected_list = set([os.path.basename(top_file)] + [top_itp_file for word in self.keyword_list for top_itp_file in os.listdir(top_dir) if word.lower() in top_itp_file.lower()])
         fu.log('Gentop will be executed on this list of files: ', out_log, self.global_log)
         fu.log(str(selected_list), out_log, self.global_log)
+
+        out_files_dict = {}
         for selected_file in selected_list:
-            output_path = fu.create_name(path=out_dir, prefix=self.prefix, step=self.step, name=selected_file)
+            output_path = fu.create_name(path=out_dir, step=self.step, name=selected_file)
             out_files_dict[selected_file] = os.path.basename(output_path)
             cmd = [self.pmx_cli_path, 'gentop',
                    '-o', output_path,
