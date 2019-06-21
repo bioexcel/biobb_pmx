@@ -54,6 +54,11 @@ class Mutate():
         self.step = properties.get('step', None)
         self.path = properties.get('path', '')
 
+        # Docker Specific
+        self.docker_path = properties.get('docker_path')
+        self.docker_image = properties.get('docker_image', 'mmbirb/pmx')
+        self.docker_volume_path = properties.get('docker_volume_path', '/inout')
+
         # Check the properties
         fu.check_properties(self, properties)
 
@@ -62,13 +67,15 @@ class Mutate():
         out_log, err_log = fu.get_logs(path=self.path, prefix=self.prefix, step=self.step, can_write_console=self.can_write_console_log)
 
         #Check if executable is exists
-        if not os.path.isfile(self.pmx_cli_path):
-            if not shutil.which(self.pmx_cli_path):
-                raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
+        if not self.docker_path:
+            if not os.path.isfile(self.pmx_cli_path):
+                if not shutil.which(self.pmx_cli_path):
+                    raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
 
 
         #Generate mutations file
-        mutations_file = os.path.join(fu.create_unique_dir(), 'mutations.txt')
+        unique_dir = os.path.abspath(fu.create_unique_dir())
+        mutations_file = os.path.join(unique_dir, 'mutations.txt')
         pattern = re.compile((r"(?P<chain>[a-zA-Z])*:*(?P<wt>[a-zA-Z]{3})(?P<resnum>\d+)(?P<mt>[a-zA-Z]{3})"))
         with open(mutations_file, 'w') as mut_file:
             for mut in self.mutation_list:
@@ -79,16 +86,34 @@ class Mutate():
                 mut_file.write(three_to_one(mut_dict.get('mt').upper()))
                 mut_file.write('\n')
 
-
         cmd = [self.pmx_cli_path, 'mutate',
                '-f', self.input_structure_path,
                '-o', self.output_structure_path,
                '-ff', self.force_field,
                '-script', mutations_file]
+        if self.docker_path:
+            shutil.copy2(self.input_structure_path, unique_dir)
+            docker_input_structure_path = os.path.join(self.docker_volume_path, os.path.basename(self.input_structure_path))
+            unique_dir_output_structure_path = os.path.join(unique_dir, os.path.basename(self.output_structure_path))
+            docker_output_structure_path = os.path.join(self.docker_volume_path, os.path.basename(self.output_structure_path))
+            docker_mutations_file_path = os.path.join(self.docker_volume_path, os.path.basename(mutations_file))
+            cmd = [self.docker_path, 'run',
+                   '-v', unique_dir+':'+self.docker_volume_path,
+                   self.docker_image,
+                   self.pmx_cli_path, 'mutate',
+                   '-f', docker_input_structure_path,
+                   '-o', docker_output_structure_path,
+                   '-ff', self.force_field,
+                   '-script', docker_mutations_file_path]
 
         if self.input_b_structure_path:
             cmd.append('-fB')
-            cmd.append(self.input_b_structure_path)
+            if self.docker_path:
+                shutil.copy2(self.input_b_structure_path, unique_dir)
+                docker_input_b_structure_path = os.path.join(self.docker_volume_path, os.path.basename(self.input_b_structure_path))
+                cmd.append(docker_input_b_structure_path)
+            else:
+                cmd.append(self.input_b_structure_path)
         if self.resinfo:
             cmd.append('-resinfo')
         if self.dna:
@@ -99,8 +124,13 @@ class Mutate():
         if self.gmxlib:
             new_env = os.environ.copy()
             new_env['GMXLIB'] = self.gmxlib
-        command = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env)
-        return command.launch()
+
+        retval = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
+
+        if self.docker_path:
+            shutil.copy2(unique_dir_output_structure_path, self.output_structure_path)
+
+        return retval
 
 def main():
     """Command line interface."""

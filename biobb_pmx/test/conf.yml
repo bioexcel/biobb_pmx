@@ -12,6 +12,17 @@ mutate:
     force_field: amber99sb-star-ildn-mut
     pmx_cli_path: /Users/pau/other_projects/pmx/pmx/scripts/cli.py
 
+mutate_docker:
+  paths:
+    input_structure_path: file:test_data_dir/pmx/frame99.pdb
+    output_structure_path: output_structure.pdb
+    ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure.pdb
+  properties:
+    mutation_list: Val2Ala, Ile3Val
+    force_field: amber99sb-star-ildn-mut
+    docker_path: docker
+    docker_image: pmx_image
+
 gentop:
   paths:
     input_top_zip_path: file:test_data_dir/pmx/topology.zip

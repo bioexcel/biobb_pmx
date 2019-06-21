@@ -55,6 +55,11 @@ class Gentop():
         self.step = properties.get('step', None)
         self.path = properties.get('path', '')
 
+        # Docker Specific
+        self.docker_path = properties.get('docker_path')
+        self.docker_image = properties.get('docker_image', 'mmbirb/pmx')
+        self.docker_volume_path = properties.get('docker_volume_path', '/inout')
+
         # Check the properties
         fu.check_properties(self, properties)
 
@@ -62,8 +67,15 @@ class Gentop():
         """Launches the execution of the PMX gentop module."""
         out_log, err_log = fu.get_logs(path=self.path, prefix=self.prefix, step=self.step, can_write_console=self.can_write_console_log)
 
+        #Check if executable is exists
+        if not self.docker_path:
+            if not os.path.isfile(self.pmx_cli_path):
+                if not shutil.which(self.pmx_cli_path):
+                    raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
+
+
         # Unzip topology to topology_out
-        out_dir = fu.create_unique_dir()
+        unique_dir = os.path.abspath(fu.create_unique_dir())
         top_file = fu.unzip_top(zip_file=self.input_top_zip_path, out_log=out_log)
         top_dir = os.path.dirname(top_file)
         selected_list = set([os.path.basename(top_file)] + [top_itp_file for word in self.keyword_list for top_itp_file in os.listdir(top_dir) if word.lower() in top_itp_file.lower()])
@@ -72,20 +84,45 @@ class Gentop():
 
         out_files_dict = {}
         for selected_file in selected_list:
-            output_path = fu.create_name(path=out_dir, step=self.step, name=selected_file)
-            out_files_dict[selected_file] = os.path.basename(output_path)
+            unique_dir_output_path = fu.create_name(path=unique_dir, step=self.step, name=selected_file)
+            out_files_dict[selected_file] = os.path.basename(unique_dir_output_path)
+
             cmd = [self.pmx_cli_path, 'gentop',
-                   '-o', output_path,
+                   '-o', unique_dir_output_path,
                    '-ff', self.force_field,
                    '-log', self.output_log_path]
+            if self.docker_path:
+                for d_file in os.listdir(top_dir):
+                    shutil.copy2(os.path.join(top_dir, d_file), unique_dir)
+                docker_output_path = os.path.join(self.docker_volume_path, os.path.basename(unique_dir_output_path))
+                docker_output_log_path = os.path.join(self.docker_volume_path, os.path.basename(self.output_log_path))
+                cmd = [self.docker_path, 'run',
+                       '-v', unique_dir+':'+self.docker_volume_path,
+                       self.docker_image,
+                       self.pmx_cli_path, 'gentop',
+                       '-o', docker_output_path,
+                       '-ff', self.force_field,
+                       '-log', docker_output_log_path]
 
             if selected_file.endswith(".itp"):
                 cmd.append('-itp')
-                cmd.append(os.path.join(top_dir, selected_file))
+                itp_file = os.path.join(top_dir, selected_file)
+                docker_itp_file = None
+                if self.docker_path:
+                    docker_itp_file = os.path.join(self.docker_volume_path, selected_file)
+                    cmd.append(docker_itp_file)
+                else:
+                    cmd.append(itp_file)
             if selected_file.endswith(".top"):
-                output_top_file = output_path
+                output_top_file = unique_dir_output_path
                 cmd.append('-p')
-                cmd.append(os.path.join(top_dir, selected_file))
+                topology_file = os.path.join(top_dir, selected_file)
+                docker_topology_file = None
+                if self.docker_path:
+                    docker_topology_file = os.path.join(self.docker_volume_path, selected_file)
+                    cmd.append(docker_topology_file)
+                else:
+                    cmd.append(topology_file)
             if self.split:
                 cmd.append('-split')
             if self.scale_mass:
@@ -100,25 +137,32 @@ class Gentop():
                 new_env['GMXLIB'] = self.gmxlib
 
             returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
+            if self.docker_path:
+                shutil.copy2(docker_output_path, unique_dir_output_path)
+                shutil.copy2(docker_output_log_path, self.output_log_path)
+                if docker_itp_file:
+                    shutil.copy2(docker_itp_file, itp_file)
+                if docker_topology_file:
+                    shutil.copy2(docker_topology_file, topology_file)
 
         #Adding modified out_itp_files to output_top_file
         fu.log('Dictionary of itp replacements: ', out_log, self.global_log)
         fu.log(str(out_files_dict), out_log, self.global_log)
         for in_file, out_file in out_files_dict.items():
-            with open(os.path.join(out_dir, out_file), 'r') as otf:
+            with open(os.path.join(unique_dir, out_file), 'r') as otf:
                 content = otf.readlines()
             for index, line in enumerate(content):
                 if line.startswith('#include'):
                     for old_file, new_file in out_files_dict.items():
                         if old_file in line:
                             content[index] = line.replace(old_file, new_file)
-            with open(os.path.join(out_dir, out_file), 'w') as otf:
+            with open(os.path.join(unique_dir, out_file), 'w') as otf:
                 otf.write("".join(content))
 
         #Copy the not selected_files of the topology outside
         for f_top in os.listdir(top_dir):
             if f_top not in selected_list:
-                shutil.copy2(os.path.join(top_dir,f_top), out_dir)
+                shutil.copy2(os.path.join(top_dir,f_top), unique_dir)
 
         # zip topology
         fu.log('Compressing topology to: %s' % self.output_top_zip_path, out_log, self.global_log)
