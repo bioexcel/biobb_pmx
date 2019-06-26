@@ -3,6 +3,7 @@
 """Module containing the PMX analyse class and the command line interface."""
 import argparse
 import os
+import shutil
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.command_wrapper import cmd_wrapper
@@ -70,6 +71,11 @@ class Analyse():
         self.step = properties.get('step', None)
         self.path = properties.get('path', '')
 
+        # Docker Specific
+        self.docker_path = properties.get('docker_path')
+        self.docker_image = properties.get('docker_image', 'mmbirb/pmx')
+        self.docker_volume_path = properties.get('docker_volume_path', '/inout')
+
         # Check the properties
         fu.check_properties(self, properties)
 
@@ -77,15 +83,37 @@ class Analyse():
         """Launches the execution of the PMX gentop module."""
         out_log, err_log = fu.get_logs(path=self.path, prefix=self.prefix, step=self.step, can_write_console=self.can_write_console_log)
 
+        #Check if executable is exists
+        if not self.docker_path:
+            if not os.path.isfile(self.pmx_cli_path):
+                if not shutil.which(self.pmx_cli_path):
+                    raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
 
-        list_A = fu.unzip_list(self.input_A_xvg_zip_path, fu.create_unique_dir(), out_log)
-        list_B = fu.unzip_list(self.input_B_xvg_zip_path, fu.create_unique_dir(), out_log)
+        list_A_dir = fu.create_unique_dir()
+        list_B_dir = fu.create_unique_dir()
+        list_A = fu.unzip_list(self.input_A_xvg_zip_path, list_A_dir, out_log)
+        list_B = fu.unzip_list(self.input_B_xvg_zip_path, list_B_dir, out_log)
 
         cmd = [self.pmx_cli_path, 'analyse',
                '-fA', " ".join(list_A),
                '-fB', " ".join(list_B),
                '-o', self.output_result_path,
                '--work_plot', self.output_work_plot_path]
+
+        if self.docker_path:
+            ouput_result_filename = os.path.join(self.docker_volume_path, os.path.basename(self.output_result_path))
+            output_work_plot_filename = os.path.join(self.docker_volume_path, os.path.basename(self.output_work_plot_path))
+            docker_volume = " "+self.docker_volume_path+"/"
+            string_A = self.docker_volume_path+"/"+docker_volume.join(list_A)
+            string_B = self.docker_volume_path+"/"+docker_volume.join(list_B)
+            cmd = [self.docker_path, 'run',
+                   '-v', os.getcwd()+':'+self.docker_volume_path,
+                   self.docker_image,
+                   self.pmx_cli_path, 'analyse',
+                   '-fA', string_A,
+                   '-fB', string_B,
+                   '-o', ouput_result_filename,
+                   '--work_plot', output_work_plot_filename]
 
         if self.method:
             cmd.append('-m')
@@ -130,6 +158,12 @@ class Analyse():
             cmd.append(self.dpi)
 
         returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log).launch()
+
+        if self.docker_path:
+            pass
+            #shutil.copy2(os.path.basename(self.output_result_path), self.output_result_path)
+            #shutil.copy2(os.path.basename(self.output_work_plot_path), self.output_work_plot_path)
+
         return returncode
 
 def main():

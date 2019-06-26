@@ -34,6 +34,18 @@ gentop:
     force_field: amber99sbmut
     pmx_cli_path: /Users/pau/other_projects/pmx/pmx/scripts/cli.py
 
+gentop_docker:
+  paths:
+    input_top_zip_path: file:test_data_dir/pmx/topology.zip
+    output_top_zip_path: output_topology.zip
+    output_log_path: gentop.log
+    ref_output_top_zip_path: file:test_reference_dir/pmx/ref_output_topology_docker.zip
+  properties:
+    force_field: amber99sbmut
+    docker_path: docker
+    docker_image: pmx_image
+
+
 analyse:
   paths:
     input_A_xvg_zip_path: file:test_data_dir/pmx/xvg_A.zip
@@ -43,3 +55,14 @@ analyse:
     ref_output_result_path: file:test_reference_dir/pmx/ref_result.txt
   properties:
     pmx_cli_path: /Users/pau/other_projects/pmx/pmx/scripts/cli.py
+
+analyse_docker:
+  paths:
+    input_A_xvg_zip_path: file:test_data_dir/pmx/xvg_A.zip
+    input_B_xvg_zip_path: file:test_data_dir/pmx/xvg_B.zip
+    output_result_path: result.txt
+    output_work_plot_path: plot.png
+    ref_output_result_path: file:test_reference_dir/pmx/ref_result.txt
+  properties:
+    docker_path: docker
+    docker_image: pmx_image

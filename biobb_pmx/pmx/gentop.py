@@ -104,20 +104,21 @@ class Gentop():
                        '-ff', self.force_field,
                        '-log', docker_output_log_path]
 
+            docker_itp_file = None
             if selected_file.endswith(".itp"):
                 cmd.append('-itp')
                 itp_file = os.path.join(top_dir, selected_file)
-                docker_itp_file = None
                 if self.docker_path:
                     docker_itp_file = os.path.join(self.docker_volume_path, selected_file)
                     cmd.append(docker_itp_file)
                 else:
                     cmd.append(itp_file)
+
+            docker_topology_file = None
             if selected_file.endswith(".top"):
                 output_top_file = unique_dir_output_path
                 cmd.append('-p')
                 topology_file = os.path.join(top_dir, selected_file)
-                docker_topology_file = None
                 if self.docker_path:
                     docker_topology_file = os.path.join(self.docker_volume_path, selected_file)
                     cmd.append(docker_topology_file)
@@ -138,12 +139,16 @@ class Gentop():
 
             returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
             if self.docker_path:
-                shutil.copy2(docker_output_path, unique_dir_output_path)
-                shutil.copy2(docker_output_log_path, self.output_log_path)
+                if os.path.isfile(docker_output_path):
+                    shutil.copy2(docker_output_path, unique_dir_output_path)
+                if os.path.isfile(docker_output_log_path):
+                    shutil.copy2(docker_output_log_path, self.output_log_path)
                 if docker_itp_file:
-                    shutil.copy2(docker_itp_file, itp_file)
+                    if os.path.isfile(docker_itp_file):
+                        shutil.copy2(docker_itp_file, itp_file)
                 if docker_topology_file:
-                    shutil.copy2(docker_topology_file, topology_file)
+                    if os.path.isfile(docker_topology_file):
+                        shutil.copy2(docker_topology_file, topology_file)
 
         #Adding modified out_itp_files to output_top_file
         fu.log('Dictionary of itp replacements: ', out_log, self.global_log)
