@@ -151,8 +151,8 @@ class Gentop():
                         shutil.copy2(docker_topology_file, topology_file)
 
         #Adding modified out_itp_files to output_top_file
-        fu.log('Dictionary of itp replacements: ', out_log, self.global_log)
-        fu.log(str(out_files_dict), out_log, self.global_log)
+        fu.log('Dictionary of itp replacements: ', out_log)
+        fu.log(str(out_files_dict), out_log)
         for in_file, out_file in out_files_dict.items():
             with open(os.path.join(unique_dir, out_file), 'r') as otf:
                 content = otf.readlines()
@@ -174,7 +174,7 @@ class Gentop():
         fu.zip_top(zip_file=self.output_top_zip_path, top_file=output_top_file, out_log=out_log)
         tmp_files = [output_top_file]
         removed_files = [f for f in tmp_files if fu.rm(f)]
-        fu.log('Removed: %s' % str(removed_files), out_log, self.global_log)
+        fu.log('Removed: %s' % str(removed_files), out_log)
 
         return returncode
 
