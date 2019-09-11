@@ -21,7 +21,7 @@ mutate_docker:
     mutation_list: Val2Ala, Ile3Val
     force_field: amber99sb-star-ildn-mut
     docker_path: docker
-    docker_image: pmx_image
+    docker_image: mmbirb/pmx
 
 gentop:
   paths:
@@ -43,7 +43,7 @@ gentop_docker:
   properties:
     force_field: amber99sbmut
     docker_path: docker
-    docker_image: pmx_image
+    docker_image: mmbirb/pmx
 
 
 analyse:
@@ -65,4 +65,4 @@ analyse_docker:
     ref_output_result_path: file:test_reference_dir/pmx/ref_result.txt
   properties:
     docker_path: docker
-    docker_image: pmx_image
+    docker_image: mmbirb/pmx

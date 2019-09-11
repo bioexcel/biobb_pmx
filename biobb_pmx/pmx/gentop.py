@@ -6,6 +6,7 @@ import os
 import shutil
 from biobb_common.configuration import  settings
 from biobb_common.tools import file_utils as fu
+from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 
 
@@ -63,9 +64,14 @@ class Gentop():
         # Check the properties
         fu.check_properties(self, properties)
 
+    @launchlogger
     def launch(self):
         """Launches the execution of the PMX gentop module."""
-        out_log, err_log = fu.get_logs(path=self.path, prefix=self.prefix, step=self.step, can_write_console=self.can_write_console_log)
+        tmp_files = []
+
+        # Get local loggers from launchlogger decorator
+        out_log = getattr(self, 'out_log', None)
+        err_log = getattr(self, 'err_log', None)
 
         #Check if executable is exists
         if not self.docker_path:
