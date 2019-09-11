@@ -104,6 +104,7 @@ class Gentop():
                 docker_output_log_path = os.path.join(self.docker_volume_path, os.path.basename(self.output_log_path))
                 cmd = [self.docker_path, 'run',
                        '-v', unique_dir+':'+self.docker_volume_path,
+                       '--user', str(os.getuid()),
                        self.docker_image,
                        self.pmx_cli_path, 'gentop',
                        '-o', docker_output_path,
