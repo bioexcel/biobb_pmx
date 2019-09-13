@@ -26,6 +26,8 @@ class Mutate():
             | - **dna** (*bool*) - (False) Generate hybrid residue for the DNA nucleotides.
             | - **rna** (*bool*) - (False) Generate hybrid residue for the RNA nucleotides.
             | - **pmx_cli_path** (*str*) - ("cli.py") Path to the PMX Python2.7 client.
+            | - **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
+            | - **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
 
     def __init__(self, input_structure_path, output_structure_path, input_b_structure_path=None, properties=None, **kwargs):
@@ -54,6 +56,8 @@ class Mutate():
         self.prefix = properties.get('prefix', None)
         self.step = properties.get('step', None)
         self.path = properties.get('path', '')
+        self.remove_tmp = properties.get('remove_tmp', True)
+        self.restart = properties.get('restart', False)
 
         # Docker Specific
         self.docker_path = properties.get('docker_path')
@@ -78,6 +82,12 @@ class Mutate():
                 if not shutil.which(self.pmx_cli_path):
                     raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
 
+        #Restart if needed
+        if self.restart:
+            output_file_list = [self.output_structure_path]
+            if fu.check_complete_files(output_file_list):
+                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
+                return 0
 
         #Generate mutations file
         unique_dir = os.path.abspath(fu.create_unique_dir())
@@ -135,6 +145,9 @@ class Mutate():
 
         if self.docker_path:
             shutil.copy2(unique_dir_output_structure_path, self.output_structure_path)
+
+        if self.remove_tmp:
+            fu.rm_file_list(tmp_files, out_log=out_log)
 
         return retval
 

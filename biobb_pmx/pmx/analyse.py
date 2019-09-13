@@ -34,6 +34,8 @@ class Analyse():
             | - **nbins** (*int*) - (10): Number of histograms bins for the plot.
             | - **dpi** (*int*) - (300): Resolution of the plot.
             | - **pmx_cli_path** (*str*) - ("cli.py"): Path to the PMX Python2.7 client.
+            | - **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
+            | - **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
 
     def __init__(self, input_A_xvg_zip_path, input_B_xvg_zip_path, output_result_path, output_work_plot_path, properties=None, **kwargs):
@@ -71,6 +73,8 @@ class Analyse():
         self.prefix = properties.get('prefix', None)
         self.step = properties.get('step', None)
         self.path = properties.get('path', '')
+        self.remove_tmp = properties.get('remove_tmp', True)
+        self.restart = properties.get('restart', False)
 
         # Docker Specific
         self.docker_path = properties.get('docker_path')
@@ -94,6 +98,13 @@ class Analyse():
             if not os.path.isfile(self.pmx_cli_path):
                 if not shutil.which(self.pmx_cli_path):
                     raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
+
+        #Restart if needed
+        if self.restart:
+            output_file_list = [self.output_result_path, self.output_work_plot_path]
+            if fu.check_complete_files(output_file_list):
+                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
+                return 0
 
         list_A_dir = fu.create_unique_dir()
         list_B_dir = fu.create_unique_dir()
@@ -166,9 +177,14 @@ class Analyse():
         returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log).launch()
 
         if self.docker_path:
-            pass
-            #shutil.copy2(os.path.basename(self.output_result_path), self.output_result_path)
-            #shutil.copy2(os.path.basename(self.output_work_plot_path), self.output_work_plot_path)
+            try:
+                shutil.copy2(os.path.basename(self.output_result_path), self.output_result_path)
+                shutil.copy2(os.path.basename(self.output_work_plot_path), self.output_work_plot_path)
+            except: # In case orig dest paths are the same
+                pass
+
+        if self.remove_tmp:
+            fu.rm_file_list(tmp_files, out_log=out_log)
 
         return returncode
 

@@ -26,6 +26,8 @@ class Gentop():
             | - **output_top_name** (*str*) - ("gentop.top") Name of the output top file.
             | - **keyword_list** (*str*) - ("Protein", "DNA") List of comma separated Keywords to match top and itp files.
             | - **pmx_cli_path** (*str*) - ("cli.py") Path to the PMX Python2.7 client.
+            | - **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
+            | - **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
     """
 
     def __init__(self, input_top_zip_path, output_top_zip_path, output_log_path, properties=None, **kwargs):
@@ -55,6 +57,8 @@ class Gentop():
         self.prefix = properties.get('prefix', None)
         self.step = properties.get('step', None)
         self.path = properties.get('path', '')
+        self.remove_tmp = properties.get('remove_tmp', True)
+        self.restart = properties.get('restart', False)
 
         # Docker Specific
         self.docker_path = properties.get('docker_path')
@@ -78,6 +82,13 @@ class Gentop():
             if not os.path.isfile(self.pmx_cli_path):
                 if not shutil.which(self.pmx_cli_path):
                     raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
+
+        #Restart if needed
+        if self.restart:
+            output_file_list = [self.output_top_zip_path, self.output_log_path]
+            if fu.check_complete_files(output_file_list):
+                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
+                return 0
 
 
         # Unzip topology to topology_out
@@ -179,9 +190,10 @@ class Gentop():
         # zip topology
         fu.log('Compressing topology to: %s' % self.output_top_zip_path, out_log, self.global_log)
         fu.zip_top(zip_file=self.output_top_zip_path, top_file=output_top_file, out_log=out_log)
-        tmp_files = [output_top_file]
-        removed_files = [f for f in tmp_files if fu.rm(f)]
-        fu.log('Removed: %s' % str(removed_files), out_log)
+
+        tmp_files.append(output_top_file)
+        if self.remove_tmp:
+            fu.rm_file_list(tmp_files, out_log=out_log)
 
         return returncode
 
