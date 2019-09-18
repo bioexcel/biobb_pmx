@@ -111,8 +111,12 @@ class Gentop():
             if self.docker_path:
                 for d_file in os.listdir(top_dir):
                     shutil.copy2(os.path.join(top_dir, d_file), unique_dir)
+
                 docker_output_path = os.path.join(self.docker_volume_path, os.path.basename(unique_dir_output_path))
+
                 docker_output_log_path = os.path.join(self.docker_volume_path, os.path.basename(self.output_log_path))
+                unique_dir_output_log_path = os.path.join(unique_dir, os.path.basename(self.output_log_path))
+
                 cmd = [self.docker_path, 'run',
                        '-v', unique_dir+':'+self.docker_volume_path,
                        '--user', str(os.getuid()),
@@ -128,6 +132,7 @@ class Gentop():
                 itp_file = os.path.join(top_dir, selected_file)
                 if self.docker_path:
                     docker_itp_file = os.path.join(self.docker_volume_path, selected_file)
+                    unique_dir_itp_file = os.path.join(unique_dir, selected_file)
                     cmd.append(docker_itp_file)
                 else:
                     cmd.append(itp_file)
@@ -139,6 +144,7 @@ class Gentop():
                 topology_file = os.path.join(top_dir, selected_file)
                 if self.docker_path:
                     docker_topology_file = os.path.join(self.docker_volume_path, selected_file)
+                    unique_dir_topology_file = os.path.join(unique_dir, selected_file)
                     cmd.append(docker_topology_file)
                 else:
                     cmd.append(topology_file)
@@ -157,16 +163,14 @@ class Gentop():
 
             returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
             if self.docker_path:
-                if os.path.isfile(docker_output_path):
-                    shutil.copy2(docker_output_path, unique_dir_output_path)
-                if os.path.isfile(docker_output_log_path):
-                    shutil.copy2(docker_output_log_path, self.output_log_path)
+                if os.path.isfile(unique_dir_output_log_path):
+                    shutil.copy2(unique_dir_output_log_path, self.output_log_path)
                 if docker_itp_file:
-                    if os.path.isfile(docker_itp_file):
-                        shutil.copy2(docker_itp_file, itp_file)
+                    if os.path.isfile(unique_dir_itp_file):
+                        shutil.copy2(unique_dir_itp_file, itp_file)
                 if docker_topology_file:
-                    if os.path.isfile(docker_topology_file):
-                        shutil.copy2(docker_topology_file, topology_file)
+                    if os.path.isfile(unique_dir_topology_file):
+                        shutil.copy2(unique_dir_topology_file, topology_file)
 
         #Adding modified out_itp_files to output_top_file
         fu.log('Dictionary of itp replacements: ', out_log)
