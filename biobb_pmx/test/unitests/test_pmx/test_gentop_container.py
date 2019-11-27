@@ -1,12 +1,13 @@
 from biobb_common.tools import test_fixtures as fx
 from biobb_pmx.pmx.gentop import Gentop
 
-class TestGentopDocker():
+class TestGentopContainer():
     def setUp(self):
-        fx.test_setup(self, 'gentop_docker')
+        fx.test_setup(self, 'gentop_container')
 
     def tearDown(self):
-        fx.test_teardown(self)
+        pass
+        #fx.test_teardown(self)
 
     def test_gentop_docker(self):
         Gentop(properties=self.properties, **self.paths).launch()

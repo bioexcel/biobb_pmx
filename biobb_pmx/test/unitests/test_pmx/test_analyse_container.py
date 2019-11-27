@@ -3,7 +3,7 @@ from biobb_pmx.pmx.analyse import Analyse
 
 class TestAnalyse():
     def setUp(self):
-        fx.test_setup(self, 'analyse_docker')
+        fx.test_setup(self, 'analyse_container')
 
     def tearDown(self):
         fx.test_teardown(self)
