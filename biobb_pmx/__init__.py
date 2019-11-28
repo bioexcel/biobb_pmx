@@ -1,1 +1,2 @@
-name = "biobb_md"
+name = "biobb_pmx"
+__all__ = ["pmx"]
