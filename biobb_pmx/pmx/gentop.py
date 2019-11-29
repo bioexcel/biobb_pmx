@@ -18,13 +18,13 @@ class Gentop:
         output_top_zip_path (str): Path the output TOP topology in zip format.
         output_log_path (str): Path to the PMX log path.
         properties (dic):
-            * **force_field** (*str*) - ("amber99sb-star-ildn-mut"): Forcefield.
+            * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield.
             * **split** (*bool*) - (False) Print a 3 to 1 letter residue list.
             * **scale_mass** (*bool*) - (False) Scale mass.
             * **dna** (*bool*) - (False) Generate hybrid residue for the DNA nucleotides.
             * **rna** (*bool*) - (False) Generate hybrid residue for the RNA nucleotides.
             * **output_top_name** (*str*) - ("gentop.top") Name of the output top file.
-            * **keyword_list** (*str*) - ("Protein", "DNA") List of comma separated Keywords to match top and itp files.
+            * **keyword_list** (*str*) - (["Protein", "DNA"]) List of comma separated Keywords to match top and itp files.
             * **pmx_cli_path** (*str*) - ("cli.py") Path to the PMX Python2.7 client.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.

@@ -1,0 +1,151 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/analyse",
+    "title": "Wrapper class for the PMX analyse (https://github.com/dseeliger/pmx/wiki) module.",
+    "type": "object",
+    "required": [
+        "input_A_xvg_zip_path",
+        "input_B_xvg_zip_path",
+        "output_result_path",
+        "output_work_plot_path"
+    ],
+    "properties": {
+        "input_A_xvg_zip_path": {
+            "type": "string",
+            "description": "Path the zip file containing the dgdl.xvg files of the A state."
+        },
+        "input_B_xvg_zip_path": {
+            "type": "string",
+            "description": "Path the zip file containing the dgdl.xvg files of the B state."
+        },
+        "output_result_path": {
+            "type": "string",
+            "description": "Path to the TXT results file."
+        },
+        "output_work_plot_path": {
+            "type": "string",
+            "description": "Path to the PNG plot results file."
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "method": {
+                    "type": "string",
+                    "default": "CGI BAR JARZ",
+                    "description": "Choose one or more estimators to use from the available ones: CGI, BAR, JARZ."
+                },
+                "temperature": {
+                    "type": "float",
+                    "default": 298.15,
+                    "description": "Temperature in Kelvin."
+                },
+                "nboots": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Number of bootstrap samples."
+                },
+                "nblocks": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Number of blocks to divide the data into for an estimate of the standard error."
+                },
+                "integ_only": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether to do integration only."
+                },
+                "reverseB": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "transformation."
+                },
+                "skip": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Skip files."
+                },
+                "slice": {
+                    "type": "number",
+                    "default": "All",
+                    "description": "Subset of trajectories to analyze."
+                },
+                "index": {
+                    "type": "boolean",
+                    "default": "All",
+                    "description": "Zero-based index of files to analyze."
+                },
+                "prec": {
+                    "type": "number",
+                    "default": 2,
+                    "description": "The decimal precision of the screen/file output."
+                },
+                "units": {
+                    "type": "string",
+                    "default": "KJ",
+                    "description": "The units of the output. Choose from \"kJ\", \"kcal\", \"kT\"."
+                },
+                "no_ks": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether to do a Kolmogorov-Smirnov test to check whether the Gaussian assumption for CGI holds."
+                },
+                "nbins": {
+                    "type": "number",
+                    "default": 10,
+                    "description": "Number of histograms bins for the plot."
+                },
+                "dpi": {
+                    "type": "number",
+                    "default": 300,
+                    "description": "Resolution of the plot."
+                },
+                "pmx_cli_path": {
+                    "type": "string",
+                    "default": "cli.py",
+                    "description": "Path to the PMX Python2.7 client."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "[WF property] Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "[WF property] Do not execute if output files exist."
+                },
+                "container_path": {
+                    "type": "string",
+                    "default": null,
+                    "description": " Path to the binary executable of your container."
+                },
+                "container_image": {
+                    "type": "string",
+                    "default": "gromacs/gromacs:latest",
+                    "description": "Container Image identifier."
+                },
+                "container_volume_path": {
+                    "type": "string",
+                    "default": "/data",
+                    "description": "Path to an internal directory in the container."
+                },
+                "container_working_dir": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Path to the internal CWD in the container."
+                },
+                "container_user_id": {
+                    "type": "string",
+                    "default": null,
+                    "description": "User number id to be mapped inside the container."
+                },
+                "container_shell_path": {
+                    "type": "string",
+                    "default": "/bin/bash",
+                    "description": "Path to the binary executable of the container shell."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

@@ -19,21 +19,21 @@ class Analyse:
         output_result_path (str): Path to the TXT results file.
         output_work_plot_path (str): Path to the PNG plot results file.
         properties (dic):
-            * **method** (*str*) - ("CGI BAR JARZ"): Choose one or more estimators to use from the available ones: CGI, BAR, JARZ.
-            * **temperature** (*float*) - (298.15): Temperature in Kelvin.
-            * **nboots** (*int*) - (0): Number of bootstrap samples.
-            * **nblocks** (*int*) - (1): Number of blocks to divide the data into for an estimate of the standard error.
-            * **integ_only** (*bool*) - (False): Whether to do integration only.
-            * **reverseB** (*bool*) - (False): Whether to reverse the work values for the backward (B->A) transformation.
-            * **skip** (*int*) - (1): Skip files.
-            * **slice** (*int*) - (All): Subset of trajectories to analyze.
-            * **index** (*bool*) - (All): Zero-based index of files to analyze.
-            * **prec** (*int*) - (2): The decimal precision of the screen/file output.
-            * **units** (*str*) - ("KJ"): The units of the output. Choose from "kJ", "kcal", "kT".
-            * **no_ks** (*bool*) - (False): Whether to do a Kolmogorov-Smirnov test to check whether the Gaussian assumption for CGI holds.
-            * **nbins** (*int*) - (10): Number of histograms bins for the plot.
-            * **dpi** (*int*) - (300): Resolution of the plot.
-            * **pmx_cli_path** (*str*) - ("cli.py"): Path to the PMX Python2.7 client.
+            * **method** (*str*) - ("CGI BAR JARZ") Choose one or more estimators to use from the available ones: CGI, BAR, JARZ.
+            * **temperature** (*float*) - (298.15) Temperature in Kelvin.
+            * **nboots** (*int*) - (0) Number of bootstrap samples.
+            * **nblocks** (*int*) - (1) Number of blocks to divide the data into for an estimate of the standard error.
+            * **integ_only** (*bool*) - (False) Whether to do integration only.
+            * **reverseB** (*bool*) - (False) Whether to reverse the work values for the backward (B->A) transformation.
+            * **skip** (*int*) - (1) Skip files.
+            * **slice** (*int*) - (All) Subset of trajectories to analyze.
+            * **index** (*bool*) - (All) Zero-based index of files to analyze.
+            * **prec** (*int*) - (2) The decimal precision of the screen/file output.
+            * **units** (*str*) - ("KJ") The units of the output. Choose from "kJ", "kcal", "kT".
+            * **no_ks** (*bool*) - (False) Whether to do a Kolmogorov-Smirnov test to check whether the Gaussian assumption for CGI holds.
+            * **nbins** (*int*) - (10) Number of histograms bins for the plot.
+            * **dpi** (*int*) - (300) Resolution of the plot.
+            * **pmx_cli_path** (*str*) - ("cli.py") Path to the PMX Python2.7 client.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
             * **container_path** (*string*) - (None)  Path to the binary executable of your container.

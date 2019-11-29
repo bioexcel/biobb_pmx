@@ -1,0 +1,114 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/gentop",
+    "title": "Wrapper class for the PMX gentop (https://github.com/dseeliger/pmx/wiki) module.",
+    "type": "object",
+    "required": [
+        "input_top_zip_path",
+        "output_top_zip_path",
+        "output_log_path"
+    ],
+    "properties": {
+        "input_top_zip_path": {
+            "type": "string",
+            "description": "Path the input GROMACS topology TOP and ITP files in zip format."
+        },
+        "output_top_zip_path": {
+            "type": "string",
+            "description": "Path the output TOP topology in zip format."
+        },
+        "output_log_path": {
+            "type": "string",
+            "description": "Path to the PMX log path."
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "force_field": {
+                    "type": "string",
+                    "default": "amber99sb-star-ildn-mut",
+                    "description": "Forcefield."
+                },
+                "split": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Print a 3 to 1 letter residue list."
+                },
+                "scale_mass": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Scale mass."
+                },
+                "dna": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Generate hybrid residue for the DNA nucleotides."
+                },
+                "rna": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Generate hybrid residue for the RNA nucleotides."
+                },
+                "output_top_name": {
+                    "type": "string",
+                    "default": "gentop.top",
+                    "description": "Name of the output top file."
+                },
+                "keyword_list": {
+                    "type": "string",
+                    "default": [
+                        "Protein",
+                        "DNA"
+                    ],
+                    "description": "List of comma separated Keywords to match top and itp files."
+                },
+                "pmx_cli_path": {
+                    "type": "string",
+                    "default": "cli.py",
+                    "description": "Path to the PMX Python2.7 client."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "[WF property] Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "[WF property] Do not execute if output files exist."
+                },
+                "container_path": {
+                    "type": "string",
+                    "default": null,
+                    "description": " Path to the binary executable of your container."
+                },
+                "container_image": {
+                    "type": "string",
+                    "default": "gromacs/gromacs:latest",
+                    "description": "Container Image identifier."
+                },
+                "container_volume_path": {
+                    "type": "string",
+                    "default": "/inout",
+                    "description": "Path to an internal directory in the container."
+                },
+                "container_working_dir": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Path to the internal CWD in the container."
+                },
+                "container_user_id": {
+                    "type": "string",
+                    "default": null,
+                    "description": "User number id to be mapped inside the container."
+                },
+                "container_shell_path": {
+                    "type": "string",
+                    "default": "/bin/bash",
+                    "description": "Path to the binary executable of the container shell."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

@@ -20,8 +20,8 @@ class Mutate:
         output_structure_path (str): Path to the output structure file.
         input_b_structure_path (str)[Optional]: Path to the mutated input structure file.
         properties (dic):
-            * **mutation_list** (*str*): ("Val2Ala") Mutation list in the format "Chain:WT_AA_ThreeLeterCode Resnum MUT_AA_ThreeLeterCode" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:ALA15CYS"
-            * **force_field** (*str*) - ("amber99sb-star-ildn-mut"): Forcefield.
+            * **mutation_list** (*str*) ("Val2Ala") Mutation list in the format "Chain:WT_AA_ThreeLeterCode Resnum MUT_AA_ThreeLeterCode" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:ALA15CYS"
+            * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield.
             * **resinfo** (*bool*) - (False) Print a 3 to 1 letter residue list.
             * **dna** (*bool*) - (False) Generate hybrid residue for the DNA nucleotides.
             * **rna** (*bool*) - (False) Generate hybrid residue for the RNA nucleotides.
