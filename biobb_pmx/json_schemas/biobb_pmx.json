@@ -6,7 +6,7 @@
     "conda": "https://anaconda.org/bioconda/biobb_pmx",
     "docker": "https://quay.io/repository/biocontainers/biobb_pmx",
     "singularity": "https://singularity-hub.org/collections/3854/usage",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "tools" : [
         {
             "block" : "Mutate",
