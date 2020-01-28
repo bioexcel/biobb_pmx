@@ -11,13 +11,13 @@ from biobb_common.command_wrapper import cmd_wrapper
 
 
 class Analyse:
-    """Wrapper class for the PMX analyse (https://github.com/dseeliger/pmx/wiki) module.
+    """Wrapper class for the `PMX analyse <https://github.com/dseeliger/pmx/wiki>`_ module.
 
     Args:
-        input_A_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the A state.
-        input_B_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the B state.
-        output_result_path (str): Path to the TXT results file.
-        output_work_plot_path (str): Path to the PNG plot results file.
+        input_A_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the A state. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/xvg_A.zip>`_. Accepted formats: zip.
+        input_B_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the B state. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/xvg_B.zip>`_. Accepted formats: zip.
+        output_result_path (str): Path to the TXT results file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_result.txt>`_. Accepted formats: txt.
+        output_work_plot_path (str): Path to the PNG plot results file. File type: output. Accepted formats: png.
         properties (dic):
             * **method** (*str*) - ("CGI BAR JARZ") Choose one or more estimators to use from the available ones: CGI, BAR, JARZ.
             * **temperature** (*float*) - (298.15) Temperature in Kelvin.

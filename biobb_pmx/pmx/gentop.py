@@ -11,11 +11,11 @@ from biobb_common.command_wrapper import cmd_wrapper
 
 
 class Gentop:
-    """Wrapper class for the PMX gentop (https://github.com/dseeliger/pmx/wiki) module.
+    """Wrapper class for the `PMX gentop <https://github.com/dseeliger/pmx/wiki>`_ module.
 
     Args:
-        input_top_zip_path (str): Path the input GROMACS topology TOP and ITP files in zip format.
-        output_top_zip_path (str): Path the output TOP topology in zip format.
+        input_top_zip_path (str): Path the input GROMACS topology TOP and ITP files in zip format. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topology.zip>`_. Accepted formats: zip.
+        output_top_zip_path (str): Path the output TOP topology in zip format. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_topology.zip>`_. Accepted formats: zip.
         properties (dic):
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield.
             * **split** (*bool*) - (False) Print a 3 to 1 letter residue list.

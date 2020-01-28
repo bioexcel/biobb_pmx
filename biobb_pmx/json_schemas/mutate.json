@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/mutate",
-    "title": "Wrapper class for the PMX mutate (https://github.com/dseeliger/pmx/wiki) module.",
+    "title": "Wrapper class for the `PMX mutate <https://github.com/dseeliger/pmx/wiki>`_ module.",
     "type": "object",
     "required": [
         "input_structure_path",
@@ -10,15 +10,30 @@
     "properties": {
         "input_structure_path": {
             "type": "string",
-            "description": "Path to the input structure file."
+            "description": "Path to the input structure file",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/frame99.pdb",
+            "enum": [
+                ".*\\.pdb$"
+            ]
         },
         "output_structure_path": {
             "type": "string",
-            "description": "Path to the output structure file."
+            "description": "Path to the output structure file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_structure.pdb",
+            "enum": [
+                ".*\\.pdb$"
+            ]
         },
         "input_b_structure_path": {
             "type": "string",
-            "description": "Path to the mutated input structure file."
+            "description": "Path to the mutated input structure file",
+            "filetype": "input",
+            "sample": null,
+            "enum": [
+                ".*\\.pdb$"
+            ]
         },
         "properties": {
             "type": "object",
