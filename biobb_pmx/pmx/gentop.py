@@ -11,7 +11,7 @@ from biobb_common.command_wrapper import cmd_wrapper
 
 
 class Gentop:
-    """Wrapper class for the `PMX gentop <https://github.com/dseeliger/pmx/wiki>`_ module.
+    """Wrapper class for the `PMX gentop <https://github.com/deGrootLab/pmx>`_ module.
 
     Args:
         input_top_zip_path (str): Path the input GROMACS topology TOP and ITP files in zip format. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topology.zip>`_. Accepted formats: zip.

@@ -11,7 +11,7 @@ from biobb_common.command_wrapper import cmd_wrapper
 
 
 class Analyse:
-    """Wrapper class for the `PMX analyse <https://github.com/dseeliger/pmx/wiki>`_ module.
+    """Wrapper class for the `PMX analyse <https://github.com/deGrootLab/pmx>`_ module.
 
     Args:
         input_A_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the A state. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/xvg_A.zip>`_. Accepted formats: zip.

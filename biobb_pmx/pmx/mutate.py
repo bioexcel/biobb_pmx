@@ -13,12 +13,12 @@ from biobb_common.command_wrapper import cmd_wrapper
 
 
 class Mutate:
-    """Wrapper class for the `PMX mutate <https://github.com/dseeliger/pmx/wiki>`_ module.
+    """Wrapper class for the `PMX mutate <https://github.com/deGrootLab/pmx>`_ module.
 
     Args:
-        input_structure_path (str): Path to the input structure file. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/frame99.pdb>`_. Accepted formats: pdb.
-        output_structure_path (str): Path to the output structure file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_structure.pdb>`_. Accepted formats: pdb.
-        input_b_structure_path (str) (Optional): Path to the mutated input structure file. File type: input. Accepted formats: pdb.
+        input_structure_path (str): Path to the input structure file. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/frame99.pdb>`_. Accepted formats: pdb, gro.
+        output_structure_path (str): Path to the output structure file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_structure.pdb>`_. Accepted formats: pdb, gro.
+        input_b_structure_path (str) (Optional): Path to the mutated input structure file. File type: input. Accepted formats: pdb, gro.
         properties (dic):
             * **mutation_list** (*str*) ("Val2Ala") Mutation list in the format "Chain:WT_AA_ThreeLeterCode Resnum MUT_AA_ThreeLeterCode" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:ALA15CYS"
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield.
