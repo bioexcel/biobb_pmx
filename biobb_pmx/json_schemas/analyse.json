@@ -52,7 +52,7 @@
                 "method": {
                     "type": "string",
                     "default": "CGI BAR JARZ",
-                    "description": "Choose one or more estimators to use from the available ones: CGI, BAR, JARZ"
+                    "description": "Choose one or more estimators to use from the available ones: CGI, BAR, JARZ."
                 },
                 "temperature": {
                     "type": "float",
