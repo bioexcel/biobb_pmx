@@ -4,13 +4,13 @@
     "title": "Wrapper class for the `PMX analyse <https://github.com/deGrootLab/pmx>`_ module.",
     "type": "object",
     "required": [
-        "input_A_xvg_zip_path",
-        "input_B_xvg_zip_path",
+        "input_a_xvg_zip_path",
+        "input_b_xvg_zip_path",
         "output_result_path",
         "output_work_plot_path"
     ],
     "properties": {
-        "input_A_xvg_zip_path": {
+        "input_a_xvg_zip_path": {
             "type": "string",
             "description": "Path the zip file containing the dgdl",
             "filetype": "input",
@@ -19,7 +19,7 @@
                 ".*\\.zip$"
             ]
         },
-        "input_B_xvg_zip_path": {
+        "input_b_xvg_zip_path": {
             "type": "string",
             "description": "Path the zip file containing the dgdl",
             "filetype": "input",
