@@ -164,7 +164,6 @@ def main():
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_structure_path', required=True, help="Path to the input structure file")
     required_args.add_argument('--output_structure_path', required=True, help="Path to the output structure file")
-    required_args.add_argument('--input_mutations_path', required=True, help="Path to the input text file containing the mutations")
     parser.add_argument('--input_b_structure_path', required=False, help="Path to the mutated input structure file")
 
     args = parser.parse_args()
@@ -174,7 +173,7 @@ def main():
         properties = properties[args.step]
 
     # Specific call of each building block
-    Mutate(input_structure_path=args.input_structure_path, output_structure_path=args.output_structure_path, input_mutations_path=args.input_mutations_path, input_b_structure_path=args.input_b_structure_path, properties=properties).launch()
+    Mutate(input_structure_path=args.input_structure_path, output_structure_path=args.output_structure_path, input_b_structure_path=args.input_b_structure_path, properties=properties).launch()
 
 
 if __name__ == '__main__':

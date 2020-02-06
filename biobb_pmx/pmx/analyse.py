@@ -14,8 +14,8 @@ class Analyse:
     """Wrapper class for the PMX analyse (https://github.com/dseeliger/pmx/wiki) module.
 
     Args:
-        input_A_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the A state.
-        input_B_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the B state.
+        input_a_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the A state.
+        input_b_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the B state.
         output_result_path (str): Path to the TXT results file.
         output_work_plot_path (str): Path to the PNG plot results file.
         properties (dic):
@@ -121,8 +121,8 @@ class Analyse:
 
         list_a_dir = fu.create_unique_dir()
         list_b_dir = fu.create_unique_dir()
-        list_a = fu.unzip_list(self.input_a_xvg_zip_path, list_a_dir, out_log)
-        list_b = fu.unzip_list(self.input_b_xvg_zip_path, list_b_dir, out_log)
+        list_a = list(filter(lambda f: os.path.exists(f) and os.path.getsize(f) > 10, fu.unzip_list(self.input_a_xvg_zip_path, list_a_dir, out_log)))
+        list_b = list(filter(lambda f: os.path.exists(f) and os.path.getsize(f) > 10, fu.unzip_list(self.input_b_xvg_zip_path, list_b_dir, out_log)))
         string_a = " ".join(list_a)
         string_b = " ".join(list_b)
 
@@ -134,6 +134,8 @@ class Analyse:
             container_volume = " " + self.container_volume_path + "/"
             string_a = self.container_volume_path + "/" + container_volume.join(list_a)
             string_b = self.container_volume_path + "/" + container_volume.join(list_b)
+
+        # Check no missing or Error or empty files.
 
         cmd = [self.pmx_cli_path, 'analyse',
                '-fA', string_a,
@@ -212,9 +214,9 @@ def main():
 
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
-    required_args.add_argument('--input_A_xvg_zip_path', required=True,
+    required_args.add_argument('--input_a_xvg_zip_path', required=True,
                                help="Path the zip file containing the dgdl.xvg files of the A state")
-    required_args.add_argument('--input_B_xvg_zip_path', required=True,
+    required_args.add_argument('--input_b_xvg_zip_path', required=True,
                                help="Path the zip file containing the dgdl.xvg files of the B state")
     required_args.add_argument('--output_result_path', required=True, help="Path to the TXT results file")
     required_args.add_argument('--output_work_plot_path', required=True, help="Path to the PNG plot results file")
@@ -226,7 +228,7 @@ def main():
         properties = properties[args.step]
 
     # Specific call of each building block
-    Analyse(input_A_xvg_zip_path=args.input_A_xvg_zip_path, input_B_xvg_zip_path=args.input_B_xvg_zip_path,
+    Analyse(input_a_xvg_zip_path=args.input_a_xvg_zip_path, input_b_xvg_zip_path=args.input_b_xvg_zip_path,
             output_result_path=args.output_result_path, output_work_plot_path=args.output_work_plot_path,
             properties=properties).launch()
 
