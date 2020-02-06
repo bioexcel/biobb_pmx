@@ -1,0 +1,7 @@
+{
+    "properties": {
+        "gmxlib": "/Users/pau/other_projects/pmx/pmx/data/mutff45",
+        "force_field": "amber99sbmut",
+        "pmx_cli_path": "/Users/pau/other_projects/pmx/pmx/scripts/cli.py"
+    }
+}
