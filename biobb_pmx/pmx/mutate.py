@@ -48,7 +48,7 @@ class Mutate:
         # Properties specific for BB
         self.force_field = properties.get('force_field', "amber99sb-star-ildn-mut.ff")
         self.resinfo = properties.get('resinfo', False)
-        self.mutation_list = list(properties.get('mutation_list', 'Val2Ala').replace(" ", "").split(','))
+        self.mutation_list = properties.get('mutation_list', 'Val2Ala')
         self.dna = properties.get('dna', False)
         self.rna = properties.get('rna', False)
 
@@ -78,6 +78,7 @@ class Mutate:
 
     @launchlogger
     def launch(self):
+        print(self.mutation_list)
         """Launches the execution of the PMX mutate module."""
         tmp_files = []
 
@@ -99,12 +100,18 @@ class Mutate:
                 return 0
 
         # Generate mutations file
+        try:
+            # Check if self.mutation_list is a string
+            self.mutation_list = self.mutation_list.replace(" ", "").split(',')
+        except AttributeError:
+            pass
         unique_dir = os.path.abspath(fu.create_unique_dir())
         self.io_dict["in"]["mutations"] = os.path.join(unique_dir, 'mutations.txt')
         pattern = re.compile(r"(?P<chain>[a-zA-Z])*:*(?P<wt>[a-zA-Z]{3})(?P<resnum>\d+)(?P<mt>[a-zA-Z]{3})")
         with open(self.io_dict["in"]["mutations"], 'w') as mut_file:
             for mut in self.mutation_list:
-                mut_dict = pattern.match(mut).groupdict()
+                print(mut)
+                mut_dict = pattern.match(mut.strip()).groupdict()
                 if mut_dict.get('chain'):
                     mut_file.write(mut_dict.get('chain')+' ')
                 mut_file.write(mut_dict.get('resnum')+' ')
