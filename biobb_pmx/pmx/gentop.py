@@ -116,7 +116,7 @@ class Gentop:
 
         out_files_dict = {}
         for selected_file in selected_list:
-            unique_dir_output_path = fu.create_name(path=container_io_dict.get("unique_dir"), step=self.step, name=selected_file)
+            unique_dir_output_path = fu.create_name(path=container_io_dict.get("unique_dir"), prefix=self.prefix, step=self.step, name=selected_file)
             out_files_dict[selected_file] = os.path.basename(unique_dir_output_path)
 
             if self.container_path:
