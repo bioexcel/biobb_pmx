@@ -11,12 +11,11 @@ from biobb_common.command_wrapper import cmd_wrapper
 
 
 class Gentop:
-    """Wrapper class for the PMX gentop (https://github.com/dseeliger/pmx/wiki) module.
+    """Wrapper class for the `PMX gentop <https://github.com/deGrootLab/pmx>`_ module.
 
     Args:
-        input_top_zip_path (str): Path the input GROMACS topology TOP and ITP files in zip format.
-        output_top_zip_path (str): Path the output TOP topology in zip format.
-        output_log_path (str): Path to the PMX log path.
+        input_top_zip_path (str): Path the input GROMACS topology TOP and ITP files in zip format. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topology.zip>`_. Accepted formats: zip.
+        output_top_zip_path (str): Path the output TOP topology in zip format. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_topology.zip>`_. Accepted formats: zip.
         properties (dic):
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield.
             * **split** (*bool*) - (False) Print a 3 to 1 letter residue list.
@@ -36,13 +35,13 @@ class Gentop:
             * **container_shell_path** (*string*) - ("/bin/bash") Path to the binary executable of the container shell.
     """
 
-    def __init__(self, input_top_zip_path, output_top_zip_path, output_log_path, properties=None, **kwargs):
+    def __init__(self, input_top_zip_path, output_top_zip_path, properties=None, **kwargs):
         properties = properties or {}
 
         # Input/Output files
         self.io_dict = {
             "in": {},
-            "out": {"output_log_path": output_log_path, "output_top_zip_path": output_top_zip_path}
+            "out": {"output_top_zip_path": output_top_zip_path}
         }
         # Should not be copied inside container
         self.input_top_zip_path = input_top_zip_path
@@ -105,53 +104,56 @@ class Gentop:
         # Unzip topology to topology_out
         top_file = fu.unzip_top(zip_file=self.input_top_zip_path, out_log=out_log)
         top_dir = os.path.dirname(top_file)
+        # List of top and ipt files to apply pmx_gentop
         selected_list = set([os.path.basename(top_file)] + [top_itp_file for word in self.keyword_list for top_itp_file in os.listdir(top_dir) if word.lower() in top_itp_file.lower()])
         fu.log('Gentop will be executed on this list of files: ', out_log, self.global_log)
         fu.log(str(selected_list), out_log, self.global_log)
         tmp_files.append(top_dir)
 
+        #  If using containers create unique dir and copy nothing there
         container_io_dict = fu.copy_to_container(self.container_path, self.container_volume_path, self.io_dict)
-        if not container_io_dict.get("unique_dir"):
-            container_io_dict["unique_dir"] = os.path.abspath(fu.create_unique_dir())
 
-        out_files_dict = {}
+        if self.container_path:
+            fu.log(f"Unique dir: {container_io_dict['unique_dir']}", out_log)
+            fu.log(f"{container_io_dict['unique_dir']} files: {os.listdir(container_io_dict['unique_dir'])}", out_log)
+            # Copy all files of the unzipped topology to unique dir
+            fu.log(f"Copy all files of the unzipped original topology to unique dir:", out_log)
+            for d_file in os.listdir(top_dir):
+                shutil.copy2(os.path.join(top_dir, d_file), container_io_dict.get("unique_dir"))
+                fu.log(f"    Copy: {os.path.join(top_dir, d_file)} to: {container_io_dict.get('unique_dir')}", out_log)
+
+        # Loop through all selected files applying pmx_gentop
+        fu.log(f"List of files where gentop will be applied: {selected_list}", out_log)
+
         for selected_file in selected_list:
             unique_dir_output_path = fu.create_name(path=container_io_dict.get("unique_dir"), prefix=self.prefix, step=self.step, name=selected_file)
-            out_files_dict[selected_file] = os.path.basename(unique_dir_output_path)
 
             if self.container_path:
-                for d_file in os.listdir(top_dir):
-                    shutil.copy2(os.path.join(top_dir, d_file), container_io_dict.get("unique_dir"))
-                unique_dir_output_path = os.path.join(self.container_volume_path, os.path.basename(unique_dir_output_path))
-                container_io_dict["out"]["output_log_path"] = os.path.join(self.container_volume_path, os.path.basename(container_io_dict["out"]["output_log_path"]))
+                fu.log("Change references for container:", out_log)
+                unique_dir_output_file = os.path.join(self.container_volume_path, os.path.basename(unique_dir_output_file))
+                fu.log(f"    unique_dir_output_file: {unique_dir_output_file}", out_log)
 
             cmd = [self.pmx_cli_path, 'gentop',
-                   '-o', unique_dir_output_path,
-                   '-ff', self.force_field,
-                   '-log', container_io_dict["out"]["output_log_path"]]
+                   '-o', unique_dir_output_file,
+                   '-ff', self.force_field]
 
-            container_itp_file = None
+            # Adding itp file command line
             if selected_file.endswith(".itp"):
                 cmd.append('-itp')
                 itp_file = os.path.join(top_dir, selected_file)
-                orig_itp_file = itp_file
                 if self.container_path:
-                    container_itp_file = True
                     itp_file = os.path.join(self.container_volume_path, selected_file)
-                    unique_dir_itp_file = os.path.join(container_io_dict.get("unique_dir"), selected_file)
                 cmd.append(itp_file)
 
-            container_topology_file = None
+            # Adding top file to command line
             if selected_file.endswith(".top"):
-                output_top_file = unique_dir_output_path
                 cmd.append('-p')
                 topology_file = os.path.join(top_dir, selected_file)
                 orig_topology_file = topology_file
                 if self.container_path:
-                    container_topology_file = True
                     topology_file = os.path.join(self.container_volume_path, selected_file)
-                    unique_dir_topology_file = os.path.join(container_io_dict.get("unique_dir"), selected_file)
                 cmd.append(topology_file)
+
             if self.split:
                 cmd.append('-split')
             if self.scale_mass:
@@ -160,10 +162,6 @@ class Gentop:
                 cmd.append('-dna')
             if self.rna:
                 cmd.append('-rna')
-            new_env = None
-            if self.gmxlib:
-                new_env = os.environ.copy()
-                new_env['GMXLIB'] = self.gmxlib
 
             cmd = fu.create_cmd_line(cmd, container_path=self.container_path,
                                      host_volume=container_io_dict.get("unique_dir"),
@@ -173,41 +171,22 @@ class Gentop:
                                      container_shell_path=self.container_shell_path,
                                      container_image=self.container_image,
                                      out_log=out_log, global_log=self.global_log)
-            returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
-            fu.copy_to_host(self.container_path, container_io_dict, self.io_dict)
 
+            returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log).launch()
+
+            # Replace original file for the modified one
             if self.container_path:
-                if container_itp_file:
-                    if os.path.isfile(unique_dir_itp_file):
-                        shutil.copy2(unique_dir_itp_file, orig_itp_file)
-                if container_topology_file:
-                    if os.path.isfile(unique_dir_topology_file):
-                        shutil.copy2(unique_dir_topology_file, orig_topology_file)
+                shutil.copy2(os.path.join(container_io_dict.get("unique_dir"), os.path.basename(unique_dir_output_file)), os.path.join(top_dir, selected_file))
+                fu.log(f"Replace (copy): {os.path.join(container_io_dict.get('unique_dir'), os.path.basename(unique_dir_output_file))} to: {os.path.join(top_dir, selected_file)}", out_log)
 
-        # Adding modified out_itp_files to output_top_file
-        fu.log('Dictionary of itp replacements: ', out_log)
-        fu.log(str(out_files_dict), out_log)
-        for in_file, out_file in out_files_dict.items():
-            with open(os.path.join(container_io_dict.get("unique_dir"), out_file), 'r') as otf:
-                content = otf.readlines()
-            for index, line in enumerate(content):
-                if line.startswith('#include'):
-                    for old_file, new_file in out_files_dict.items():
-                        if old_file in line:
-                            content[index] = line.replace(old_file, new_file)
-            with open(os.path.join(container_io_dict.get("unique_dir"), out_file), 'w') as otf:
-                otf.write("".join(content))
-
-        # Copy the not selected_files of the topology outside
-        for f_top in os.listdir(top_dir):
-            if f_top not in selected_list:
-                shutil.copy2(os.path.join(top_dir,f_top), container_io_dict.get("unique_dir"))
+        fu.log("End of looping throug files", out_log)
 
         # zip topology
         fu.log('Compressing topology to: %s' % self.io_dict["out"]["output_top_zip_path"], out_log, self.global_log)
         fu.zip_top(zip_file=self.io_dict["out"]["output_top_zip_path"], top_file=orig_topology_file, out_log=out_log)
 
-        tmp_files.append(orig_topology_file)
+        tmp_files.append(top_dir)
+        tmp_files.append(container_io_dict.get("unique_dir"))
         if self.remove_tmp:
             fu.rm_file_list(tmp_files, out_log=out_log)
 
@@ -224,7 +203,6 @@ def main():
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_top_zip_path', required=True, help="Path to the input topology zip file")
     required_args.add_argument('--output_top_zip_path', required=True, help="Path to the output topology zip file")
-    required_args.add_argument('--output_log_path', required=True, help="Path to the PMX log path")
 
     args = parser.parse_args()
     config = args.config if args.config else None
@@ -233,7 +211,7 @@ def main():
         properties = properties[args.step]
 
     # Specific call of each building block
-    Gentop(input_top_zip_path=args.input_top_zip_path, output_top_zip_path=args.output_top_zip_path, output_log_path=args.output_log_path, properties=properties).launch()
+    Gentop(input_top_zip_path=args.input_top_zip_path, output_top_zip_path=args.output_top_zip_path, properties=properties).launch()
 
 
 if __name__ == '__main__':

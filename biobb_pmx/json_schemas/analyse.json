@@ -1,30 +1,50 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/analyse",
-    "title": "Wrapper class for the PMX analyse (https://github.com/dseeliger/pmx/wiki) module.",
+    "title": "Wrapper class for the `PMX analyse <https://github.com/deGrootLab/pmx>`_ module.",
     "type": "object",
     "required": [
-        "input_A_xvg_zip_path",
-        "input_B_xvg_zip_path",
+        "input_a_xvg_zip_path",
+        "input_b_xvg_zip_path",
         "output_result_path",
         "output_work_plot_path"
     ],
     "properties": {
-        "input_A_xvg_zip_path": {
+        "input_a_xvg_zip_path": {
             "type": "string",
-            "description": "Path the zip file containing the dgdl.xvg files of the A state."
+            "description": "Path the zip file containing the dgdl",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/xvg_A.zip",
+            "enum": [
+                ".*\\.zip$"
+            ]
         },
-        "input_B_xvg_zip_path": {
+        "input_b_xvg_zip_path": {
             "type": "string",
-            "description": "Path the zip file containing the dgdl.xvg files of the B state."
+            "description": "Path the zip file containing the dgdl",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/xvg_B.zip",
+            "enum": [
+                ".*\\.zip$"
+            ]
         },
         "output_result_path": {
             "type": "string",
-            "description": "Path to the TXT results file."
+            "description": "Path to the TXT results file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_result.txt",
+            "enum": [
+                ".*\\.txt$"
+            ]
         },
         "output_work_plot_path": {
             "type": "string",
-            "description": "Path to the PNG plot results file."
+            "description": "Path to the PNG plot results file",
+            "filetype": "output",
+            "sample": null,
+            "enum": [
+                ".*\\.png$"
+            ]
         },
         "properties": {
             "type": "object",

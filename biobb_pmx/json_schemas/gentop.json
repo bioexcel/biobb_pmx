@@ -1,25 +1,30 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/gentop",
-    "title": "Wrapper class for the PMX gentop (https://github.com/dseeliger/pmx/wiki) module.",
+    "title": "Wrapper class for the `PMX gentop <https://github.com/deGrootLab/pmx>`_ module.",
     "type": "object",
     "required": [
         "input_top_zip_path",
-        "output_top_zip_path",
-        "output_log_path"
+        "output_top_zip_path"
     ],
     "properties": {
         "input_top_zip_path": {
             "type": "string",
-            "description": "Path the input GROMACS topology TOP and ITP files in zip format."
+            "description": "Path the input GROMACS topology TOP and ITP files in zip format",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topology.zip",
+            "enum": [
+                ".*\\.zip$"
+            ]
         },
         "output_top_zip_path": {
             "type": "string",
-            "description": "Path the output TOP topology in zip format."
-        },
-        "output_log_path": {
-            "type": "string",
-            "description": "Path to the PMX log path."
+            "description": "Path the output TOP topology in zip format",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_topology.zip",
+            "enum": [
+                ".*\\.zip$"
+            ]
         },
         "properties": {
             "type": "object",

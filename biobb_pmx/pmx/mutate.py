@@ -13,12 +13,12 @@ from biobb_common.command_wrapper import cmd_wrapper
 
 
 class Mutate:
-    """Wrapper class for the PMX mutate (https://github.com/dseeliger/pmx/wiki) module.
+    """Wrapper class for the `PMX mutate <https://github.com/deGrootLab/pmx>`_ module.
 
     Args:
-        input_structure_path (str): Path to the input structure file.
-        output_structure_path (str): Path to the output structure file.
-        input_b_structure_path (str)[Optional]: Path to the mutated input structure file.
+        input_structure_path (str): Path to the input structure file. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/frame99.pdb>`_. Accepted formats: pdb, gro.
+        output_structure_path (str): Path to the output structure file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_structure.pdb>`_. Accepted formats: pdb, gro.
+        input_b_structure_path (str) (Optional): Path to the mutated input structure file. File type: input. Accepted formats: pdb, gro.
         properties (dic):
             * **mutation_list** (*str*) ("Val2Ala") Mutation list in the format "Chain:WT_AA_ThreeLeterCode Resnum MUT_AA_ThreeLeterCode" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:ALA15CYS"
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield.
@@ -48,7 +48,7 @@ class Mutate:
         # Properties specific for BB
         self.force_field = properties.get('force_field', "amber99sb-star-ildn-mut.ff")
         self.resinfo = properties.get('resinfo', False)
-        self.mutation_list = list(properties.get('mutation_list', 'Val2Ala').replace(" ", "").split(','))
+        self.mutation_list = properties.get('mutation_list', 'Val2Ala')
         self.dna = properties.get('dna', False)
         self.rna = properties.get('rna', False)
 
@@ -78,6 +78,7 @@ class Mutate:
 
     @launchlogger
     def launch(self):
+        print(self.mutation_list)
         """Launches the execution of the PMX mutate module."""
         tmp_files = []
 
@@ -99,12 +100,18 @@ class Mutate:
                 return 0
 
         # Generate mutations file
+        try:
+            # Check if self.mutation_list is a string
+            self.mutation_list = self.mutation_list.replace(" ", "").split(',')
+        except AttributeError:
+            pass
         unique_dir = os.path.abspath(fu.create_unique_dir())
         self.io_dict["in"]["mutations"] = os.path.join(unique_dir, 'mutations.txt')
         pattern = re.compile(r"(?P<chain>[a-zA-Z])*:*(?P<wt>[a-zA-Z]{3})(?P<resnum>\d+)(?P<mt>[a-zA-Z]{3})")
         with open(self.io_dict["in"]["mutations"], 'w') as mut_file:
             for mut in self.mutation_list:
-                mut_dict = pattern.match(mut).groupdict()
+                print(mut)
+                mut_dict = pattern.match(mut.strip()).groupdict()
                 if mut_dict.get('chain'):
                     mut_file.write(mut_dict.get('chain')+' ')
                 mut_file.write(mut_dict.get('resnum')+' ')
@@ -164,7 +171,6 @@ def main():
     required_args = parser.add_argument_group('required arguments')
     required_args.add_argument('--input_structure_path', required=True, help="Path to the input structure file")
     required_args.add_argument('--output_structure_path', required=True, help="Path to the output structure file")
-    required_args.add_argument('--input_mutations_path', required=True, help="Path to the input text file containing the mutations")
     parser.add_argument('--input_b_structure_path', required=False, help="Path to the mutated input structure file")
 
     args = parser.parse_args()
@@ -174,7 +180,7 @@ def main():
         properties = properties[args.step]
 
     # Specific call of each building block
-    Mutate(input_structure_path=args.input_structure_path, output_structure_path=args.output_structure_path, input_mutations_path=args.input_mutations_path, input_b_structure_path=args.input_b_structure_path, properties=properties).launch()
+    Mutate(input_structure_path=args.input_structure_path, output_structure_path=args.output_structure_path, input_b_structure_path=args.input_b_structure_path, properties=properties).launch()
 
 
 if __name__ == '__main__':
