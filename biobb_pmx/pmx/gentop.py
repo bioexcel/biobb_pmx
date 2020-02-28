@@ -179,11 +179,12 @@ class Gentop:
             returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
 
             # Replace original file for the modified one
-            shutil.copy2(unique_dir_output_file, os.path.join(top_dir, selected_file))
-            fu.log(f"Replace (copy): {unique_dir_output_file} to: {os.path.join(top_dir, selected_file)}", out_log)
             if self.container_path:
                 shutil.copy2(os.path.join(container_io_dict.get("unique_dir"), os.path.basename(unique_dir_output_file)), os.path.join(top_dir, selected_file))
                 fu.log(f"Replace (copy): {os.path.join(container_io_dict.get('unique_dir'), os.path.basename(unique_dir_output_file))} to: {os.path.join(top_dir, selected_file)}", out_log)
+            else:
+                shutil.copy2(unique_dir_output_file, os.path.join(top_dir, selected_file))
+                fu.log(f"Replace (copy): {unique_dir_output_file} to: {os.path.join(top_dir, selected_file)}", out_log)
 
         fu.log("End of looping throug files", out_log)
 
