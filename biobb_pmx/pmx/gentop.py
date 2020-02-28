@@ -193,8 +193,8 @@ class Gentop:
 
         tmp_files.append(top_dir)
         tmp_files.append(container_io_dict.get("unique_dir"))
-        # if self.remove_tmp:
-        #     fu.rm_file_list(tmp_files, out_log=out_log)
+        if self.remove_tmp:
+            fu.rm_file_list(tmp_files, out_log=out_log)
 
         return returncode
 
