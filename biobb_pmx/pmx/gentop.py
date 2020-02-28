@@ -126,7 +126,7 @@ class Gentop:
         fu.log(f"List of files where gentop will be applied: {selected_list}", out_log)
 
         for selected_file in selected_list:
-            unique_dir_output_path = fu.create_name(path=container_io_dict.get("unique_dir"), prefix=self.prefix, step=self.step, name=selected_file)
+            unique_dir_output_file = fu.create_name(path=container_io_dict.get("unique_dir"), prefix=self.prefix, step=self.step, name=selected_file)
 
             if self.container_path:
                 fu.log("Change references for container:", out_log)
@@ -162,6 +162,10 @@ class Gentop:
                 cmd.append('-dna')
             if self.rna:
                 cmd.append('-rna')
+            new_env = None
+            if self.gmxlib:
+                new_env = os.environ.copy()
+                new_env['GMXLIB'] = self.gmxlib
 
             cmd = fu.create_cmd_line(cmd, container_path=self.container_path,
                                      host_volume=container_io_dict.get("unique_dir"),
@@ -172,9 +176,11 @@ class Gentop:
                                      container_image=self.container_image,
                                      out_log=out_log, global_log=self.global_log)
 
-            returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log).launch()
+            returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
 
             # Replace original file for the modified one
+            shutil.copy2(unique_dir_output_file, os.path.join(top_dir, selected_file))
+            fu.log(f"Replace (copy): {unique_dir_output_file} to: {os.path.join(top_dir, selected_file)}", out_log)
             if self.container_path:
                 shutil.copy2(os.path.join(container_io_dict.get("unique_dir"), os.path.basename(unique_dir_output_file)), os.path.join(top_dir, selected_file))
                 fu.log(f"Replace (copy): {os.path.join(container_io_dict.get('unique_dir'), os.path.basename(unique_dir_output_file))} to: {os.path.join(top_dir, selected_file)}", out_log)
@@ -187,8 +193,8 @@ class Gentop:
 
         tmp_files.append(top_dir)
         tmp_files.append(container_io_dict.get("unique_dir"))
-        if self.remove_tmp:
-            fu.rm_file_list(tmp_files, out_log=out_log)
+        # if self.remove_tmp:
+        #     fu.rm_file_list(tmp_files, out_log=out_log)
 
         return returncode
 
