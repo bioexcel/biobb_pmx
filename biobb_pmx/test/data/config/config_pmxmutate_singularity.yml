@@ -1,0 +1,5 @@
+properties:
+  container_image: shub://bioexcel/pmx_docker
+  container_path: singularity
+  force_field: amber99sb-star-ildn-mut
+  mutation_list: Val2Ala, Ile3Val

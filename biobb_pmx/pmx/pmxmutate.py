@@ -2,9 +2,11 @@
 
 """Module containing the PMX mutate class and the command line interface."""
 import os
+from pathlib import Path
 import re
 import shutil
 import argparse
+from typing import Mapping
 from Bio.PDB.Polypeptide import three_to_one
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
@@ -12,7 +14,7 @@ from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 
 
-class Mutate:
+class Pmxmutate:
     """Wrapper class for the `PMX mutate <https://github.com/deGrootLab/pmx>`_ module.
 
     Args:
@@ -28,15 +30,16 @@ class Mutate:
             * **pmx_cli_path** (*str*) - ("cli.py") Path to the PMX Python2.7 client.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
-            * **container_path** (*string*) - (None)  Path to the binary executable of your container.
-            * **container_image** (*string*) - ("gromacs/gromacs:latest") Container Image identifier.
-            * **container_volume_path** (*string*) - ("/inout") Path to an internal directory in the container.
-            * **container_working_dir** (*string*) - (None) Path to the internal CWD in the container.
-            * **container_user_id** (*string*) - (None) User number id to be mapped inside the container.
-            * **container_shell_path** (*string*) - ("/bin/bash") Path to the binary executable of the container shell.
+            * **container_path** (*str*) - (None)  Path to the binary executable of your container.
+            * **container_image** (*str*) - ("gromacs/gromacs:latest") Container Image identifier.
+            * **container_volume_path** (*str*) - ("/inout") Path to an internal directory in the container.
+            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
+            * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
+            * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
     """
 
-    def __init__(self, input_structure_path, output_structure_path, input_b_structure_path=None, properties=None, **kwargs):
+    def __init__(self, input_structure_path: str, output_structure_path: str, input_b_structure_path: str = None,
+                 properties: Mapping = None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -77,7 +80,7 @@ class Mutate:
         fu.check_properties(self, properties)
 
     @launchlogger
-    def launch(self):
+    def launch(self) -> int:
         print(self.mutation_list)
         """Launches the execution of the PMX mutate module."""
         tmp_files = []
@@ -88,7 +91,7 @@ class Mutate:
 
         # Check if executable is exists
         if not self.container_path:
-            if not os.path.isfile(self.pmx_cli_path):
+            if not Path(self.pmx_cli_path).is_file():
                 if not shutil.which(self.pmx_cli_path):
                     raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
 
@@ -105,12 +108,11 @@ class Mutate:
             self.mutation_list = self.mutation_list.replace(" ", "").split(',')
         except AttributeError:
             pass
-        unique_dir = os.path.abspath(fu.create_unique_dir())
-        self.io_dict["in"]["mutations"] = os.path.join(unique_dir, 'mutations.txt')
+        unique_dir = str(Path(fu.create_unique_dir()).resolve())
+        self.io_dict["in"]["mutations"] = str(Path(unique_dir).joinpath('mutations.txt'))
         pattern = re.compile(r"(?P<chain>[a-zA-Z])*:*(?P<wt>[a-zA-Z]{3})(?P<resnum>\d+)(?P<mt>[a-zA-Z]{3})")
         with open(self.io_dict["in"]["mutations"], 'w') as mut_file:
             for mut in self.mutation_list:
-                print(mut)
                 mut_dict = pattern.match(mut.strip()).groupdict()
                 if mut_dict.get('chain'):
                     mut_file.write(mut_dict.get('chain')+' ')
@@ -152,8 +154,8 @@ class Mutate:
         returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
         fu.copy_to_host(self.container_path, container_io_dict, self.io_dict)
 
-        tmp_files.append(container_io_dict.get("unique_dir"))
-        tmp_files.append(unique_dir)
+        #tmp_files.append(container_io_dict.get("unique_dir"))
+        #tmp_files.append(unique_dir)
         if self.remove_tmp:
             fu.rm_file_list(tmp_files, out_log=out_log)
 
@@ -161,11 +163,9 @@ class Mutate:
 
 
 def main():
-    """Command line interface."""
-    parser = argparse.ArgumentParser(description="Run PMX mutate module", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser = argparse.ArgumentParser(description="Run PMX mutate module",
+                                     formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('-c', '--config', required=False, help="This file can be a YAML file, JSON file or JSON string")
-    parser.add_argument('--system', required=False, help="Common name for workflow properties set")
-    parser.add_argument('--step', required=False, help="Check 'https://biobb-common.readthedocs.io/en/latest/configuration.html")
 
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
@@ -175,12 +175,11 @@ def main():
 
     args = parser.parse_args()
     config = args.config if args.config else None
-    properties = settings.ConfReader(config=config, system=args.system).get_prop_dic()
-    if args.step:
-        properties = properties[args.step]
+    properties = settings.ConfReader(config=config).get_prop_dic()
 
     # Specific call of each building block
-    Mutate(input_structure_path=args.input_structure_path, output_structure_path=args.output_structure_path, input_b_structure_path=args.input_b_structure_path, properties=properties).launch()
+    Pmxmutate(input_structure_path=args.input_structure_path, output_structure_path=args.output_structure_path,
+              input_b_structure_path=args.input_b_structure_path, properties=properties).launch()
 
 
 if __name__ == '__main__':

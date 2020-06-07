@@ -2,22 +2,23 @@
 
 """Module containing the PMX analyse class and the command line interface."""
 import argparse
-import os
+from pathlib import Path
 import shutil
+from typing import Mapping
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 
 
-class Analyse:
+class Pmxanalyse:
     """Wrapper class for the `PMX analyse <https://github.com/deGrootLab/pmx>`_ module.
 
     Args:
         input_a_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the A state. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/xvg_A.zip>`_. Accepted formats: zip.
         input_b_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the B state. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/xvg_B.zip>`_. Accepted formats: zip.
         output_result_path (str): Path to the TXT results file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_result.txt>`_. Accepted formats: txt.
-        output_work_plot_path (str): Path to the PNG plot results file. File type: output. Accepted formats: png.
+        output_work_plot_path (str): Path to the PNG plot results file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_plot.png>`_. Accepted formats: png.
         properties (dic):
             * **method** (*str*) - ("CGI BAR JARZ") Choose one or more estimators to use from the available ones: CGI, BAR, JARZ.
             * **temperature** (*float*) - (298.15) Temperature in Kelvin.
@@ -36,16 +37,16 @@ class Analyse:
             * **pmx_cli_path** (*str*) - ("cli.py") Path to the PMX Python2.7 client.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
-            * **container_path** (*string*) - (None)  Path to the binary executable of your container.
-            * **container_image** (*string*) - ("gromacs/gromacs:latest") Container Image identifier.
-            * **container_volume_path** (*string*) - ("/data") Path to an internal directory in the container.
-            * **container_working_dir** (*string*) - (None) Path to the internal CWD in the container.
-            * **container_user_id** (*string*) - (None) User number id to be mapped inside the container.
-            * **container_shell_path** (*string*) - ("/bin/bash") Path to the binary executable of the container shell.
+            * **container_path** (*str*) - (None)  Path to the binary executable of your container.
+            * **container_image** (*str*) - ("gromacs/gromacs:latest") Container Image identifier.
+            * **container_volume_path** (*str*) - ("/data") Path to an internal directory in the container.
+            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
+            * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
+            * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
     """
 
-    def __init__(self, input_a_xvg_zip_path, input_b_xvg_zip_path, output_result_path, output_work_plot_path,
-                 properties=None, **kwargs):
+    def __init__(self, input_a_xvg_zip_path: str, input_b_xvg_zip_path: str, output_result_path: str,
+                 output_work_plot_path: str, properties: Mapping = None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -98,7 +99,7 @@ class Analyse:
         fu.check_properties(self, properties)
 
     @launchlogger
-    def launch(self):
+    def launch(self) -> int:
         """Launches the execution of the PMX gentop module."""
         tmp_files = []
 
@@ -108,7 +109,7 @@ class Analyse:
 
         # Check if executable is exists
         if not self.container_path:
-            if not os.path.isfile(self.pmx_cli_path):
+            if not Path(self.pmx_cli_path).is_file():
                 if not shutil.which(self.pmx_cli_path):
                     raise FileNotFoundError(
                         'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
@@ -121,21 +122,19 @@ class Analyse:
 
         list_a_dir = fu.create_unique_dir()
         list_b_dir = fu.create_unique_dir()
-        list_a = list(filter(lambda f: os.path.exists(f) and os.path.getsize(f) > 10, fu.unzip_list(self.input_a_xvg_zip_path, list_a_dir, out_log)))
-        list_b = list(filter(lambda f: os.path.exists(f) and os.path.getsize(f) > 10, fu.unzip_list(self.input_b_xvg_zip_path, list_b_dir, out_log)))
+        list_a = list(filter(lambda f: Path(f).exists() and Path(f).stat().st_size > 10, fu.unzip_list(self.input_a_xvg_zip_path, list_a_dir, out_log)))
+        list_b = list(filter(lambda f: Path(f).exists() and Path(f).stat().st_size > 10, fu.unzip_list(self.input_b_xvg_zip_path, list_b_dir, out_log)))
         string_a = " ".join(list_a)
         string_b = " ".join(list_b)
 
         container_io_dict = fu.copy_to_container(self.container_path, self.container_volume_path, self.io_dict)
 
         if self.container_path:
-            shutil.copytree(list_a_dir, os.path.join(container_io_dict.get("unique_dir"), os.path.basename(list_a_dir)))
-            shutil.copytree(list_b_dir, os.path.join(container_io_dict.get("unique_dir"), os.path.basename(list_b_dir)))
+            shutil.copytree(list_a_dir, Path(container_io_dict.get("unique_dir")).joinpath(Path(list_a_dir).name))
+            shutil.copytree(list_b_dir, Path(container_io_dict.get("unique_dir")).joinpath(Path(list_b_dir).name))
             container_volume = " " + self.container_volume_path + "/"
             string_a = self.container_volume_path + "/" + container_volume.join(list_a)
             string_b = self.container_volume_path + "/" + container_volume.join(list_b)
-
-        # Check no missing or Error or empty files.
 
         cmd = [self.pmx_cli_path, 'analyse',
                '-fA', string_a,
@@ -206,11 +205,10 @@ class Analyse:
 
 
 def main():
-    """Command line interface."""
-    parser = argparse.ArgumentParser(description="Run PMX mutate module", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
-    parser.add_argument('-c', '--config', required=False, help="This file can be a YAML file, JSON file or JSON string")
-    parser.add_argument('--system', required=False, help="Common name for workflow properties set")
-    parser.add_argument('--step', required=False, help="Check 'https://biobb-common.readthedocs.io/en/latest/configuration.html")
+    parser = argparse.ArgumentParser(description="Run PMX mutate module",
+                                     formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
+    parser.add_argument('-c', '--config', required=False,
+                        help="This file can be a YAML file, JSON file or JSON string")
 
     # Specific args of each building block
     required_args = parser.add_argument_group('required arguments')
@@ -223,14 +221,12 @@ def main():
 
     args = parser.parse_args()
     config = args.config if args.config else None
-    properties = settings.ConfReader(config=config, system=args.system).get_prop_dic()
-    if args.step:
-        properties = properties[args.step]
+    properties = settings.ConfReader(config=config).get_prop_dic()
 
     # Specific call of each building block
-    Analyse(input_a_xvg_zip_path=args.input_a_xvg_zip_path, input_b_xvg_zip_path=args.input_b_xvg_zip_path,
-            output_result_path=args.output_result_path, output_work_plot_path=args.output_work_plot_path,
-            properties=properties).launch()
+    Pmxanalyse(input_a_xvg_zip_path=args.input_a_xvg_zip_path, input_b_xvg_zip_path=args.input_b_xvg_zip_path,
+               output_result_path=args.output_result_path, output_work_plot_path=args.output_work_plot_path,
+               properties=properties).launch()
 
 
 if __name__ == '__main__':

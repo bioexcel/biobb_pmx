@@ -1,0 +1,4 @@
+properties:
+  container_image: shub://bioexcel/pmx_docker
+  container_path: docker
+  force_field: amber99sbmut

@@ -1,2 +1,2 @@
 name = "pmx"
-__all__ = ["analyse", "gentop", "mutate"]
+__all__ = ["pmxanalyse", "pmxgentop", "pmxmutate"]

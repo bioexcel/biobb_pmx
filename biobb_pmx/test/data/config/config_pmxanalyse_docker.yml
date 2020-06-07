@@ -1,0 +1,3 @@
+properties:
+  container_image: mmbirb/pmx
+  container_path: docker

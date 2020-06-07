@@ -6,34 +6,34 @@
     "conda": "https://anaconda.org/bioconda/biobb_pmx",
     "docker": "https://quay.io/repository/biocontainers/biobb_pmx",
     "singularity": "https://singularity-hub.org/collections/3854/usage",
-    "version": "2.0.2",
+    "version": "3.0.0",
     "tools" : [
         {
-            "block" : "Mutate",
+            "block" : "Pmxmutate",
             "tool" : "pmx",
             "desc" : "pmx tool to insert mutated residues in structure files for free energy simulations",
             "exec" : "mutate"
         },
         {
-            "block" : "Gentop",
+            "block" : "PmxGentop",
             "tool" : "pmx",
             "desc" : "pmx tool to generate hybrid GROMACS topologies: adding a B state to an .itp or .top file for a hybrid residue",
             "exec" : "gentop"
         },
         {
-            "block" : "Analyse",
+            "block" : "Pmxanalyse",
             "tool" : "pmx",
             "desc" : "pmx tool to calculate free energies from fast growth thermodynamic integration simulations.",
             "exec" : "analyse"
         }
     ],
     "dep_pypi" : [
-        "install_requires=['biobb_common==2.0.1']",
-        "python_requires='==3.6.*'"
+        "install_requires=['biobb_common==3.0.0']",
+        "python_requires='==3.7.*'"
     ],
     "dep_conda" : [
-        "python ==3.6.*",
-        "biobb_common ==2.0.1"
+        "python ==3.7.*",
+        "biobb_common ==3.0.0"
     ],
     "keywords" : [
         "pmx",

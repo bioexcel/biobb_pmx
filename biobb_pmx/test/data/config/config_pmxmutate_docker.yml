@@ -1,0 +1,5 @@
+properties:
+  container_image: mmbirb/pmx
+  container_path: docker
+  force_field: amber99sb-star-ildn-mut
+  mutation_list: Val2Ala, Ile3Val

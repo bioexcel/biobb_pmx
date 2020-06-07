@@ -1,0 +1,4 @@
+properties:
+  container_image: mmbirb/pmx
+  container_path: docker
+  force_field: amber99sbmut

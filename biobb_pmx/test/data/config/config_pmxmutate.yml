@@ -1,0 +1,5 @@
+properties:
+  force_field: amber99sb-star-ildn-mut
+  gmxlib: /Users/pau/other_projects/pmx/pmx/data/mutff45
+  mutation_list: Val2Ala, Ile3Val
+  pmx_cli_path: /Users/pau/other_projects/pmx/pmx/scripts/cli.py
