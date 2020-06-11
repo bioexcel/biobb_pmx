@@ -8,14 +8,14 @@ Submodules
 pmx.analyse module
 ---------------------------
 
-.. automodule:: pmx.analyse
+.. automodule:: pmx.pmxanalyse
     :members:
     :undoc-members:
     :show-inheritance:
 
 pmx.gentop module
 -------------------
-.. automodule:: pmx.gentop
+.. automodule:: pmx.pmxgentop
     :members:
     :undoc-members:
     :show-inheritance:
@@ -23,7 +23,7 @@ pmx.gentop module
 pmx.mutate module
 ------------------
 
-.. automodule:: pmx.mutate
+.. automodule:: pmx.pmxmutate
     :members:
     :undoc-members:
     :show-inheritance:
