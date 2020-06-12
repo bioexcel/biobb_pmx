@@ -3,6 +3,6 @@
     "mutation_list": "Val2Ala, Ile3Val",
     "force_field": "amber99sb-star-ildn-mut",
     "container_path": "docker",
-    "container_image": "mmbirb/pmx"
+    "container_image": "mmbirb/pmx:1.0"
   }
 }
