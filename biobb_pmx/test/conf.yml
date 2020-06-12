@@ -8,9 +8,9 @@ pmxmutate:
     ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure.pdb
   properties:
     mutation_list: Val2Ala, Ile3Val
-    gmxlib: /Users/pau/other_projects/pmx/pmx/data/mutff45
+    gmxlib: <pmx_installation_path>/pmx/data/mutff45
     force_field: amber99sb-star-ildn-mut
-    pmx_cli_path: /Users/pau/other_projects/pmx/pmx/scripts/cli.py
+    pmx_cli_path: <pmx_installation_path>/cli.py
 
 pmxmutate_docker:
   paths:
@@ -21,7 +21,7 @@ pmxmutate_docker:
     mutation_list: Val2Ala, Ile3Val
     force_field: amber99sb-star-ildn-mut
     container_path: docker
-    container_image: mmbirb/pmx
+    container_image: mmbirb/pmx:1.0
 
 pmxmutate_singularity:
   paths:
@@ -41,9 +41,9 @@ pmxgentop:
     output_log_path: gentop.log
     ref_output_top_zip_path: file:test_reference_dir/pmx/ref_mut_gmx_hybrid_top.zip
   properties:
-    gmxlib: /Users/pau/other_projects/pmx/pmx/data/mutff45
+    gmxlib: <pmx_installation_path>/pmx/data/mutff45
     force_field: amber99sbmut
-    pmx_cli_path: /Users/pau/other_projects/pmx/pmx/scripts/cli.py
+    pmx_cli_path: <pmx_installation_path>/cli.py
 
 pmxgentop_docker:
   paths:
@@ -54,7 +54,7 @@ pmxgentop_docker:
   properties:
     force_field: amber99sbmut
     container_path: docker
-    container_image: mmbirb/pmx
+    container_image: mmbirb/pmx:1.0
 
 pmxgentop_singularity:
   paths:
@@ -75,7 +75,7 @@ pmxanalyse:
     output_work_plot_path: plot.png
     ref_output_result_path: file:test_reference_dir/pmx/ref_result.txt
   properties:
-    pmx_cli_path: /Users/pau/other_projects/pmx/pmx/scripts/cli.py
+    pmx_cli_path: <pmx_installation_path>/cli.py
 
 pmxanalyse_docker:
   paths:
@@ -86,7 +86,7 @@ pmxanalyse_docker:
     ref_output_result_path: file:test_reference_dir/pmx/ref_result.txt
   properties:
     container_path: docker
-    container_image: mmbirb/pmx
+    container_image: mmbirb/pmx:1.0
 
 pmxanalyse_singularity:
   paths:

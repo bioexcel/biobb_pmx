@@ -1,6 +1,6 @@
 # Biobb Model changelog
 
-## What's new in version [3.0.0](https://github.com/bioexcel/biobb_pmx/releases/tag/3.0.0)?
+## What's new in version [3.0.1](https://github.com/bioexcel/biobb_pmx/releases/tag/3.0.1)?
 In version 3.0.0 Python has been updated to version 3.7 and Biopython to version 1.76.
 Big changes in the documentation style and content. Finally a new conda installation recipe has been introduced.
 
@@ -17,6 +17,7 @@ Big changes in the documentation style and content. Finally a new conda installa
 
 * Replace container Quay.io badge (documentation)
 * Remove unused system and step arguments from command line causing execution errors (cli) [#9](https://github.com/bioexcel/biobb_model/issues/9)
+* Replace wrong arguments in pmxgentop.py commandline (commandline)
 
 ### Other changes
 

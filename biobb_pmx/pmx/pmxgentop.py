@@ -217,8 +217,8 @@ def main():
     properties = settings.ConfReader(config=config).get_prop_dic()
 
     # Specific call of each building block
-    Pmxgentop(input_structure_path=args.input_structure_path, output_ndx_path=args.output_ndx_path,
-              input_ndx_path=args.input_ndx_path, properties=properties).launch()
+    Pmxgentop(input_top_zip_path=args.input_top_zip_path, output_top_zip_path=args.output_top_zip_path,
+              properties=properties).launch()
 
 
 if __name__ == '__main__':
