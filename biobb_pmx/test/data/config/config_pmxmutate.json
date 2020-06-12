@@ -1,8 +1,8 @@
 {
-  "properties": {
-    "mutation_list": "Val2Ala, Ile3Val",
-    "gmxlib": "/Users/pau/other_projects/pmx/pmx/data/mutff45",
-    "force_field": "amber99sb-star-ildn-mut",
-    "pmx_cli_path": "/Users/pau/other_projects/pmx/pmx/scripts/cli.py"
-  }
+    "properties": {
+        "mutation_list": "Val2Ala, Ile3Val",
+        "force_field": "amber99sb-star-ildn-mut",
+        "container_path": "docker",
+        "container_image": "mmbirb/pmx"
+    }
 }
