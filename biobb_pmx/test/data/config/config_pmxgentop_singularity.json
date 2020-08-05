@@ -1,7 +1,0 @@
-{
-  "properties": {
-    "force_field": "amber99sbmut",
-    "container_path": "docker",
-    "container_image": "shub://bioexcel/pmx_docker"
-  }
-}

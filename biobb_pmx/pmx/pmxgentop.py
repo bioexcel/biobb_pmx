@@ -26,7 +26,7 @@ class Pmxgentop:
             * **rna** (*bool*) - (False) Generate hybrid residue for the RNA nucleotides.
             * **output_top_name** (*str*) - ("gentop.top") Name of the output top file.
             * **keyword_list** (*str*) - (["Protein", "DNA"]) List of comma separated Keywords to match top and itp files.
-            * **pmx_cli_path** (*str*) - ("cli.py") Path to the PMX Python2.7 client.
+            * **pmx_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
@@ -59,7 +59,7 @@ class Pmxgentop:
         self.keyword_list = list(set(self.keyword_list + ["Protein", "DNA"]))
         # Properties common in all PMX BB
         self.gmxlib = properties.get('gmxlib', None)
-        self.pmx_cli_path = properties.get('pmx_cli_path', 'cli.py')
+        self.pmx_path = properties.get('pmx_path', 'pmx')
 
         # Properties common in all BB
         self.can_write_console_log = properties.get('can_write_console_log', True)
@@ -92,9 +92,9 @@ class Pmxgentop:
 
         # Check if executable is exists
         if not self.container_path:
-            if not Path(self.pmx_cli_path).is_file():
-                if not shutil.which(self.pmx_cli_path):
-                    raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
+            if not Path(self.pmx_path).is_file():
+                if not shutil.which(self.pmx_path):
+                    raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_path)
 
         # Restart if needed
         if self.restart:
@@ -135,7 +135,7 @@ class Pmxgentop:
                 unique_dir_output_file = str(Path(self.container_volume_path).joinpath(Path(unique_dir_output_file).name))
                 fu.log(f"    unique_dir_output_file: {unique_dir_output_file}", out_log)
 
-            cmd = [self.pmx_cli_path, 'gentop',
+            cmd = [self.pmx_path, 'gentop',
                    '-o', unique_dir_output_file,
                    '-ff', self.force_field]
 

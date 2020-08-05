@@ -1,8 +1,0 @@
-{
-  "properties": {
-    "mutation_list": "Val2Ala, Ile3Val",
-    "force_field": "amber99sb-star-ildn-mut",
-    "container_path": "singularity",
-    "container_image": "shub://bioexcel/pmx_docker"
-  }
-}

@@ -27,7 +27,7 @@ class Pmxmutate:
             * **resinfo** (*bool*) - (False) Print a 3 to 1 letter residue list.
             * **dna** (*bool*) - (False) Generate hybrid residue for the DNA nucleotides.
             * **rna** (*bool*) - (False) Generate hybrid residue for the RNA nucleotides.
-            * **pmx_cli_path** (*str*) - ("cli.py") Path to the PMX Python2.7 client.
+            * **pmx_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
@@ -49,7 +49,7 @@ class Pmxmutate:
         }
 
         # Properties specific for BB
-        self.force_field = properties.get('force_field', "amber99sb-star-ildn-mut.ff")
+        self.force_field = properties.get('force_field', "amber99sb-star-ildn-mut")
         self.resinfo = properties.get('resinfo', False)
         self.mutation_list = properties.get('mutation_list', 'Val2Ala')
         self.dna = properties.get('dna', False)
@@ -57,7 +57,7 @@ class Pmxmutate:
 
         # Properties common in all PMX BB
         self.gmxlib = properties.get('gmxlib', None)
-        self.pmx_cli_path = properties.get('pmx_cli_path', 'cli.py')
+        self.pmx_path = properties.get('pmx_path', 'pmx')
 
         # container Specific
         self.container_path = properties.get('container_path')
@@ -91,9 +91,9 @@ class Pmxmutate:
 
         # Check if executable is exists
         if not self.container_path:
-            if not Path(self.pmx_cli_path).is_file():
-                if not shutil.which(self.pmx_cli_path):
-                    raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
+            if not Path(self.pmx_path).is_file():
+                if not shutil.which(self.pmx_path):
+                    raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_path)
 
         # Restart if needed
         if self.restart:
@@ -122,11 +122,11 @@ class Pmxmutate:
 
         container_io_dict = fu.copy_to_container(self.container_path, self.container_volume_path, self.io_dict)
 
-        cmd = [self.pmx_cli_path, 'mutate',
+        cmd = [self.pmx_path, 'mutate',
                '-f', container_io_dict["in"]["input_structure_path"],
                '-o', container_io_dict["out"]["output_structure_path"],
                '-ff', self.force_field,
-               '-script', container_io_dict["in"]["mutations"]]
+               '--script', container_io_dict["in"]["mutations"]]
 
         if container_io_dict["in"].get("input_b_structure_path"):
             cmd.append('-fB')

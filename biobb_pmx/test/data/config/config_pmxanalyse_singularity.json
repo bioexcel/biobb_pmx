@@ -1,6 +1,0 @@
-{
-  "properties": {
-    "container_path": "docker",
-    "container_image": "shub://bioexcel/pmx_docker"
-  }
-}

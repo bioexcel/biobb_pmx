@@ -34,7 +34,7 @@ class Pmxanalyse:
             * **no_ks** (*bool*) - (False) Whether to do a Kolmogorov-Smirnov test to check whether the Gaussian assumption for CGI holds.
             * **nbins** (*int*) - (10) Number of histograms bins for the plot.
             * **dpi** (*int*) - (300) Resolution of the plot.
-            * **pmx_cli_path** (*str*) - ("cli.py") Path to the PMX Python2.7 client.
+            * **pmx_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
@@ -76,7 +76,7 @@ class Pmxanalyse:
         self.dpi = properties.get('dpi', None)
 
         # Properties common in all PMX BB
-        self.pmx_cli_path = properties.get('pmx_cli_path', 'cli.py')
+        self.pmx_path = properties.get('pmx_path', 'cli.py')
 
         # container Specific
         self.container_path = properties.get('container_path')
@@ -109,10 +109,10 @@ class Pmxanalyse:
 
         # Check if executable is exists
         if not self.container_path:
-            if not Path(self.pmx_cli_path).is_file():
-                if not shutil.which(self.pmx_cli_path):
+            if not Path(self.pmx_path).is_file():
+                if not shutil.which(self.pmx_path):
                     raise FileNotFoundError(
-                        'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_cli_path)
+                        'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_path)
 
         # Restart if needed
         if self.restart:
@@ -136,11 +136,11 @@ class Pmxanalyse:
             string_a = self.container_volume_path + "/" + container_volume.join(list_a)
             string_b = self.container_volume_path + "/" + container_volume.join(list_b)
 
-        cmd = [self.pmx_cli_path, 'analyse',
+        cmd = [self.pmx_path, 'analyse',
                '-fA', string_a,
                '-fB', string_b,
                '-o', container_io_dict["out"]["output_result_path"],
-               '--work_plot', container_io_dict["out"]["output_work_plot_path"]]
+               '-w', container_io_dict["out"]["output_work_plot_path"]]
 
         if self.method:
             cmd.append('-m')

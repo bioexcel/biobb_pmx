@@ -8,9 +8,9 @@ pmxmutate:
     ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure.pdb
   properties:
     mutation_list: Val2Ala, Ile3Val
-    gmxlib: <pmx_installation_path>/pmx/data/mutff45
+    gmxlib: /anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45
     force_field: amber99sb-star-ildn-mut
-    pmx_cli_path: <pmx_installation_path>/cli.py
+    pmx_path: pmx
 
 pmxmutate_docker:
   paths:
@@ -38,12 +38,11 @@ pmxgentop:
   paths:
     input_top_zip_path: file:test_data_dir/pmx/mut_gmx.top.zip
     output_top_zip_path: output_topology.zip
-    output_log_path: gentop.log
     ref_output_top_zip_path: file:test_reference_dir/pmx/ref_mut_gmx_hybrid_top.zip
   properties:
-    gmxlib: <pmx_installation_path>/pmx/data/mutff45
+    gmxlib: /anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45
     force_field: amber99sbmut
-    pmx_cli_path: <pmx_installation_path>/cli.py
+    pmx_path: pmx
 
 pmxgentop_docker:
   paths:
@@ -74,8 +73,9 @@ pmxanalyse:
     output_result_path: result.txt
     output_work_plot_path: plot.png
     ref_output_result_path: file:test_reference_dir/pmx/ref_result.txt
+    ref_output_work_plot_path: file:test_reference_dir/pmx/ref_plot.png
   properties:
-    pmx_cli_path: <pmx_installation_path>/cli.py
+    pmx_path: pmx
 
 pmxanalyse_docker:
   paths:
