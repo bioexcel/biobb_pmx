@@ -76,7 +76,7 @@ class Pmxanalyse:
         self.dpi = properties.get('dpi', None)
 
         # Properties common in all PMX BB
-        self.pmx_path = properties.get('pmx_path', 'cli.py')
+        self.pmx_path = properties.get('pmx_path', 'pmx')
 
         # container Specific
         self.container_path = properties.get('container_path')

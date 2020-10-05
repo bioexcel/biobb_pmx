@@ -22,8 +22,6 @@ class Pmxgentop:
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield.
             * **split** (*bool*) - (False) Print a 3 to 1 letter residue list.
             * **scale_mass** (*bool*) - (False) Scale mass.
-            * **dna** (*bool*) - (False) Generate hybrid residue for the DNA nucleotides.
-            * **rna** (*bool*) - (False) Generate hybrid residue for the RNA nucleotides.
             * **output_top_name** (*str*) - ("gentop.top") Name of the output top file.
             * **keyword_list** (*str*) - (["Protein", "DNA"]) List of comma separated Keywords to match top and itp files.
             * **pmx_path** (*str*) - ("pmx") Path to the PMX command line interface.
@@ -136,12 +134,12 @@ class Pmxgentop:
                 fu.log(f"    unique_dir_output_file: {unique_dir_output_file}", out_log)
 
             cmd = [self.pmx_path, 'gentop',
-                   '-o', unique_dir_output_file,
+                   '-o', './' + unique_dir_output_file,
                    '-ff', self.force_field]
 
             # Adding itp file command line
             if selected_file.endswith(".itp"):
-                cmd.append('-itp')
+                cmd.append('-p')
                 itp_file = str(Path(top_dir).joinpath(selected_file))
                 if self.container_path:
                     itp_file = str(Path(self.container_volume_path).joinpath(selected_file))
@@ -157,13 +155,13 @@ class Pmxgentop:
                 cmd.append(topology_file)
 
             if self.split:
-                cmd.append('-split')
+                cmd.append('--split')
             if self.scale_mass:
-                cmd.append('-scale_mass')
-            if self.dna:
-                cmd.append('-dna')
-            if self.rna:
-                cmd.append('-rna')
+                cmd.append('--scale_mass')
+            #if self.dna:
+            #    cmd.append('-dna')
+            #if self.rna:
+            #    cmd.append('-rna')
             new_env = None
             if self.gmxlib:
                 new_env = os.environ.copy()
