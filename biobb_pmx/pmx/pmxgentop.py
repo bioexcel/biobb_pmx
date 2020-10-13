@@ -23,7 +23,6 @@ class Pmxgentop:
             * **split** (*bool*) - (False) Print a 3 to 1 letter residue list.
             * **scale_mass** (*bool*) - (False) Scale mass.
             * **output_top_name** (*str*) - ("gentop.top") Name of the output top file.
-            * **keyword_list** (*str*) - (["Protein", "DNA"]) List of comma separated Keywords to match top and itp files.
             * **pmx_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -53,8 +52,6 @@ class Pmxgentop:
         self.scale_mass = properties.get('scale_mass', False)
         self.dna = properties.get('dna', False)
         self.rna = properties.get('rna', False)
-        self.keyword_list = list(properties.get('keyword_list', []))
-        self.keyword_list = list(set(self.keyword_list + ["Protein", "DNA"]))
         # Properties common in all PMX BB
         self.gmxlib = properties.get('gmxlib', None)
         self.pmx_path = properties.get('pmx_path', 'pmx')
@@ -104,11 +101,8 @@ class Pmxgentop:
         # Unzip topology to topology_out
         top_file = fu.unzip_top(zip_file=self.input_top_zip_path, out_log=out_log)
         top_dir = str(Path(top_file).parent)
-        # List of top and ipt files to apply pmx_gentop
-        selected_list = set([str(Path(top_file).name)] + [top_itp_file for word in self.keyword_list for top_itp_file in os.listdir(top_dir) if word.lower() in top_itp_file.lower()])
-        fu.log('Gentop will be executed on this list of files: ', out_log, self.global_log)
-        fu.log(str(selected_list), out_log, self.global_log)
         tmp_files.append(top_dir)
+        fu.log(f"top_file: {top_file}", out_log)
 
         #  If using containers create unique dir and copy nothing there
         container_io_dict = fu.copy_to_container(self.container_path, self.container_volume_path, self.io_dict)
@@ -118,79 +112,63 @@ class Pmxgentop:
             fu.log(f"{container_io_dict['unique_dir']} files: {os.listdir(container_io_dict['unique_dir'])}", out_log)
             # Copy all files of the unzipped topology to unique dir
             fu.log(f"Copy all files of the unzipped original topology to unique dir:", out_log)
-            for d_file in os.listdir(top_dir):
-                shutil.copy2(Path(top_dir).joinpath(d_file), container_io_dict.get("unique_dir"))
-                fu.log(f"    Copy: {Path(top_dir).joinpath(d_file)} to: {container_io_dict.get('unique_dir')}", out_log)
+            shutil.copytree(top_dir, Path(container_io_dict.get("unique_dir")).joinpath(Path(top_dir).name))
+            top_file = str(Path(self.container_volume_path).joinpath(Path(top_dir).name, Path(top_file).name))
 
-        # Loop through all selected files applying pmx_gentop
-        fu.log(f"List of files where gentop will be applied: {selected_list}", out_log)
+        output_file_name = fu.create_name(prefix=self.prefix, step=self.step, name=str(Path(top_file).name))
+        unique_dir_output_file = str(Path(fu.create_unique_dir()).joinpath(output_file_name))
+        fu.log(f"unique_dir_output_file: {unique_dir_output_file}", out_log)
 
-        for selected_file in selected_list:
-            unique_dir_output_file = fu.create_name(path=container_io_dict.get("unique_dir"), prefix=self.prefix, step=self.step, name=selected_file)
+        if self.container_path:
+            fu.log("Change references for container:", out_log)
+            unique_dir_output_file = str(Path(self.container_volume_path).joinpath(Path(output_file_name)))
+            fu.log(f"    unique_dir_output_file: {unique_dir_output_file}", out_log)
 
-            if self.container_path:
-                fu.log("Change references for container:", out_log)
-                unique_dir_output_file = str(Path(self.container_volume_path).joinpath(Path(unique_dir_output_file).name))
-                fu.log(f"    unique_dir_output_file: {unique_dir_output_file}", out_log)
+        cmd = [self.pmx_path, 'gentop',
+               '-o', str(Path(unique_dir_output_file)),
+               '-ff', self.force_field,
+               '-p', top_file]
 
-            cmd = [self.pmx_path, 'gentop',
-                   '-o', './' + unique_dir_output_file,
-                   '-ff', self.force_field]
+        if self.split:
+            cmd.append('--split')
+        if self.scale_mass:
+            cmd.append('--scale_mass')
 
-            # Adding itp file command line
-            if selected_file.endswith(".itp"):
-                cmd.append('-p')
-                itp_file = str(Path(top_dir).joinpath(selected_file))
-                if self.container_path:
-                    itp_file = str(Path(self.container_volume_path).joinpath(selected_file))
-                cmd.append(itp_file)
+        new_env = None
+        if self.gmxlib:
+            new_env = os.environ.copy()
+            new_env['GMXLIB'] = self.gmxlib
 
-            # Adding top file to command line
-            if selected_file.endswith(".top"):
-                cmd.append('-p')
-                topology_file = str(Path(top_dir).joinpath(selected_file))
-                orig_topology_file = topology_file
-                if self.container_path:
-                    topology_file = str(Path(self.container_volume_path).joinpath(selected_file))
-                cmd.append(topology_file)
+        cmd = fu.create_cmd_line(cmd, container_path=self.container_path,
+                                 host_volume=container_io_dict.get("unique_dir"),
+                                 container_volume=self.container_volume_path,
+                                 container_working_dir=self.container_working_dir,
+                                 container_user_uid=self.container_user_id,
+                                 container_shell_path=self.container_shell_path,
+                                 container_image=self.container_image,
+                                 out_log=out_log, global_log=self.global_log)
 
-            if self.split:
-                cmd.append('--split')
-            if self.scale_mass:
-                cmd.append('--scale_mass')
-            #if self.dna:
-            #    cmd.append('-dna')
-            #if self.rna:
-            #    cmd.append('-rna')
-            new_env = None
-            if self.gmxlib:
-                new_env = os.environ.copy()
-                new_env['GMXLIB'] = self.gmxlib
+        returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
 
-            cmd = fu.create_cmd_line(cmd, container_path=self.container_path,
-                                     host_volume=container_io_dict.get("unique_dir"),
-                                     container_volume=self.container_volume_path,
-                                     container_working_dir=self.container_working_dir,
-                                     container_user_uid=self.container_user_id,
-                                     container_shell_path=self.container_shell_path,
-                                     container_image=self.container_image,
-                                     out_log=out_log, global_log=self.global_log)
+        if self.container_path:
+            unique_dir_output_file = str(Path(container_io_dict.get("unique_dir")).joinpath(Path(unique_dir_output_file).name))
 
-            returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
-
-            # Replace original file for the modified one
-            if self.container_path:
-                shutil.copy2(Path(container_io_dict.get("unique_dir")).joinpath(Path(unique_dir_output_file).name), Path(top_dir).joinpath(selected_file))
-                fu.log(f"Replace (copy): {Path(container_io_dict.get('unique_dir')).joinpath(Path(unique_dir_output_file).name)} to: {Path(top_dir).joinpath(selected_file)}", out_log)
-            else:
-                shutil.copy2(unique_dir_output_file, Path(top_dir).joinpath(selected_file))
-                fu.log(f"Replace (copy): {unique_dir_output_file} to: {Path(top_dir).joinpath(selected_file)}", out_log)
-
-        fu.log("End of looping throug files", out_log)
+        # Remove paths from top file
+        with open(Path(unique_dir_output_file)) as top_fh:
+            top_lines = top_fh.readlines()
+        with open(Path(unique_dir_output_file), 'w') as top_fh:
+            for line in top_lines:
+                top_fh.write(line.replace(str(Path(unique_dir_output_file).parent)+'/', ''))
+        # Copy the not modified itp files
+        for orig_itp_file in Path(top_dir).iterdir():
+            fu.log(f'Check if {str(Path(unique_dir_output_file).parent.joinpath(Path(orig_itp_file).name))} exists', out_log, self.global_log)
+            if not Path(unique_dir_output_file).parent.joinpath(Path(orig_itp_file).name).exists():
+                shutil.copy(orig_itp_file, Path(unique_dir_output_file).parent)
+                fu.log(f'Copying {str(orig_itp_file)} to: {str(Path(unique_dir_output_file).parent)}', out_log, self.global_log)
 
         # zip topology
         fu.log('Compressing topology to: %s' % self.io_dict["out"]["output_top_zip_path"], out_log, self.global_log)
-        fu.zip_top(zip_file=self.io_dict["out"]["output_top_zip_path"], top_file=orig_topology_file, out_log=out_log)
+        fu.zip_top(zip_file=self.io_dict["out"]["output_top_zip_path"], top_file=str(Path(unique_dir_output_file)), out_log=out_log)
 
         tmp_files.append(top_dir)
         tmp_files.append(container_io_dict.get("unique_dir"))
