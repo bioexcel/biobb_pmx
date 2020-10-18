@@ -6,7 +6,7 @@
     "conda": "https://anaconda.org/bioconda/biobb_pmx",
     "docker": "https://quay.io/repository/biocontainers/biobb_pmx",
     "singularity": "https://singularity-hub.org/collections/3854/usage",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "tools" : [
         {
             "block" : "Pmxmutate",
@@ -31,12 +31,13 @@
         }
     ],
     "dep_pypi" : [
-        "install_requires=['biobb_common==3.0.0']",
+        "install_requires=['biobb_common==3.0.1']",
         "python_requires='==3.7.*'"
     ],
     "dep_conda" : [
         "python ==3.7.*",
-        "biobb_common ==3.0.0"
+        "biobb_common ==3.0.1"
+        "pmx_biobb ==1.0.0"
     ],
     "keywords" : [
         "pmx",

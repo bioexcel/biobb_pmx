@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="biobb_pmx",
-    version="3.0.1",
+    version="3.0.2",
     author="Biobb developers",
     author_email="pau.andrio@bsc.es",
     description="Biobb_pmx is the Biobb module collection to perform PMX (http://pmx.mpibpc.mpg.de) executions.",
@@ -18,7 +18,7 @@ setuptools.setup(
         "Bioexcel": "https://bioexcel.eu/"
     },
     packages=setuptools.find_packages(exclude=['docs',]),
-    install_requires=['biobb_common==3.0.0'],
+    install_requires=['biobb_common==3.0.1'],
     python_requires='==3.7.*',
     classifiers=(
         "Development Status :: 3 - Alpha",
