@@ -15,7 +15,7 @@ The latest documentation of this package can be found in our readthedocs site:
 [latest API documentation](http://biobb_pmx.readthedocs.io/en/latest/).
 
 ### Version
-v3.0.2 2020.2
+v3.0.2 2020.3
 
 ### Installation
 Using PIP:
