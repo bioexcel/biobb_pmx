@@ -15,18 +15,19 @@ from biobb_common.command_wrapper import cmd_wrapper
 
 
 class Pmxmutate:
-    """Wrapper class for the `PMX mutate <https://github.com/deGrootLab/pmx>`_ module.
+    """
+    | biobb_pmx Pmxmutate
+    | Wrapper class for the `PMX mutate <https://github.com/deGrootLab/pmx>`_ module.
 
     Args:
-        input_structure_path (str): Path to the input structure file. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/frame99.pdb>`_. Accepted formats: pdb, gro.
-        output_structure_path (str): Path to the output structure file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_structure.pdb>`_. Accepted formats: pdb, gro.
-        input_b_structure_path (str) (Optional): Path to the mutated input structure file. File type: input. Accepted formats: pdb, gro.
+        input_structure_path (str): Path to the input structure file. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/frame99.pdb>`_. Accepted formats: pdb (edam:format_1476), gro (edam:format_2033).
+        output_structure_path (str): Path to the output structure file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_structure.pdb>`_. Accepted formats: pdb (edam:format_1476), gro (edam:format_2033).
+        input_b_structure_path (str) (Optional): Path to the mutated input structure file. File type: input. Accepted formats: pdb (edam:format_1476), gro (edam:format_2033).
         properties (dic):
-            * **mutation_list** (*str*) ("Val2Ala") Mutation list in the format "Chain:WT_AA_ThreeLeterCode Resnum MUT_AA_ThreeLeterCode" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:ALA15CYS"
-            * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield.
-            * **resinfo** (*bool*) - (False) Print a 3 to 1 letter residue list.
-            * **dna** (*bool*) - (False) Generate hybrid residue for the DNA nucleotides.
-            * **rna** (*bool*) - (False) Generate hybrid residue for the RNA nucleotides.
+            * **mutation_list** (*str*) - ("Val2Ala") Mutation list in the format "Chain:WT_AA_ThreeLeterCode Resnum MUT_AA_ThreeLeterCode" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:ALA15CYS".
+            * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield to use.
+            * **resinfo** (*bool*) - (False) Show the list of 3-letter -> 1-letter residues.
+            * **gmxlib** (*str*) - (None) Path to the GMXLIB folder in your computer.
             * **pmx_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -36,10 +37,35 @@ class Pmxmutate:
             * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
             * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
+
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_pmx.pmx.pmxmutate import pmxmutate
+            prop = { 
+                'mutation_list': 'Val2Ala, Ile3Val',
+                'gmxlib': '/path/to/myGMXLIB/', 
+                'force_field': 'amber99sb-star-ildn-mut' 
+            }
+            pmxmutate(input_structure_path='/path/to/myStructure.pdb', 
+                    output_structure_path='/path/to/newStructure.pdb', 
+                    input_b_structure_path='/path/to/myStructureB.pdb'
+                    properties=prop)
+
+    Info:
+        * wrapped_software:
+            * name: PMX mutate
+            * version: >=1.0.1
+            * license: GNU
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
-    def __init__(self, input_structure_path: str, output_structure_path: str, input_b_structure_path: str = None,
-                 properties: Mapping = None, **kwargs) -> None:
+    def __init__(self, input_structure_path: str, output_structure_path: str, 
+                input_b_structure_path: str = None,
+                properties: Mapping = None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -52,8 +78,6 @@ class Pmxmutate:
         self.force_field = properties.get('force_field', "amber99sb-star-ildn-mut")
         self.resinfo = properties.get('resinfo', False)
         self.mutation_list = properties.get('mutation_list', 'Val2Ala')
-        self.dna = properties.get('dna', False)
-        self.rna = properties.get('rna', False)
 
         # Properties common in all PMX BB
         self.gmxlib = properties.get('gmxlib', None)
@@ -81,8 +105,7 @@ class Pmxmutate:
 
     @launchlogger
     def launch(self) -> int:
-        print(self.mutation_list)
-        """Launches the execution of the PMX mutate module."""
+        """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
         tmp_files = []
 
         # Get local loggers from launchlogger decorator
@@ -133,10 +156,6 @@ class Pmxmutate:
             cmd.append(container_io_dict["in"]["input_b_structure_path"])
         if self.resinfo:
             cmd.append('-resinfo')
-        if self.dna:
-            cmd.append('-dna')
-        if self.rna:
-            cmd.append('-rna')
         new_env = None
         if self.gmxlib:
             new_env = os.environ.copy()
@@ -161,8 +180,17 @@ class Pmxmutate:
 
         return returncode
 
+def pmxmutate(input_structure_path: str, output_structure_path: str, input_b_structure_path: str = None, properties: dict = None, **kwargs) -> None:
+    """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` class and
+    execute the :meth:`launch() <pmx.pmxmutate.Pmxmutate.launch> method."""
+
+    return Pmxmutate(input_structure_path=input_structure_path, 
+                    output_structure_path=output_structure_path,
+                    input_b_structure_path=input_b_structure_path,
+                    properties=properties).launch()
 
 def main():
+    """Command line execution of this building block. Please check the command line documentation."""
     parser = argparse.ArgumentParser(description="Run PMX mutate module",
                                      formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('-c', '--config', required=False, help="This file can be a YAML file, JSON file or JSON string")
@@ -178,8 +206,10 @@ def main():
     properties = settings.ConfReader(config=config).get_prop_dic()
 
     # Specific call of each building block
-    Pmxmutate(input_structure_path=args.input_structure_path, output_structure_path=args.output_structure_path,
-              input_b_structure_path=args.input_b_structure_path, properties=properties).launch()
+    Pmxmutate(input_structure_path=args.input_structure_path, 
+                output_structure_path=args.output_structure_path,
+                input_b_structure_path=args.input_b_structure_path, 
+                properties=properties).launch()
 
 
 if __name__ == '__main__':

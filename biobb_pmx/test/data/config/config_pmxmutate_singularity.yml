@@ -1,4 +1,5 @@
 properties:
+  container_image: shub://bioexcel/pmx_docker
+  container_path: singularity
   force_field: amber99sb-star-ildn-mut
-  gmxlib: /anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45
   mutation_list: Val2Ala, Ile3Val

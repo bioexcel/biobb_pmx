@@ -1,8 +1,21 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/pmxanalyse",
-    "title": "Wrapper class for the `PMX analyse <https://github.com/deGrootLab/pmx>`_ module.",
+    "name": "biobb_pmx Pmxanalyse",
+    "title": "Wrapper class for the PMX analyse module.",
+    "description": null,
     "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "PMX analyse",
+            "version": ">=1.0.1",
+            "license": "GNU"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
     "required": [
         "input_a_xvg_zip_path",
         "input_b_xvg_zip_path",
@@ -12,20 +25,34 @@
     "properties": {
         "input_a_xvg_zip_path": {
             "type": "string",
-            "description": "Path the zip file containing the dgdl",
+            "description": "Path the zip file containing the dgdl.xvg files of the A state",
             "filetype": "input",
             "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/xvg_A.zip",
             "enum": [
                 ".*\\.zip$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.zip$",
+                    "description": "Path the zip file containing the dgdl.xvg files of the A state",
+                    "edam": "format_3987"
+                }
             ]
         },
         "input_b_xvg_zip_path": {
             "type": "string",
-            "description": "Path the zip file containing the dgdl",
+            "description": "Path the zip file containing the dgdl.xvg files of the B state",
             "filetype": "input",
             "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/xvg_B.zip",
             "enum": [
                 ".*\\.zip$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.zip$",
+                    "description": "Path the zip file containing the dgdl.xvg files of the B state",
+                    "edam": "format_3987"
+                }
             ]
         },
         "output_result_path": {
@@ -35,6 +62,13 @@
             "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_result.txt",
             "enum": [
                 ".*\\.txt$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.txt$",
+                    "description": "Path to the TXT results file",
+                    "edam": "format_2330"
+                }
             ]
         },
         "output_work_plot_path": {
@@ -44,6 +78,13 @@
             "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_plot.png",
             "enum": [
                 ".*\\.png$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.png$",
+                    "description": "Path to the PNG plot results file",
+                    "edam": "format_3603"
+                }
             ]
         },
         "properties": {
@@ -52,116 +93,207 @@
                 "method": {
                     "type": "string",
                     "default": "CGI BAR JARZ",
-                    "description": "Choose one or more estimators to use from the available ones: CGI, BAR, JARZ."
+                    "wf_prop": false,
+                    "description": "Choose one or more estimators to use. ",
+                    "enum": [
+                        "CGI",
+                        "BAR",
+                        "JARZ"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "CGI",
+                            "description": "Crooks Gaussian Intersection"
+                        },
+                        {
+                            "name": "BAR",
+                            "description": "Bennet Acceptance Ratio"
+                        },
+                        {
+                            "name": "JARZ",
+                            "description": "Jarzynski's estimator"
+                        }
+                    ]
                 },
                 "temperature": {
-                    "type": "float",
+                    "type": "number",
                     "default": 298.15,
-                    "description": "Temperature in Kelvin."
+                    "wf_prop": false,
+                    "description": "Temperature in Kelvin.",
+                    "min": 0.0,
+                    "max": 1000.0,
+                    "step": 0.05
                 },
                 "nboots": {
-                    "type": "number",
+                    "type": "integer",
                     "default": 0,
-                    "description": "Number of bootstrap samples."
+                    "wf_prop": false,
+                    "description": "Number of bootstrap samples to use for the bootstrap estimate of the standard errors.",
+                    "min": 0,
+                    "max": 1000,
+                    "step": 1
                 },
                 "nblocks": {
-                    "type": "number",
+                    "type": "integer",
                     "default": 1,
-                    "description": "Number of blocks to divide the data into for an estimate of the standard error."
+                    "wf_prop": false,
+                    "description": "Number of blocks to divide the data into for an estimate of the standard error.",
+                    "min": 0,
+                    "max": 1000,
+                    "step": 1
                 },
                 "integ_only": {
                     "type": "boolean",
                     "default": false,
+                    "wf_prop": false,
                     "description": "Whether to do integration only."
                 },
                 "reverseB": {
                     "type": "boolean",
                     "default": false,
-                    "description": "transformation."
+                    "wf_prop": false,
+                    "description": "Whether to reverse the work values for the backward (B->A) transformation."
                 },
                 "skip": {
-                    "type": "number",
+                    "type": "integer",
                     "default": 1,
-                    "description": "Skip files."
+                    "wf_prop": false,
+                    "description": "Skip files.",
+                    "min": 0,
+                    "max": 1000,
+                    "step": 1
                 },
                 "slice": {
-                    "type": "number",
-                    "default": "All",
-                    "description": "Subset of trajectories to analyze."
+                    "type": "string",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Subset of trajectories to analyze. Provide list slice, e.g. \"10 50\" will result in selecting dhdl_files[10:50]."
+                },
+                "rand": {
+                    "type": "integer",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Take a random subset of trajectories. Default is None (do not take random subset).",
+                    "min": 0,
+                    "max": 1000,
+                    "step": 1
                 },
                 "index": {
-                    "type": "boolean",
-                    "default": "All",
-                    "description": "Zero-based index of files to analyze."
+                    "type": "string",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Zero-based index of files to analyze (e.g. \"0 10 20 50 60\"). It keeps the dhdl.xvg files according to their position in the list, sorted according to the filenames."
                 },
                 "prec": {
-                    "type": "number",
+                    "type": "integer",
                     "default": 2,
-                    "description": "The decimal precision of the screen/file output."
+                    "wf_prop": false,
+                    "description": "The decimal precision of the screen/file output.",
+                    "min": 0,
+                    "max": 100,
+                    "step": 1
                 },
                 "units": {
                     "type": "string",
-                    "default": "KJ",
-                    "description": "The units of the output. Choose from \"kJ\", \"kcal\", \"kT\"."
+                    "default": "kJ",
+                    "wf_prop": false,
+                    "description": "The units of the output. ",
+                    "enum": [
+                        "kJ",
+                        "kcal",
+                        "kT"
+                    ],
+                    "property_formats": [
+                        {
+                            "name": "kJ",
+                            "description": "Kilojoules"
+                        },
+                        {
+                            "name": "kcal",
+                            "description": "Kilocalories"
+                        },
+                        {
+                            "name": "kT",
+                            "description": "the product of the Boltzmann constant k and the temperature"
+                        }
+                    ]
                 },
                 "no_ks": {
                     "type": "boolean",
                     "default": false,
+                    "wf_prop": false,
                     "description": "Whether to do a Kolmogorov-Smirnov test to check whether the Gaussian assumption for CGI holds."
                 },
                 "nbins": {
-                    "type": "number",
-                    "default": 10,
-                    "description": "Number of histograms bins for the plot."
+                    "type": "integer",
+                    "default": 20,
+                    "wf_prop": false,
+                    "description": "Number of histograms bins for the plot.",
+                    "min": 0,
+                    "max": 1000,
+                    "step": 1
                 },
                 "dpi": {
-                    "type": "number",
+                    "type": "integer",
                     "default": 300,
-                    "description": "Resolution of the plot."
+                    "wf_prop": false,
+                    "description": "Resolution of the plot.",
+                    "min": 72,
+                    "max": 2048,
+                    "step": 1
                 },
-                "pmx_cli_path": {
+                "pmx_path": {
                     "type": "string",
-                    "default": "cli.py",
-                    "description": "Path to the PMX Python2.7 client."
+                    "default": "pmx",
+                    "wf_prop": false,
+                    "description": "Path to the PMX command line interface."
                 },
                 "remove_tmp": {
                     "type": "boolean",
                     "default": true,
-                    "description": "[WF property] Remove temporal files."
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
                 },
                 "restart": {
                     "type": "boolean",
                     "default": false,
-                    "description": "[WF property] Do not execute if output files exist."
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
                 },
                 "container_path": {
                     "type": "string",
                     "default": null,
-                    "description": " Path to the binary executable of your container."
+                    "wf_prop": false,
+                    "description": "Path to the binary executable of your container."
                 },
                 "container_image": {
                     "type": "string",
                     "default": "gromacs/gromacs:latest",
+                    "wf_prop": false,
                     "description": "Container Image identifier."
                 },
                 "container_volume_path": {
                     "type": "string",
                     "default": "/data",
+                    "wf_prop": false,
                     "description": "Path to an internal directory in the container."
                 },
                 "container_working_dir": {
                     "type": "string",
                     "default": null,
+                    "wf_prop": false,
                     "description": "Path to the internal CWD in the container."
                 },
                 "container_user_id": {
                     "type": "string",
                     "default": null,
+                    "wf_prop": false,
                     "description": "User number id to be mapped inside the container."
                 },
                 "container_shell_path": {
                     "type": "string",
                     "default": "/bin/bash",
+                    "wf_prop": false,
                     "description": "Path to the binary executable of the container shell."
                 }
             }

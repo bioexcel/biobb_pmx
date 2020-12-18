@@ -11,21 +11,21 @@
         {
             "block" : "Pmxmutate",
             "tool" : "pmx",
-            "desc" : "pmx tool to insert mutated residues in structure files for free energy simulations",
+            "desc" : "Wrapper class for the PMX mutate module.",
             "exec" : "pmxmutate",
             "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxmutate"
         },
         {
             "block" : "PmxGentop",
             "tool" : "pmx",
-            "desc" : "pmx tool to generate hybrid GROMACS topologies: adding a B state to an .itp or .top file for a hybrid residue",
+            "desc" : "Wrapper class for the PMX gentop module.",
             "exec" : "pmxgentop",
             "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxgentop"
         },
         {
             "block" : "Pmxanalyse",
             "tool" : "pmx",
-            "desc" : "pmx tool to calculate free energies from fast growth thermodynamic integration simulations.",
+            "desc" : "Wrapper class for the PMX analyse module.",
             "exec" : "pmxanalyse",
             "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxanalyse"
         }

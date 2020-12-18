@@ -1,4 +1,4 @@
 properties:
-  container_image: mmbirb/pmx:1.0
+  container_image: shub://bioexcel/pmx_docker
   container_path: docker
   force_field: amber99sb-star-ildn-mut

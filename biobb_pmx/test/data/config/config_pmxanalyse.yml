@@ -1,3 +1,4 @@
 properties:
-  container_image: mmbirb/pmx:1.0
-  container_path: docker
+  dpi: 600
+  method: CGI BAR JARZ
+  temperature: 298.15
