@@ -53,7 +53,7 @@ class Pmxgentop:
         self.dna = properties.get('dna', False)
         self.rna = properties.get('rna', False)
         # Properties common in all PMX BB
-        self.gmxlib = properties.get('gmxlib', None)
+        self.gmx_lib = properties.get('gmx_lib', None)
         self.pmx_path = properties.get('pmx_path', 'pmx')
 
         # Properties common in all BB
@@ -135,9 +135,9 @@ class Pmxgentop:
             cmd.append('--scale_mass')
 
         new_env = None
-        if self.gmxlib:
+        if self.gmx_lib:
             new_env = os.environ.copy()
-            new_env['GMXLIB'] = self.gmxlib
+            new_env['GMXLIB'] = self.gmx_lib
 
         cmd = fu.create_cmd_line(cmd, container_path=self.container_path,
                                  host_volume=container_io_dict.get("unique_dir"),
