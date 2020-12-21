@@ -10,7 +10,6 @@ pmxmutate:
     mutation_list: Val2Ala, Ile3Val
     gmx_lib: /anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45
     force_field: amber99sb-star-ildn-mut
-    pmx_path: pmx
 
 pmxmutate_docker:
   paths:
@@ -41,8 +40,7 @@ pmxgentop:
     ref_output_top_zip_path: file:test_reference_dir/pmx/ref_mut_gmx_hybrid_top.zip
   properties:
     gmx_lib: /anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45
-    force_field: amber99sbmut
-    pmx_path: pmx
+    force_field: amber99sb-star-ildn-mut
 
 pmxgentop_docker:
   paths:
@@ -51,7 +49,7 @@ pmxgentop_docker:
     output_log_path: gentop.log
     ref_output_top_zip_path: file:test_reference_dir/pmx/ref_mut_gmx_hybrid_top.zip
   properties:
-    force_field: amber99sbmut
+    force_field: amber99sb-star-ildn-mut
     container_path: docker
     container_image: mmbirb/pmx:1.0
 
@@ -62,7 +60,7 @@ pmxgentop_singularity:
     output_log_path: gentop.log
     ref_output_top_zip_path: file:test_reference_dir/pmx/ref_mut_gmx_hybrid_top.zip
   properties:
-    force_field: amber99sbmut
+    force_field: amber99sb-star-ildn-mut
     container_path: docker
     container_image: shub://bioexcel/pmx_docker
 
@@ -75,7 +73,9 @@ pmxanalyse:
     ref_output_result_path: file:test_reference_dir/pmx/ref_result.txt
     ref_output_work_plot_path: file:test_reference_dir/pmx/ref_plot.png
   properties:
-    pmx_path: pmx
+    method: CGI BAR JARZ
+    temperature: 298.15
+    dpi: 600 
 
 pmxanalyse_docker:
   paths:
@@ -85,6 +85,9 @@ pmxanalyse_docker:
     output_work_plot_path: plot.png
     ref_output_result_path: file:test_reference_dir/pmx/ref_result.txt
   properties:
+    method: CGI BAR JARZ
+    temperature: 298.15
+    dpi: 600 
     container_path: docker
     container_image: mmbirb/pmx:1.0
 
@@ -96,5 +99,8 @@ pmxanalyse_singularity:
     output_work_plot_path: plot.png
     ref_output_result_path: file:test_reference_dir/pmx/ref_result.txt
   properties:
+    method: CGI BAR JARZ
+    temperature: 298.15
+    dpi: 600 
     container_path: docker
     container_image: shub://bioexcel/pmx_docker

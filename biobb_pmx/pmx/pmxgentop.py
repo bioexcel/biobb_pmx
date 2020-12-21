@@ -13,16 +13,18 @@ from biobb_common.command_wrapper import cmd_wrapper
 
 
 class Pmxgentop:
-    """Wrapper class for the `PMX gentop <https://github.com/deGrootLab/pmx>`_ module.
+    """
+    | biobb_pmx Pmxanalyse
+    | Wrapper class for the `PMX gentop <https://github.com/deGrootLab/pmx>`_ module.
 
     Args:
-        input_top_zip_path (str): Path the input GROMACS topology TOP and ITP files in zip format. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topology.zip>`_. Accepted formats: zip.
-        output_top_zip_path (str): Path the output TOP topology in zip format. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_topology.zip>`_. Accepted formats: zip.
+        input_top_zip_path (str): Path the input GROMACS topology TOP and ITP files in zip format. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topology.zip>`_. Accepted formats: zip (edam:format_3987).
+        output_top_zip_path (str): Path the output TOP topology in zip format. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_topology.zip>`_. Accepted formats: zip (edam:format_3987).
         properties (dic):
-            * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield.
-            * **split** (*bool*) - (False) Print a 3 to 1 letter residue list.
-            * **scale_mass** (*bool*) - (False) Scale mass.
-            * **output_top_name** (*str*) - ("gentop.top") Name of the output top file.
+            * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Force field to use. If **input_top_zip_path** is a top file, it's not necessary to specify the forcefield, as it will be determined automatically. If **input_top_zip_path** is an itp file, then it's needed.
+            * **split** (*bool*) - (False) Write separate topologies for the vdW and charge transformations.
+            * **scale_mass** (*bool*) - (False) Scale the masses of morphing atoms so that dummies have a mass of 1.
+            * **gmxlib** (*str*) - (None) Path to the GMXLIB folder in your computer.
             * **pmx_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -32,9 +34,32 @@ class Pmxgentop:
             * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
             * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
+
+    Examples:
+        This is a use example of how to use the building block from Python::
+
+            from biobb_pmx.pmx.pmxgentop import pmxgentop
+            prop = { 
+                'gmxlib': '/path/to/myGMXLIB/', 
+                'force_field': 'amber99sb-star-ildn-mut' 
+            }
+            pmxgentop(input_top_zip_path='/path/to/myTopology.zip', 
+                    output_top_zip_path='/path/to/newTopology.zip', 
+                    properties=prop)
+
+    Info:
+        * wrapped_software:
+            * name: PMX gentop
+            * version: >=1.0.1
+            * license: GNU
+        * ontology:
+            * name: EDAM
+            * schema: http://edamontology.org/EDAM.owl
+
     """
 
-    def __init__(self, input_top_zip_path: str, output_top_zip_path: str, properties: Mapping = None, **kwargs) -> None:
+    def __init__(self, input_top_zip_path: str, output_top_zip_path: str, 
+                properties: Mapping = None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -48,10 +73,8 @@ class Pmxgentop:
         # Properties specific for BB
         self.force_field = properties.get('force_field', "amber99sb-star-ildn-mut")
         self.split = properties.get('split', False)
-        # self.search_itp = properties.get('search_itp', False)
         self.scale_mass = properties.get('scale_mass', False)
-        self.dna = properties.get('dna', False)
-        self.rna = properties.get('rna', False)
+
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
         self.pmx_path = properties.get('pmx_path', 'pmx')
@@ -78,7 +101,7 @@ class Pmxgentop:
 
     @launchlogger
     def launch(self) -> int:
-        """Launches the execution of the PMX gentop module."""
+        """Execute the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` pmx.pmxgentop.Pmxgentop object."""
         tmp_files = []
 
         # Get local loggers from launchlogger decorator
@@ -177,9 +200,17 @@ class Pmxgentop:
 
         return returncode
 
+def pmxgentop(input_top_zip_path: str, output_top_zip_path: str, properties: dict = None, **kwargs) -> None:
+    """Execute the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` class and
+    execute the :meth:`launch() <pmx.pmxgentop.Pmxgentop.launch> method."""
+
+    return Pmxgentop(input_top_zip_path=input_top_zip_path, 
+                    output_top_zip_path=output_top_zip_path,
+                    properties=properties).launch()
 
 def main():
-    parser = argparse.ArgumentParser(description="Run PMX mutate module",
+    """Command line execution of this building block. Please check the command line documentation."""
+    parser = argparse.ArgumentParser(description="Wrapper class for the PMX gentop module",
                                      formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
     parser.add_argument('-c', '--config', required=False, help="This file can be a YAML file, JSON file or JSON string")
 
@@ -193,8 +224,9 @@ def main():
     properties = settings.ConfReader(config=config).get_prop_dic()
 
     # Specific call of each building block
-    Pmxgentop(input_top_zip_path=args.input_top_zip_path, output_top_zip_path=args.output_top_zip_path,
-              properties=properties).launch()
+    Pmxgentop(input_top_zip_path=args.input_top_zip_path, 
+                output_top_zip_path=args.output_top_zip_path,
+                properties=properties).launch()
 
 
 if __name__ == '__main__':

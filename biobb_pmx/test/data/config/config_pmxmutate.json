@@ -1,8 +1,7 @@
 {
-    "properties": {
-        "mutation_list": "Val2Ala, Ile3Val",
-        "force_field": "amber99sb-star-ildn-mut",
-        "container_path": "docker",
-        "container_image": "mmbirb/pmx:1.0"
-    }
+  "properties": {
+    "mutation_list": "Val2Ala, Ile3Val",
+    "gmxlib": "/anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45",
+    "force_field": "amber99sb-star-ildn-mut"
+  }
 }

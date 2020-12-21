@@ -1,8 +1,21 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/pmxmutate",
-    "title": "Wrapper class for the `PMX mutate <https://github.com/deGrootLab/pmx>`_ module.",
+    "name": "biobb_pmx Pmxmutate",
+    "title": "Wrapper class for the PMX mutate module.",
+    "description": null,
     "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "PMX mutate",
+            "version": ">=1.0.1",
+            "license": "GNU"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
     "required": [
         "input_structure_path",
         "output_structure_path"
@@ -16,6 +29,18 @@
             "enum": [
                 ".*\\.pdb$",
                 ".*\\.gro$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.pdb$",
+                    "description": "Path to the input structure file",
+                    "edam": "format_1476"
+                },
+                {
+                    "extension": ".*\\.gro$",
+                    "description": "Path to the input structure file",
+                    "edam": "format_2033"
+                }
             ]
         },
         "output_structure_path": {
@@ -26,6 +51,18 @@
             "enum": [
                 ".*\\.pdb$",
                 ".*\\.gro$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.pdb$",
+                    "description": "Path to the output structure file",
+                    "edam": "format_1476"
+                },
+                {
+                    "extension": ".*\\.gro$",
+                    "description": "Path to the output structure file",
+                    "edam": "format_2033"
+                }
             ]
         },
         "input_b_structure_path": {
@@ -36,6 +73,18 @@
             "enum": [
                 ".*\\.pdb$",
                 ".*\\.gro$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.pdb$",
+                    "description": "Path to the mutated input structure file",
+                    "edam": "format_1476"
+                },
+                {
+                    "extension": ".*\\.gro$",
+                    "description": "Path to the mutated input structure file",
+                    "edam": "format_2033"
+                }
             ]
         },
         "properties": {
@@ -44,71 +93,79 @@
                 "mutation_list": {
                     "type": "string",
                     "default": "Val2Ala",
-                    "description": "separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: \"A:ALA15CYS\""
+                    "wf_prop": false,
+                    "description": "Mutation list in the format \"Chain:WT_AA_ThreeLeterCode Resnum MUT_AA_ThreeLeterCode\" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: \"A:ALA15CYS\"."
                 },
                 "force_field": {
                     "type": "string",
                     "default": "amber99sb-star-ildn-mut",
-                    "description": "Forcefield."
+                    "wf_prop": false,
+                    "description": "Forcefield to use."
                 },
                 "resinfo": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Print a 3 to 1 letter residue list."
+                    "wf_prop": false,
+                    "description": "Show the list of 3-letter -> 1-letter residues."
                 },
-                "dna": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Generate hybrid residue for the DNA nucleotides."
-                },
-                "rna": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Generate hybrid residue for the RNA nucleotides."
-                },
-                "pmx_cli_path": {
+                "gmxlib": {
                     "type": "string",
-                    "default": "cli.py",
-                    "description": "Path to the PMX Python2.7 client."
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Path to the GMXLIB folder in your computer."
+                },
+                "pmx_path": {
+                    "type": "string",
+                    "default": "pmx",
+                    "wf_prop": false,
+                    "description": "Path to the PMX command line interface."
                 },
                 "remove_tmp": {
                     "type": "boolean",
                     "default": true,
-                    "description": "[WF property] Remove temporal files."
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
                 },
                 "restart": {
                     "type": "boolean",
                     "default": false,
-                    "description": "[WF property] Do not execute if output files exist."
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
                 },
                 "container_path": {
                     "type": "string",
                     "default": null,
-                    "description": " Path to the binary executable of your container."
+                    "wf_prop": false,
+                    "description": "Path to the binary executable of your container."
                 },
                 "container_image": {
                     "type": "string",
                     "default": "gromacs/gromacs:latest",
+                    "wf_prop": false,
                     "description": "Container Image identifier."
                 },
                 "container_volume_path": {
                     "type": "string",
                     "default": "/inout",
+                    "wf_prop": false,
                     "description": "Path to an internal directory in the container."
                 },
                 "container_working_dir": {
                     "type": "string",
                     "default": null,
+                    "wf_prop": false,
                     "description": "Path to the internal CWD in the container."
                 },
                 "container_user_id": {
                     "type": "string",
                     "default": null,
+                    "wf_prop": false,
                     "description": "User number id to be mapped inside the container."
                 },
                 "container_shell_path": {
                     "type": "string",
                     "default": "/bin/bash",
+                    "wf_prop": false,
                     "description": "Path to the binary executable of the container shell."
                 }
             }
