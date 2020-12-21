@@ -145,7 +145,7 @@ Config parameters for this building block:
 ```python
 properties:
   force_field: amber99sbmut
-  gmxlib: /Users/pau/other_projects/pmx/pmx/data/mutff45
+  gmx_lib: /Users/pau/other_projects/pmx/pmx/data/mutff45
   pmx_cli_path: /Users/pau/other_projects/pmx/pmx/scripts/cli.py
 
 ```
@@ -174,7 +174,7 @@ pmxgentop --config config_pmxgentop.yml --input_top_zip_path topology.zip --outp
 ```python
 {
   "properties": {
-    "gmxlib": "/Users/pau/other_projects/pmx/pmx/data/mutff45",
+    "gmx_lib": "/Users/pau/other_projects/pmx/pmx/data/mutff45",
     "force_field": "amber99sbmut",
     "pmx_cli_path": "/Users/pau/other_projects/pmx/pmx/scripts/cli.py"
   }
@@ -243,7 +243,7 @@ Config parameters for this building block:
 ```python
 properties:
   force_field: amber99sb-star-ildn-mut
-  gmxlib: /Users/pau/other_projects/pmx/pmx/data/mutff45
+  gmx_lib: /Users/pau/other_projects/pmx/pmx/data/mutff45
   mutation_list: Val2Ala, Ile3Val
   pmx_cli_path: /Users/pau/other_projects/pmx/pmx/scripts/cli.py
 
@@ -276,7 +276,7 @@ pmxmutate --config config_pmxmutate.yml --input_structure_path frame99.pdb --out
 {
   "properties": {
     "mutation_list": "Val2Ala, Ile3Val",
-    "gmxlib": "/Users/pau/other_projects/pmx/pmx/data/mutff45",
+    "gmx_lib": "/Users/pau/other_projects/pmx/pmx/data/mutff45",
     "force_field": "amber99sb-star-ildn-mut",
     "pmx_cli_path": "/Users/pau/other_projects/pmx/pmx/scripts/cli.py"
   }

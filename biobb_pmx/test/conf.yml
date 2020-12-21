@@ -8,7 +8,7 @@ pmxmutate:
     ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure.pdb
   properties:
     mutation_list: Val2Ala, Ile3Val
-    gmxlib: /anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45
+    gmx_lib: /anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45
     force_field: amber99sb-star-ildn-mut
     pmx_path: pmx
 
@@ -40,7 +40,7 @@ pmxgentop:
     output_top_zip_path: output_topology.zip
     ref_output_top_zip_path: file:test_reference_dir/pmx/ref_mut_gmx_hybrid_top.zip
   properties:
-    gmxlib: /anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45
+    gmx_lib: /anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45
     force_field: amber99sbmut
     pmx_path: pmx
 
