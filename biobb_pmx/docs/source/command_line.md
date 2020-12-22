@@ -6,122 +6,6 @@ biobb_command [-h] --config CONFIG --input_file(s) <input_file(s)> --output_file
 -----------------
 
 
-## Pmxmutate
-Wrapper class for the PMX mutate module.
-### Get help
-Command:
-```python
-pmxmutate -h
-```
-    usage: pmxmutate [-h] [-c CONFIG] --input_structure_path INPUT_STRUCTURE_PATH --output_structure_path OUTPUT_STRUCTURE_PATH [--input_b_structure_path INPUT_B_STRUCTURE_PATH]
-    
-    Run PMX mutate module
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-      -c CONFIG, --config CONFIG
-                            This file can be a YAML file, JSON file or JSON string
-      --input_b_structure_path INPUT_B_STRUCTURE_PATH
-                            Path to the mutated input structure file
-    
-    required arguments:
-      --input_structure_path INPUT_STRUCTURE_PATH
-                            Path to the input structure file
-      --output_structure_path OUTPUT_STRUCTURE_PATH
-                            Path to the output structure file
-### I / O Arguments
-Syntax: input_argument (datatype) : Definition
-
-Config input / output arguments for this building block:
-* **input_structure_path** (*string*): Path to the input structure file. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/frame99.pdb). Accepted formats: PDB, GRO
-* **output_structure_path** (*string*): Path to the output structure file. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_structure.pdb). Accepted formats: PDB, GRO
-* **input_b_structure_path** (*string*): Path to the mutated input structure file. File type: input. [Sample file](None). Accepted formats: PDB, GRO
-### Config
-Syntax: input_parameter (datatype) - (default_value) Definition
-
-Config parameters for this building block:
-* **mutation_list** (*string*): (Val2Ala) Mutation list in the format "Chain:WT_AA_ThreeLeterCode Resnum MUT_AA_ThreeLeterCode" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:ALA15CYS"..
-* **force_field** (*string*): (amber99sb-star-ildn-mut) Forcefield to use..
-* **resinfo** (*boolean*): (False) Show the list of 3-letter -> 1-letter residues..
-* **gmxlib** (*string*): (None) Path to the GMXLIB folder in your computer..
-* **pmx_path** (*string*): (pmx) Path to the PMX command line interface..
-* **remove_tmp** (*boolean*): (True) Remove temporal files..
-* **restart** (*boolean*): (False) Do not execute if output files exist..
-* **container_path** (*string*): (None) Path to the binary executable of your container..
-* **container_image** (*string*): (gromacs/gromacs:latest) Container Image identifier..
-* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container..
-* **container_user_id** (*string*): (None) User number id to be mapped inside the container..
-* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell..
-### YAML
-#### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate.yml)
-```python
-properties:
-  force_field: amber99sb-star-ildn-mut
-  gmxlib: /anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45
-  mutation_list: Val2Ala, Ile3Val
-
-```
-#### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_docker.yml)
-```python
-properties:
-  container_image: mmbirb/pmx:1.0
-  container_path: docker
-  force_field: amber99sb-star-ildn-mut
-  mutation_list: Val2Ala, Ile3Val
-
-```
-#### [Singularity config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_singularity.yml)
-```python
-properties:
-  container_image: shub://bioexcel/pmx_docker
-  container_path: singularity
-  force_field: amber99sb-star-ildn-mut
-  mutation_list: Val2Ala, Ile3Val
-
-```
-#### Command line
-```python
-pmxmutate --config config_pmxmutate.yml --input_structure_path frame99.pdb --output_structure_path ref_output_structure.pdb --input_b_structure_path input.pdb
-```
-### JSON
-#### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate.json)
-```python
-{
-  "properties": {
-    "mutation_list": "Val2Ala, Ile3Val",
-    "gmxlib": "/anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45",
-    "force_field": "amber99sb-star-ildn-mut"
-  }
-}
-```
-#### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_docker.json)
-```python
-{
-  "properties": {
-    "mutation_list": "Val2Ala, Ile3Val",
-    "force_field": "amber99sb-star-ildn-mut",
-    "container_path": "docker",
-    "container_image": "mmbirb/pmx:1.0"
-  }
-}
-```
-#### [Singularity config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_singularity.json)
-```python
-{
-  "properties": {
-    "mutation_list": "Val2Ala, Ile3Val",
-    "force_field": "amber99sb-star-ildn-mut",
-    "container_path": "singularity",
-    "container_image": "shub://bioexcel/pmx_docker"
-  }
-}
-```
-#### Command line
-```python
-pmxmutate --config config_pmxmutate.json --input_structure_path frame99.pdb --output_structure_path ref_output_structure.pdb --input_b_structure_path input.pdb
-```
-
 ## Pmxanalyse
 Wrapper class for the PMX analyse module.
 ### Get help
@@ -129,24 +13,7 @@ Command:
 ```python
 pmxanalyse -h
 ```
-    usage: pmxanalyse [-h] [-c CONFIG] --input_a_xvg_zip_path INPUT_A_XVG_ZIP_PATH --input_b_xvg_zip_path INPUT_B_XVG_ZIP_PATH --output_result_path OUTPUT_RESULT_PATH --output_work_plot_path OUTPUT_WORK_PLOT_PATH
-    
-    Wrapper class for the PMX analyse module.
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-      -c CONFIG, --config CONFIG
-                            This file can be a YAML file, JSON file or JSON string
-    
-    required arguments:
-      --input_a_xvg_zip_path INPUT_A_XVG_ZIP_PATH
-                            Path the zip file containing the dgdl.xvg files of the A state. Accepted formats: zip.
-      --input_b_xvg_zip_path INPUT_B_XVG_ZIP_PATH
-                            Path the zip file containing the dgdl.xvg files of the B state. Accepted formats: zip.
-      --output_result_path OUTPUT_RESULT_PATH
-                            Path to the TXT results file. Accepted formats: txt.
-      --output_work_plot_path OUTPUT_WORK_PLOT_PATH
-                            Path to the PNG plot results file. Accepted formats: png.
+    /bin/sh: pmxanalyse: command not found
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -190,7 +57,6 @@ properties:
   dpi: 600
   method: CGI BAR JARZ
   temperature: 298.15
-
 
 ```
 #### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxanalyse_docker.yml)
@@ -264,20 +130,7 @@ Command:
 ```python
 pmxgentop -h
 ```
-    usage: pmxgentop [-h] [-c CONFIG] --input_top_zip_path INPUT_TOP_ZIP_PATH --output_top_zip_path OUTPUT_TOP_ZIP_PATH
-    
-    Wrapper class for the PMX gentop module
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-      -c CONFIG, --config CONFIG
-                            This file can be a YAML file, JSON file or JSON string
-    
-    required arguments:
-      --input_top_zip_path INPUT_TOP_ZIP_PATH
-                            Path to the input topology zip file
-      --output_top_zip_path OUTPUT_TOP_ZIP_PATH
-                            Path to the output topology zip file
+    /bin/sh: pmxgentop: command not found
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -291,7 +144,7 @@ Config parameters for this building block:
 * **force_field** (*string*): (amber99sb-star-ildn-mut) Force field to use. If **input_top_zip_path** is a top file, it's not necessary to specify the forcefield, as it will be determined automatically. If **input_top_zip_path** is an itp file, then it's needed..
 * **split** (*boolean*): (False) Write separate topologies for the vdW and charge transformations..
 * **scale_mass** (*boolean*): (False) Scale the masses of morphing atoms so that dummies have a mass of 1..
-* **gmxlib** (*string*): (None) Path to the GMXLIB folder in your computer..
+* **gmx_lib** (*string*): (None) Path to the GMXLIB folder in your computer..
 * **pmx_path** (*string*): (pmx) Path to the PMX command line interface..
 * **remove_tmp** (*boolean*): (True) Remove temporal files..
 * **restart** (*boolean*): (False) Do not execute if output files exist..
@@ -306,7 +159,7 @@ Config parameters for this building block:
 ```python
 properties:
   force_field: amber99sb-star-ildn-mut
-  gmxlib: /path/to/gmxlib
+  gmx_lib: /anaconda3/envs/biobb/lib/python3.7/site-packages/pmx/data/mutff45/
 
 ```
 #### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxgentop_docker.yml)
@@ -334,9 +187,8 @@ pmxgentop --config config_pmxgentop.yml --input_top_zip_path topology.zip --outp
 ```python
 {
   "properties": {
-    "gmxlib": "/path/to/gmxlib",
+    "gmx_lib": "/anaconda3/envs/biobb/lib/python3.7/site-packages/pmx/data/mutff45/",
     "force_field": "amber99sb-star-ildn-mut"
-
   }
 }
 ```
@@ -363,4 +215,105 @@ pmxgentop --config config_pmxgentop.yml --input_top_zip_path topology.zip --outp
 #### Command line
 ```python
 pmxgentop --config config_pmxgentop.json --input_top_zip_path topology.zip --output_top_zip_path ref_output_topology.zip
+```
+
+## Pmxmutate
+Wrapper class for the PMX mutate module.
+### Get help
+Command:
+```python
+pmxmutate -h
+```
+    /bin/sh: pmxmutate: command not found
+### I / O Arguments
+Syntax: input_argument (datatype) : Definition
+
+Config input / output arguments for this building block:
+* **input_structure_path** (*string*): Path to the input structure file. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/frame99.pdb). Accepted formats: PDB, GRO
+* **output_structure_path** (*string*): Path to the output structure file. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_structure.pdb). Accepted formats: PDB, GRO
+* **input_b_structure_path** (*string*): Path to the mutated input structure file. File type: input. [Sample file](None). Accepted formats: PDB, GRO
+### Config
+Syntax: input_parameter (datatype) - (default_value) Definition
+
+Config parameters for this building block:
+* **mutation_list** (*string*): (Val2Ala) Mutation list in the format "Chain:WT_AA_ThreeLeterCode Resnum MUT_AA_ThreeLeterCode" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:ALA15CYS"..
+* **force_field** (*string*): (amber99sb-star-ildn-mut) Forcefield to use..
+* **resinfo** (*boolean*): (False) Show the list of 3-letter -> 1-letter residues..
+* **gmx_lib** (*string*): (None) Path to the GMXLIB folder in your computer..
+* **pmx_path** (*string*): (pmx) Path to the PMX command line interface..
+* **remove_tmp** (*boolean*): (True) Remove temporal files..
+* **restart** (*boolean*): (False) Do not execute if output files exist..
+* **container_path** (*string*): (None) Path to the binary executable of your container..
+* **container_image** (*string*): (gromacs/gromacs:latest) Container Image identifier..
+* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
+* **container_working_dir** (*string*): (None) Path to the internal CWD in the container..
+* **container_user_id** (*string*): (None) User number id to be mapped inside the container..
+* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell..
+### YAML
+#### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate.yml)
+```python
+properties:
+  force_field: amber99sb-star-ildn-mut
+  gmx_lib: /anaconda3/envs/biobb/lib/python3.7/site-packages/pmx/data/mutff45/
+  mutation_list: Val2Ala, Ile3Val
+
+```
+#### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_docker.yml)
+```python
+properties:
+  container_image: mmbirb/pmx:1.0
+  container_path: docker
+  force_field: amber99sb-star-ildn-mut
+  mutation_list: Val2Ala, Ile3Val
+
+```
+#### [Singularity config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_singularity.yml)
+```python
+properties:
+  container_image: shub://bioexcel/pmx_docker
+  container_path: singularity
+  force_field: amber99sb-star-ildn-mut
+  mutation_list: Val2Ala, Ile3Val
+
+```
+#### Command line
+```python
+pmxmutate --config config_pmxmutate.yml --input_structure_path frame99.pdb --output_structure_path ref_output_structure.pdb --input_b_structure_path input.pdb
+```
+### JSON
+#### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate.json)
+```python
+{
+  "properties": {
+    "mutation_list": "Val2Ala, Ile3Val",
+    "gmx_lib": "/anaconda3/envs/biobb/lib/python3.7/site-packages/pmx/data/mutff45/",
+    "force_field": "amber99sb-star-ildn-mut"
+  }
+}
+```
+#### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_docker.json)
+```python
+{
+  "properties": {
+    "mutation_list": "Val2Ala, Ile3Val",
+    "force_field": "amber99sb-star-ildn-mut",
+    "container_path": "docker",
+    "container_image": "mmbirb/pmx:1.0"
+  }
+}
+```
+#### [Singularity config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_singularity.json)
+```python
+{
+  "properties": {
+    "mutation_list": "Val2Ala, Ile3Val",
+    "force_field": "amber99sb-star-ildn-mut",
+    "container_path": "singularity",
+    "container_image": "shub://bioexcel/pmx_docker"
+  }
+}
+```
+#### Command line
+```python
+pmxmutate --config config_pmxmutate.json --input_structure_path frame99.pdb --output_structure_path ref_output_structure.pdb --input_b_structure_path input.pdb
 ```

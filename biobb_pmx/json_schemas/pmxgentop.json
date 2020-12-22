@@ -74,7 +74,7 @@
                     "wf_prop": false,
                     "description": "Scale the masses of morphing atoms so that dummies have a mass of 1."
                 },
-                "gmxlib": {
+                "gmx_lib": {
                     "type": "string",
                     "default": null,
                     "wf_prop": false,

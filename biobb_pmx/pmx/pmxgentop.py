@@ -24,7 +24,7 @@ class Pmxgentop:
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Force field to use. If **input_top_zip_path** is a top file, it's not necessary to specify the forcefield, as it will be determined automatically. If **input_top_zip_path** is an itp file, then it's needed.
             * **split** (*bool*) - (False) Write separate topologies for the vdW and charge transformations.
             * **scale_mass** (*bool*) - (False) Scale the masses of morphing atoms so that dummies have a mass of 1.
-            * **gmxlib** (*str*) - (None) Path to the GMXLIB folder in your computer.
+            * **gmx_lib** (*str*) - (None) Path to the GMXLIB folder in your computer.
             * **pmx_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -40,7 +40,7 @@ class Pmxgentop:
 
             from biobb_pmx.pmx.pmxgentop import pmxgentop
             prop = { 
-                'gmxlib': '/path/to/myGMXLIB/', 
+                'gmx_lib': '/path/to/myGMXLIB/',
                 'force_field': 'amber99sb-star-ildn-mut' 
             }
             pmxgentop(input_top_zip_path='/path/to/myTopology.zip', 
@@ -59,7 +59,7 @@ class Pmxgentop:
     """
 
     def __init__(self, input_top_zip_path: str, output_top_zip_path: str, 
-                properties: Mapping = None, **kwargs) -> None:
+                 properties: Mapping = None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -200,13 +200,15 @@ class Pmxgentop:
 
         return returncode
 
-def pmxgentop(input_top_zip_path: str, output_top_zip_path: str, properties: dict = None, **kwargs) -> None:
+
+def pmxgentop(input_top_zip_path: str, output_top_zip_path: str, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` class and
     execute the :meth:`launch() <pmx.pmxgentop.Pmxgentop.launch> method."""
 
     return Pmxgentop(input_top_zip_path=input_top_zip_path, 
-                    output_top_zip_path=output_top_zip_path,
-                    properties=properties).launch()
+                     output_top_zip_path=output_top_zip_path,
+                     properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -224,9 +226,9 @@ def main():
     properties = settings.ConfReader(config=config).get_prop_dic()
 
     # Specific call of each building block
-    Pmxgentop(input_top_zip_path=args.input_top_zip_path, 
-                output_top_zip_path=args.output_top_zip_path,
-                properties=properties).launch()
+    pmxgentop(input_top_zip_path=args.input_top_zip_path,
+              output_top_zip_path=args.output_top_zip_path,
+              properties=properties)
 
 
 if __name__ == '__main__':

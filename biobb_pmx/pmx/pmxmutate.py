@@ -7,7 +7,6 @@ import re
 import shutil
 import argparse
 from typing import Mapping
-from Bio.PDB.Polypeptide import three_to_one
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
@@ -27,7 +26,7 @@ class Pmxmutate:
             * **mutation_list** (*str*) - ("Val2Ala") Mutation list in the format "Chain:WT_AA_ThreeLeterCode Resnum MUT_AA_ThreeLeterCode" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:ALA15CYS".
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield to use.
             * **resinfo** (*bool*) - (False) Show the list of 3-letter -> 1-letter residues.
-            * **gmxlib** (*str*) - (None) Path to the GMXLIB folder in your computer.
+            * **gmx_lib** (*str*) - (None) Path to the GMXLIB folder in your computer.
             * **pmx_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -44,7 +43,7 @@ class Pmxmutate:
             from biobb_pmx.pmx.pmxmutate import pmxmutate
             prop = { 
                 'mutation_list': 'Val2Ala, Ile3Val',
-                'gmxlib': '/path/to/myGMXLIB/', 
+                'gmx_lib': '/path/to/myGMXLIB/',
                 'force_field': 'amber99sb-star-ildn-mut' 
             }
             pmxmutate(input_structure_path='/path/to/myStructure.pdb', 
@@ -63,9 +62,8 @@ class Pmxmutate:
 
     """
 
-    def __init__(self, input_structure_path: str, output_structure_path: str, 
-                input_b_structure_path: str = None,
-                properties: Mapping = None, **kwargs) -> None:
+    def __init__(self, input_structure_path: str, output_structure_path: str, input_b_structure_path: str = None,
+                 properties: Mapping = None, **kwargs) -> None:
         properties = properties or {}
 
         # Input/Output files
@@ -78,7 +76,11 @@ class Pmxmutate:
         self.force_field = properties.get('force_field', "amber99sb-star-ildn-mut")
         self.resinfo = properties.get('resinfo', False)
         self.mutation_list = properties.get('mutation_list', 'Val2Ala')
-
+        self.aminoacid_three_one = {"ALA": "A", "CYS": "C", "ASP": "D", "GLU": "E",
+                                    "PHE": "F", "GLY": "G", "HIS": "H", "ILE": "I",
+                                    "LYS": "K", "LEU": "L", "MET": "M", "ASN": "N",
+                                    "PRO": "P", "GLN": "Q", "ARG": "R", "SER": "S",
+                                    "THR": "T", "VAL": "V", "TRP": "W", "TYR": "Y"}
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
         self.pmx_path = properties.get('pmx_path', 'pmx')
@@ -140,7 +142,7 @@ class Pmxmutate:
                 if mut_dict.get('chain'):
                     mut_file.write(mut_dict.get('chain')+' ')
                 mut_file.write(mut_dict.get('resnum')+' ')
-                mut_file.write(three_to_one(mut_dict.get('mt').upper()))
+                mut_file.write(self.aminoacid_three_one[mut_dict.get('mt').upper()])
                 mut_file.write('\n')
 
         container_io_dict = fu.copy_to_container(self.container_path, self.container_volume_path, self.io_dict)
@@ -173,21 +175,25 @@ class Pmxmutate:
         returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
         fu.copy_to_host(self.container_path, container_io_dict, self.io_dict)
 
-        #tmp_files.append(container_io_dict.get("unique_dir"))
+        # tmp_files.append(container_io_dict.get("unique_dir"))
         tmp_files.append(unique_dir)
         if self.remove_tmp:
             fu.rm_file_list(tmp_files, out_log=out_log)
 
         return returncode
 
-def pmxmutate(input_structure_path: str, output_structure_path: str, input_b_structure_path: str = None, properties: dict = None, **kwargs) -> None:
+
+def pmxmutate(input_structure_path: str, output_structure_path: str,
+              input_b_structure_path: str = None, properties: dict = None,
+              **kwargs) -> int:
     """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` class and
     execute the :meth:`launch() <pmx.pmxmutate.Pmxmutate.launch> method."""
 
     return Pmxmutate(input_structure_path=input_structure_path, 
-                    output_structure_path=output_structure_path,
-                    input_b_structure_path=input_b_structure_path,
-                    properties=properties).launch()
+                     output_structure_path=output_structure_path,
+                     input_b_structure_path=input_b_structure_path,
+                     properties=properties, **kwargs).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -206,10 +212,10 @@ def main():
     properties = settings.ConfReader(config=config).get_prop_dic()
 
     # Specific call of each building block
-    Pmxmutate(input_structure_path=args.input_structure_path, 
-                output_structure_path=args.output_structure_path,
-                input_b_structure_path=args.input_b_structure_path, 
-                properties=properties).launch()
+    pmxmutate(input_structure_path=args.input_structure_path,
+              output_structure_path=args.output_structure_path,
+              input_b_structure_path=args.input_b_structure_path,
+              properties=properties)
 
 
 if __name__ == '__main__':

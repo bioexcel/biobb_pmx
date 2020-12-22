@@ -108,7 +108,7 @@
                     "wf_prop": false,
                     "description": "Show the list of 3-letter -> 1-letter residues."
                 },
-                "gmxlib": {
+                "gmx_lib": {
                     "type": "string",
                     "default": null,
                     "wf_prop": false,

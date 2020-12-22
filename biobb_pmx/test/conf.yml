@@ -8,7 +8,7 @@ pmxmutate:
     ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure.pdb
   properties:
     mutation_list: Val2Ala, Ile3Val
-    gmx_lib: /anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45
+    gmx_lib: /anaconda3/envs/biobb/lib/python3.7/site-packages/pmx/data/mutff45/
     force_field: amber99sb-star-ildn-mut
 
 pmxmutate_docker:
@@ -39,7 +39,7 @@ pmxgentop:
     output_top_zip_path: output_topology.zip
     ref_output_top_zip_path: file:test_reference_dir/pmx/ref_mut_gmx_hybrid_top.zip
   properties:
-    gmx_lib: /anaconda3/envs/biobb_dev_37/lib/python3.7/site-packages/pmx/data/mutff45
+    gmx_lib: /anaconda3/envs/biobb/lib/python3.7/site-packages/pmx/data/mutff45/
     force_field: amber99sb-star-ildn-mut
 
 pmxgentop_docker:
@@ -47,7 +47,7 @@ pmxgentop_docker:
     input_top_zip_path: file:test_data_dir/pmx/mut_gmx.top.zip
     output_top_zip_path: output_topology.zip
     output_log_path: gentop.log
-    ref_output_top_zip_path: file:test_reference_dir/pmx/ref_mut_gmx_hybrid_top.zip
+    ref_output_top_zip_path: file:test_reference_dir/pmx/ref_mut_gmx_hybrid_top_docker.zip
   properties:
     force_field: amber99sb-star-ildn-mut
     container_path: docker

@@ -57,10 +57,10 @@ class Pmxanalyse:
                 'dpi': 600 
             }
             pmxanalyse(input_a_xvg_zip_path='/path/to/myAStateFiles.zip', 
-                        input_b_xvg_zip_path='/path/to/myBStateFiles.zip', 
-                        output_result_path='/path/to/newResults.txt', 
-                        output_work_plot_path='/path/to/newResults.png', 
-                        properties=prop)
+                       input_b_xvg_zip_path='/path/to/myBStateFiles.zip',
+                       output_result_path='/path/to/newResults.txt',
+                       output_work_plot_path='/path/to/newResults.png',
+                       properties=prop)
 
     Info:
         * wrapped_software:
@@ -231,15 +231,19 @@ class Pmxanalyse:
 
         return returncode
 
-def pmxanalyse(input_a_xvg_zip_path: str, input_b_xvg_zip_path: str, output_result_path: str, output_work_plot_path: str, properties: dict = None, **kwargs) -> None:
+
+def pmxanalyse(input_a_xvg_zip_path: str, input_b_xvg_zip_path: str,
+               output_result_path: str, output_work_plot_path: str,
+               properties: dict = None, **kwargs) -> int:
     """Execute the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` class and
     execute the :meth:`launch() <pmx.pmxanalyse.Pmxanalyse.launch> method."""
 
     return Pmxanalyse(input_a_xvg_zip_path=input_a_xvg_zip_path, 
-                    input_b_xvg_zip_path=input_b_xvg_zip_path, 
-                    output_result_path=output_result_path,
-                    output_work_plot_path=output_work_plot_path,
-                    properties=properties).launch()
+                      input_b_xvg_zip_path=input_b_xvg_zip_path,
+                      output_result_path=output_result_path,
+                      output_work_plot_path=output_work_plot_path,
+                      properties=properties).launch()
+
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
@@ -262,11 +266,11 @@ def main():
     properties = settings.ConfReader(config=config).get_prop_dic()
 
     # Specific call of each building block
-    Pmxanalyse(input_a_xvg_zip_path=args.input_a_xvg_zip_path, 
-                input_b_xvg_zip_path=args.input_b_xvg_zip_path,
-                output_result_path=args.output_result_path, 
-                output_work_plot_path=args.output_work_plot_path,
-                properties=properties).launch()
+    pmxanalyse(input_a_xvg_zip_path=args.input_a_xvg_zip_path,
+               input_b_xvg_zip_path=args.input_b_xvg_zip_path,
+               output_result_path=args.output_result_path,
+               output_work_plot_path=args.output_work_plot_path,
+               properties=properties)
 
 
 if __name__ == '__main__':
