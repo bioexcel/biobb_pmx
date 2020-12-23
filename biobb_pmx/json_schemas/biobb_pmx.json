@@ -4,7 +4,7 @@
     "github": "https://github.com/bioexcel/biobb_pmx",
     "readthedocs": "https://biobb-pmx.readthedocs.io/en/latest/",
     "conda": "https://anaconda.org/bioconda/biobb_pmx",
-    "docker": "https://quay.io/repository/biocontainers/biobb_pmx:3.5.0--py_0",
+    "docker": "https://quay.io/biocontainers/biobb_pmx:3.5.0--py_0",
     "singularity": "https://singularity-hub.org/collections/3854/usage",
     "version": "3.5.0",
     "tools" : [
