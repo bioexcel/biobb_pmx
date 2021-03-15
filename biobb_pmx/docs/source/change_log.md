@@ -1,6 +1,6 @@
 # Biobb Model changelog
 
-## What's new in version [3.0.3](https://github.com/bioexcel/biobb_pmx/releases/tag/3.0.3)?
+## What's new in version [3.5.0](https://github.com/bioexcel/biobb_pmx/releases/tag/3.5.0)?
 In version 3.0.3 the dependency biobb_common has been updated to 3.5.1 version. Also, there has been implemented the new version of docstrings, therefore the JSON Schemas have been modified.
 
 ### New features
