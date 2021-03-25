@@ -7,9 +7,7 @@ pmxmutate:
     output_structure_path: output_structure.pdb
     ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure.pdb
   properties:
-    mutation_list: 2A, 3RU3
-    rna: True
-    #mutation_list: 2Ala, 3Val
+    mutation_list: 2Ala, 3Val
     gmx_lib: /anaconda3/envs/biobb/lib/python3.7/site-packages/pmx/data/mutff45/
     force_field: amber99sb-star-ildn-mut
 
