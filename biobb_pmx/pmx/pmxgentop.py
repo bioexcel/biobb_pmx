@@ -14,7 +14,7 @@ from biobb_common.command_wrapper import cmd_wrapper
 
 class Pmxgentop:
     """
-    | biobb_pmx Pmxanalyse
+    | biobb_pmx Pmxgentop
     | Wrapper class for the `PMX gentop <https://github.com/deGrootLab/pmx>`_ module.
 
     Args:

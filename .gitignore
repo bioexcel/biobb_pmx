@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 
+# Visual studio code
+.vscode
+
 #Python compiled
 *.pyc
 
