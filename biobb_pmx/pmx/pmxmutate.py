@@ -76,8 +76,7 @@ class Pmxmutate:
         self.force_field = properties.get('force_field', "amber99sb-star-ildn-mut")
         self.resinfo = properties.get('resinfo', False)
         self.mutation_list = properties.get('mutation_list', '2Ala')
-        self.dna = properties.get('dna', False)
-        self.rna = properties.get('rna', False)
+
         self.mutation_dict = {'ALA': 'A', 'ARG': 'R', 'ASN': 'N', 'ASP': 'D', 'ASPH': 'B', 'ASPP': 'B',
                               'ASH': 'B', 'CYS': 'C', 'CYS2': 'C', 'CYN': 'C', 'CYX': 'CX', 'CYM': 'CM',
                               'CYSH': 'C', 'GLU': 'E', 'GLUH': 'J', 'GLUP': 'J', 'GLH': 'J', 'GLN': 'Q',
@@ -146,6 +145,7 @@ class Pmxmutate:
         with open(self.io_dict["in"]["mutations"], 'w') as mut_file:
             for mut in self.mutation_list:
                 mut_groups_dict = pattern.match(mut.strip()).groupdict()
+                print(mut_groups_dict)
                 if mut_groups_dict.get('chain'):
                     mut_file.write(mut_groups_dict.get('chain') + ' ')
                 mut_file.write(mut_groups_dict.get('resnum') + ' ')
