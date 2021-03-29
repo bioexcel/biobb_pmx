@@ -23,9 +23,7 @@ class Pmxmutate:
         output_structure_path (str): Path to the output structure file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_output_structure.pdb>`_. Accepted formats: pdb (edam:format_1476), gro (edam:format_2033).
         input_b_structure_path (str) (Optional): Path to the mutated input structure file. File type: input. Accepted formats: pdb (edam:format_1476), gro (edam:format_2033).
         properties (dic):
-            * **mutation_list** (*str*) - ("2Ala") Mutation list in the format "Chain:Resnum MUT_AA_Code" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:15CYS". Possible MUT_AA_ThreeLeterCode: 'ALA', 'ARG', 'ASN', 'ASP', 'ASPH', 'ASPP', 'ASH', 'CYS', 'CYS2', 'CYN', 'CYX', 'CYM', 'CYSH', 'GLU', 'GLUH', 'GLUP', 'GLH', 'GLN', 'GLY', 'HIS', 'HIE', 'HISE', 'HSE', 'HIP', 'HSP', 'HISH', 'HID', 'HSD', 'ILE', 'LEU', 'LYS', 'LYSH', 'LYP', 'LYN', 'LSN', 'MET', 'PHE', 'PRO', 'SER', 'SP1', 'SP2', 'THR', 'TRP', 'TYR', 'VAL'.
-            * **dna** (*bool*) - (False) Modifies mutation_list format to list dna mutations "Chain:Resnum MUT_NA_Code" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:15DA". Possible MUT_NA_Codes: 'DA', 'DG', 'DC', 'DT', 'DA5', 'DG5', 'DC5', 'DT5', 'DA3', 'DG3', 'DC3', 'DT3'.
-            * **rna** (*bool*) - (False) Modifies mutation_list format to list rna mutations "Chain:Resnum MUT_RNA_Code" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:15A". Possible MUT_RNA_Codes: 'A', 'U', 'C', 'G', 'RA', 'RU', 'RC', 'RG', 'RA5', 'RT5', 'RU5', 'RC5', 'RG5', 'RA3', 'RT3', 'RU3', 'RC3', 'RG3'.
+            * **mutation_list** (*str*) - ("2Ala") Mutation list in the format "Chain:Resnum MUT_AA_Code" or "Chain:Resnum MUT_NA_Code"  (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:15CYS". Possible MUT_AA_Code: 'ALA', 'ARG', 'ASN', 'ASP', 'ASPH', 'ASPP', 'ASH', 'CYS', 'CYS2', 'CYN', 'CYX', 'CYM', 'CYSH', 'GLU', 'GLUH', 'GLUP', 'GLH', 'GLN', 'GLY', 'HIS', 'HIE', 'HISE', 'HSE', 'HIP', 'HSP', 'HISH', 'HID', 'HSD', 'ILE', 'LEU', 'LYS', 'LYSH', 'LYP', 'LYN', 'LSN', 'MET', 'PHE', 'PRO', 'SER', 'SP1', 'SP2', 'THR', 'TRP', 'TYR', 'VAL'. Possible MUT_NA_Codes: 'A', 'T', 'C', 'G', 'U'.
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield to use.
             * **resinfo** (*bool*) - (False) Show the list of 3-letter -> 1-letter residues.
             * **gmx_lib** (*str*) - (None) Path to the GMXLIB folder in your computer.
@@ -80,21 +78,16 @@ class Pmxmutate:
         self.mutation_list = properties.get('mutation_list', '2Ala')
         self.dna = properties.get('dna', False)
         self.rna = properties.get('rna', False)
-        self.aminoacid_three_one = {'ALA': 'A', 'ARG': 'R', 'ASN': 'N', 'ASP': 'D', 'ASPH': 'B', 'ASPP': 'B',
-                                    'ASH': 'B', 'CYS': 'C', 'CYS2': 'C', 'CYN': 'C', 'CYX': 'CX', 'CYM': 'CM',
-                                    'CYSH': 'C', 'GLU': 'E', 'GLUH': 'J', 'GLUP': 'J', 'GLH': 'J', 'GLN': 'Q',
-                                    'GLY': 'G', 'HIS': 'H', 'HIE': 'X', 'HISE': 'X', 'HSE': 'X', 'HIP': 'Z', 'HSP': 'Z',
-                                    'HISH': 'Z', 'HID': 'H', 'HSD': 'H', 'ILE': 'I', 'LEU': 'L', 'LYS': 'K',
-                                    'LYSH': 'K', 'LYP': 'K', 'LYN': 'O', 'LSN': 'O', 'MET': 'M', 'PHE': 'F', 'PRO': 'P',
-                                    'SER': 'S', 'SP1': 'SP1', 'SP2': 'SP2', 'THR': 'T', 'TRP': 'W', 'TYR': 'Y',
-                                    'VAL': 'V'}
+        self.mutation_dict = {'ALA': 'A', 'ARG': 'R', 'ASN': 'N', 'ASP': 'D', 'ASPH': 'B', 'ASPP': 'B',
+                              'ASH': 'B', 'CYS': 'C', 'CYS2': 'C', 'CYN': 'C', 'CYX': 'CX', 'CYM': 'CM',
+                              'CYSH': 'C', 'GLU': 'E', 'GLUH': 'J', 'GLUP': 'J', 'GLH': 'J', 'GLN': 'Q',
+                              'GLY': 'G', 'HIS': 'H', 'HIE': 'X', 'HISE': 'X', 'HSE': 'X', 'HIP': 'Z', 'HSP': 'Z',
+                              'HISH': 'Z', 'HID': 'H', 'HSD': 'H', 'ILE': 'I', 'LEU': 'L', 'LYS': 'K',
+                              'LYSH': 'K', 'LYP': 'K', 'LYN': 'O', 'LSN': 'O', 'MET': 'M', 'PHE': 'F', 'PRO': 'P',
+                              'SER': 'S', 'SP1': 'SP1', 'SP2': 'SP2', 'THR': 'T', 'TRP': 'W', 'TYR': 'Y',
+                              'VAL': 'V', 'A': 'A', 'T': 'T', 'C': 'C', 'G': 'G', 'U': 'U'}
 
-        self.dna_list = ['DA', 'DG', 'DC', 'DT', 'DA5', 'DG5', 'DC5', 'DT5', 'DA3', 'DG3', 'DC3', 'DT3']
-
-        self.rna_list = ['A', 'U', 'C', 'G', 'RA', 'RU', 'RC', 'RG', 'RA5', 'RT5', 'RU5', 'RC5', 'RG5', 'RA3', 'RT3',
-                         'RU3', 'RC3', 'RG3']
-
-        # Properties common in all PMX BBß
+        # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
         self.pmx_path = properties.get('pmx_path', 'pmx')
 
@@ -152,22 +145,13 @@ class Pmxmutate:
         pattern = re.compile(r"(?P<chain>[a-zA-Z])*:?(?P<resnum>\d+)(?P<mt>[a-zA-Z0-9]+)")
         with open(self.io_dict["in"]["mutations"], 'w') as mut_file:
             for mut in self.mutation_list:
-                mut_dict = pattern.match(mut.strip()).groupdict()
-                if mut_dict.get('chain'):
-                    mut_file.write(mut_dict.get('chain') + ' ')
-                mut_file.write(mut_dict.get('resnum') + ' ')
-                if self.dna:
-                    if not mut_dict.get('mt').upper() in self.dna_list:
-                        raise TypeError(f"{mut_dict.get('mt').upper()} is not a valid DNA code. Possible values are {self.dna_list}")
-                    mut_file.write(mut_dict.get('mt').upper())
-                elif self.rna:
-                    if not mut_dict.get('mt').upper() in self.rna_list:
-                        raise TypeError(f"{mut_dict.get('mt').upper()} is not a valid RNA code. Possible values are {self.rna_list}")
-                    mut_file.write(mut_dict.get('mt').upper())
-                else:
-                    if not mut_dict.get('mt').upper() in self.aminoacid_three_one.keys():
-                        raise TypeError(f"{mut_dict.get('mt').upper()} is not a valid AA code. Possible values are {self.aminoacid_three_one.keys()}")
-                    mut_file.write(self.aminoacid_three_one[mut_dict.get('mt').upper()])
+                mut_groups_dict = pattern.match(mut.strip()).groupdict()
+                if mut_groups_dict.get('chain'):
+                    mut_file.write(mut_groups_dict.get('chain') + ' ')
+                mut_file.write(mut_groups_dict.get('resnum') + ' ')
+                if not mut_groups_dict.get('mt').upper() in self.mutation_dict.keys():
+                    raise TypeError(f"{mut_groups_dict.get('mt').upper()} is not a valid AA code or NA code. Possible values are {self.mutation_dict.keys()}")
+                mut_file.write(self.mutation_dict[mut_groups_dict.get('mt').upper()])
                 mut_file.write('\n')
 
         container_io_dict = fu.copy_to_container(self.container_path, self.container_volume_path, self.io_dict)
@@ -177,11 +161,6 @@ class Pmxmutate:
                '-o', container_io_dict["out"]["output_structure_path"],
                '-ff', self.force_field,
                '--script', container_io_dict["in"]["mutations"]]
-
-        if self.dna:
-            cmd.append('-dna')
-        if self.rna:
-            cmd.append('-rna')
 
         if container_io_dict["in"].get("input_b_structure_path"):
             cmd.append('-fB')
