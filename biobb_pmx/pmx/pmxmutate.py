@@ -42,7 +42,7 @@ class Pmxmutate:
 
             from biobb_pmx.pmx.pmxmutate import pmxmutate
             prop = {
-                'mutation_list': 'Val2Ala, Ile3Val',
+                'mutation_list': '2Ala, 3Val',
                 'gmx_lib': '/path/to/myGMXLIB/',
                 'force_field': 'amber99sb-star-ildn-mut'
             }
