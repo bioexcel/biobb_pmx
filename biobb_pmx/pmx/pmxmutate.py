@@ -26,7 +26,7 @@ class Pmxmutate:
             * **mutation_list** (*str*) - ("2Ala") Mutation list in the format "Chain:Resnum MUT_AA_Code" or "Chain:Resnum MUT_NA_Code"  (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:15CYS". Possible MUT_AA_Code: 'ALA', 'ARG', 'ASN', 'ASP', 'ASPH', 'ASPP', 'ASH', 'CYS', 'CYS2', 'CYN', 'CYX', 'CYM', 'CYSH', 'GLU', 'GLUH', 'GLUP', 'GLH', 'GLN', 'GLY', 'HIS', 'HIE', 'HISE', 'HSE', 'HIP', 'HSP', 'HISH', 'HID', 'HSD', 'ILE', 'LEU', 'LYS', 'LYSH', 'LYP', 'LYN', 'LSN', 'MET', 'PHE', 'PRO', 'SER', 'SP1', 'SP2', 'THR', 'TRP', 'TYR', 'VAL'. Possible MUT_NA_Codes: 'A', 'T', 'C', 'G', 'U'.
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield to use.
             * **resinfo** (*bool*) - (False) Show the list of 3-letter -> 1-letter residues.
-            * **gmx_lib** (*str*) - (None) Path to the GMXLIB folder in your computer.
+            * **gmx_lib** (*str*) - ("$CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff45/") Path to the GMXLIB folder in your computer.
             * **pmx_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -88,12 +88,17 @@ class Pmxmutate:
 
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
+        if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
+            self.gmx_lib = str(
+                Path(os.environ.get('CONDA_PREFIX')).joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
+            if properties.get('container_path'):
+                self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
         self.pmx_path = properties.get('pmx_path', 'pmx')
 
         # container Specific
         self.container_path = properties.get('container_path')
         self.container_image = properties.get('container_image', 'gromacs/gromacs:latest')
-        self.container_volume_path = properties.get('container_volume_path', '/data')
+        self.container_volume_path = properties.get('container_volume_path', '/inout')
         self.container_working_dir = properties.get('container_working_dir')
         self.container_user_id = properties.get('container_user_id')
         self.container_shell_path = properties.get('container_shell_path', '/bin/bash')
@@ -145,7 +150,6 @@ class Pmxmutate:
         with open(self.io_dict["in"]["mutations"], 'w') as mut_file:
             for mut in self.mutation_list:
                 mut_groups_dict = pattern.match(mut.strip()).groupdict()
-                print(mut_groups_dict)
                 if mut_groups_dict.get('chain'):
                     mut_file.write(mut_groups_dict.get('chain') + ' ')
                 mut_file.write(mut_groups_dict.get('resnum') + ' ')

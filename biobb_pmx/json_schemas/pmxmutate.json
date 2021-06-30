@@ -92,9 +92,9 @@
             "properties": {
                 "mutation_list": {
                     "type": "string",
-                    "default": "Val2Ala",
+                    "default": "2Ala",
                     "wf_prop": false,
-                    "description": "Mutation list in the format \"Chain:WT_AA_ThreeLeterCode Resnum MUT_AA_ThreeLeterCode\" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: \"A:ALA15CYS\"."
+                    "description": "Mutation list in the format \"Chain:Resnum MUT_AA_Code\" or \"Chain:Resnum MUT_NA_Code\"  (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: \"A:15CYS\". Possible MUT_AA_Code: 'ALA', 'ARG', 'ASN', 'ASP', 'ASPH', 'ASPP', 'ASH', 'CYS', 'CYS2', 'CYN', 'CYX', 'CYM', 'CYSH', 'GLU', 'GLUH', 'GLUP', 'GLH', 'GLN', 'GLY', 'HIS', 'HIE', 'HISE', 'HSE', 'HIP', 'HSP', 'HISH', 'HID', 'HSD', 'ILE', 'LEU', 'LYS', 'LYSH', 'LYP', 'LYN', 'LSN', 'MET', 'PHE', 'PRO', 'SER', 'SP1', 'SP2', 'THR', 'TRP', 'TYR', 'VAL'. Possible MUT_NA_Codes: 'A', 'T', 'C', 'G', 'U'."
                 },
                 "force_field": {
                     "type": "string",
@@ -110,7 +110,7 @@
                 },
                 "gmx_lib": {
                     "type": "string",
-                    "default": null,
+                    "default": "$CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff45/",
                     "wf_prop": false,
                     "description": "Path to the GMXLIB folder in your computer."
                 },

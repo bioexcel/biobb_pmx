@@ -24,7 +24,7 @@ class Pmxgentop:
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Force field to use. If **input_top_zip_path** is a top file, it's not necessary to specify the forcefield, as it will be determined automatically. If **input_top_zip_path** is an itp file, then it's needed.
             * **split** (*bool*) - (False) Write separate topologies for the vdW and charge transformations.
             * **scale_mass** (*bool*) - (False) Scale the masses of morphing atoms so that dummies have a mass of 1.
-            * **gmx_lib** (*str*) - (None) Path to the GMXLIB folder in your computer.
+            * **gmx_lib** (*str*) - ("$CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff45/") Path to the GMXLIB folder in your computer.
             * **pmx_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -77,6 +77,10 @@ class Pmxgentop:
 
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
+        if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
+            self.gmx_lib = str(Path(os.environ.get('CONDA_PREFIX')).joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
+            if properties.get('container_path'):
+                self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
         self.pmx_path = properties.get('pmx_path', 'pmx')
 
         # Properties common in all BB
@@ -161,6 +165,7 @@ class Pmxgentop:
         if self.gmx_lib:
             new_env = os.environ.copy()
             new_env['GMXLIB'] = self.gmx_lib
+            fu.log(f"Setting GMXLIB to: {self.gmx_lib}", out_log)
 
         cmd = fu.create_cmd_line(cmd, container_path=self.container_path,
                                  host_volume=container_io_dict.get("unique_dir"),

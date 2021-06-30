@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/pmxgentop",
-    "name": "biobb_pmx Pmxanalyse",
+    "name": "biobb_pmx Pmxgentop",
     "title": "Wrapper class for the PMX gentop module.",
     "description": null,
     "type": "object",
@@ -76,7 +76,7 @@
                 },
                 "gmx_lib": {
                     "type": "string",
-                    "default": null,
+                    "default": "$CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff45/",
                     "wf_prop": false,
                     "description": "Path to the GMXLIB folder in your computer."
                 },
