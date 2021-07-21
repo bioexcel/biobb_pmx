@@ -144,7 +144,7 @@ Config parameters for this building block:
 * **force_field** (*string*): (amber99sb-star-ildn-mut) Force field to use. If **input_top_zip_path** is a top file, it's not necessary to specify the forcefield, as it will be determined automatically. If **input_top_zip_path** is an itp file, then it's needed..
 * **split** (*boolean*): (False) Write separate topologies for the vdW and charge transformations..
 * **scale_mass** (*boolean*): (False) Scale the masses of morphing atoms so that dummies have a mass of 1..
-* **gmx_lib** (*string*): (None) Path to the GMXLIB folder in your computer..
+* **gmx_lib** (*string*): ($CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff45/) Path to the GMXLIB folder in your computer..
 * **pmx_path** (*string*): (pmx) Path to the PMX command line interface..
 * **remove_tmp** (*boolean*): (True) Remove temporal files..
 * **restart** (*boolean*): (False) Do not execute if output files exist..
@@ -159,7 +159,6 @@ Config parameters for this building block:
 ```python
 properties:
   force_field: amber99sb-star-ildn-mut
-  gmx_lib: /anaconda3/envs/biobb/lib/python3.7/site-packages/pmx/data/mutff45/
 
 ```
 #### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxgentop_docker.yml)
@@ -187,7 +186,6 @@ pmxgentop --config config_pmxgentop.yml --input_top_zip_path topology.zip --outp
 ```python
 {
   "properties": {
-    "gmx_lib": "/anaconda3/envs/biobb/lib/python3.7/site-packages/pmx/data/mutff45/",
     "force_field": "amber99sb-star-ildn-mut"
   }
 }
@@ -236,10 +234,10 @@ Config input / output arguments for this building block:
 Syntax: input_parameter (datatype) - (default_value) Definition
 
 Config parameters for this building block:
-* **mutation_list** (*string*): (Val2Ala) Mutation list in the format "Chain:WT_AA_ThreeLeterCode Resnum MUT_AA_ThreeLeterCode" (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:ALA15CYS"..
+* **mutation_list** (*string*): (2Ala) Mutation list in the format "Chain:Resnum MUT_AA_Code" or "Chain:Resnum MUT_NA_Code"  (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:15CYS". Possible MUT_AA_Code: 'ALA', 'ARG', 'ASN', 'ASP', 'ASPH', 'ASPP', 'ASH', 'CYS', 'CYS2', 'CYN', 'CYX', 'CYM', 'CYSH', 'GLU', 'GLUH', 'GLUP', 'GLH', 'GLN', 'GLY', 'HIS', 'HIE', 'HISE', 'HSE', 'HIP', 'HSP', 'HISH', 'HID', 'HSD', 'ILE', 'LEU', 'LYS', 'LYSH', 'LYP', 'LYN', 'LSN', 'MET', 'PHE', 'PRO', 'SER', 'SP1', 'SP2', 'THR', 'TRP', 'TYR', 'VAL'. Possible MUT_NA_Codes: 'A', 'T', 'C', 'G', 'U'..
 * **force_field** (*string*): (amber99sb-star-ildn-mut) Forcefield to use..
 * **resinfo** (*boolean*): (False) Show the list of 3-letter -> 1-letter residues..
-* **gmx_lib** (*string*): (None) Path to the GMXLIB folder in your computer..
+* **gmx_lib** (*string*): ($CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff45/) Path to the GMXLIB folder in your computer..
 * **pmx_path** (*string*): (pmx) Path to the PMX command line interface..
 * **remove_tmp** (*boolean*): (True) Remove temporal files..
 * **restart** (*boolean*): (False) Do not execute if output files exist..
@@ -254,17 +252,16 @@ Config parameters for this building block:
 ```python
 properties:
   force_field: amber99sb-star-ildn-mut
-  gmx_lib: /anaconda3/envs/biobb/lib/python3.7/site-packages/pmx/data/mutff45/
-  mutation_list: Val2Ala, Ile3Val
+  mutation_list: 2Ala, 3Val
 
 ```
 #### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_docker.yml)
 ```python
 properties:
-  container_image: mmbirb/pmx:1.0
+  container_image: quay.io/biocontainers/pmx_biobb:1.0.0--py37h9d97f00_1
   container_path: docker
   force_field: amber99sb-star-ildn-mut
-  mutation_list: Val2Ala, Ile3Val
+  mutation_list: 2Ala, 3Val
 
 ```
 #### [Singularity config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_singularity.yml)
@@ -273,7 +270,7 @@ properties:
   container_image: shub://bioexcel/pmx_docker
   container_path: singularity
   force_field: amber99sb-star-ildn-mut
-  mutation_list: Val2Ala, Ile3Val
+  mutation_list: 2Ala, 3Val
 
 ```
 #### Command line
@@ -285,8 +282,7 @@ pmxmutate --config config_pmxmutate.yml --input_structure_path frame99.pdb --out
 ```python
 {
   "properties": {
-    "mutation_list": "Val2Ala, Ile3Val",
-    "gmx_lib": "/anaconda3/envs/biobb/lib/python3.7/site-packages/pmx/data/mutff45/",
+    "mutation_list": "2Ala, 3Val",
     "force_field": "amber99sb-star-ildn-mut"
   }
 }
@@ -295,10 +291,10 @@ pmxmutate --config config_pmxmutate.yml --input_structure_path frame99.pdb --out
 ```python
 {
   "properties": {
-    "mutation_list": "Val2Ala, Ile3Val",
+    "mutation_list": "2Ala, 3Val",
     "force_field": "amber99sb-star-ildn-mut",
     "container_path": "docker",
-    "container_image": "mmbirb/pmx:1.0"
+    "container_image": "quay.io/biocontainers/pmx_biobb:1.0.0--py37h9d97f00_1"
   }
 }
 ```
@@ -306,7 +302,7 @@ pmxmutate --config config_pmxmutate.yml --input_structure_path frame99.pdb --out
 ```python
 {
   "properties": {
-    "mutation_list": "Val2Ala, Ile3Val",
+    "mutation_list": "2Ala, 3Val",
     "force_field": "amber99sb-star-ildn-mut",
     "container_path": "singularity",
     "container_image": "shub://bioexcel/pmx_docker"

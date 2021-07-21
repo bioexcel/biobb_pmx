@@ -1,4 +1,3 @@
 properties:
   force_field: amber99sb-star-ildn-mut
-  gmx_lib: /anaconda3/envs/biobb/lib/python3.7/site-packages/pmx/data/mutff45/
-  mutation_list: Val2Ala, Ile3Val
+  mutation_list: 2Ala, 3Val
