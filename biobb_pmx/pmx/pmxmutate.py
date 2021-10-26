@@ -7,13 +7,15 @@ import re
 import shutil
 import argparse
 from typing import Mapping
+from biobb_pmx.pmx.common import create_mutations_file, MUTATION_DICT
+from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 
 
-class Pmxmutate:
+class Pmxmutate(BiobbObject):
     """
     | biobb_pmx Pmxmutate
     | Wrapper class for the `PMX mutate <https://github.com/deGrootLab/pmx>`_ module.
@@ -31,7 +33,7 @@ class Pmxmutate:
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
-            * **container_image** (*str*) - ("gromacs/gromacs:latest") Container Image identifier.
+            * **container_image** (*str*) - (None) Container Image identifier.
             * **container_volume_path** (*str*) - ("/inout") Path to an internal directory in the container.
             * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
@@ -66,6 +68,9 @@ class Pmxmutate:
                  properties: Mapping = None, **kwargs) -> None:
         properties = properties or {}
 
+        # Call parent class constructor
+        super().__init__(properties)
+
         # Input/Output files
         self.io_dict = {
             "in": {"input_structure_path": input_structure_path, "input_b_structure_path": input_b_structure_path},
@@ -76,15 +81,8 @@ class Pmxmutate:
         self.force_field = properties.get('force_field', "amber99sb-star-ildn-mut")
         self.resinfo = properties.get('resinfo', False)
         self.mutation_list = properties.get('mutation_list', '2Ala')
+        self.input_mutations_file = properties.get('mutations_file')
 
-        self.mutation_dict = {'ALA': 'A', 'ARG': 'R', 'ASN': 'N', 'ASP': 'D', 'ASPH': 'B', 'ASPP': 'B',
-                              'ASH': 'B', 'CYS': 'C', 'CYS2': 'C', 'CYN': 'C', 'CYX': 'CX', 'CYM': 'CM',
-                              'CYSH': 'C', 'GLU': 'E', 'GLUH': 'J', 'GLUP': 'J', 'GLH': 'J', 'GLN': 'Q',
-                              'GLY': 'G', 'HIS': 'H', 'HIE': 'X', 'HISE': 'X', 'HSE': 'X', 'HIP': 'Z', 'HSP': 'Z',
-                              'HISH': 'Z', 'HID': 'H', 'HSD': 'H', 'ILE': 'I', 'LEU': 'L', 'LYS': 'K',
-                              'LYSH': 'K', 'LYP': 'K', 'LYN': 'O', 'LSN': 'O', 'MET': 'M', 'PHE': 'F', 'PRO': 'P',
-                              'SER': 'S', 'SP1': 'SP1', 'SP2': 'SP2', 'THR': 'T', 'TRP': 'W', 'TYR': 'Y',
-                              'VAL': 'V', 'A': 'A', 'T': 'T', 'C': 'C', 'G': 'G', 'U': 'U'}
 
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
@@ -95,105 +93,64 @@ class Pmxmutate:
                 self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
         self.pmx_path = properties.get('pmx_path', 'pmx')
 
-        # container Specific
-        self.container_path = properties.get('container_path')
-        self.container_image = properties.get('container_image', 'gromacs/gromacs:latest')
-        self.container_volume_path = properties.get('container_volume_path', '/inout')
-        self.container_working_dir = properties.get('container_working_dir')
-        self.container_user_id = properties.get('container_user_id')
-        self.container_shell_path = properties.get('container_shell_path', '/bin/bash')
-
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
-
         # Check the properties
-        fu.check_properties(self, properties)
+        self.check_properties(properties)
 
     @launchlogger
     def launch(self) -> int:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
-        tmp_files = []
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
-        # Check if executable is exists
+        # Check if executable exists
         if not self.container_path:
             if not Path(self.pmx_path).is_file():
                 if not shutil.which(self.pmx_path):
                     raise FileNotFoundError(
                         'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_path)
 
-        # Restart if needed
-        if self.restart:
-            if fu.check_complete_files(self.io_dict["out"].values()):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log,
-                       self.global_log)
-                return 0
-
         # Generate mutations file
-        try:
-            # Check if self.mutation_list is a string
-            self.mutation_list = self.mutation_list.replace(" ", "").split(',')
-        except AttributeError:
-            pass
-        unique_dir = str(Path(fu.create_unique_dir()).resolve())
-        self.io_dict["in"]["mutations"] = str(Path(unique_dir).joinpath('mutations.txt'))
-        pattern = re.compile(r"(?P<chain>[a-zA-Z])*:?(?P<resnum>\d+)(?P<mt>[a-zA-Z0-9]+)")
-        with open(self.io_dict["in"]["mutations"], 'w') as mut_file:
-            for mut in self.mutation_list:
-                mut_groups_dict = pattern.match(mut.strip()).groupdict()
-                if mut_groups_dict.get('chain'):
-                    mut_file.write(mut_groups_dict.get('chain') + ' ')
-                mut_file.write(mut_groups_dict.get('resnum') + ' ')
-                if not mut_groups_dict.get('mt').upper() in self.mutation_dict.keys():
-                    raise TypeError(f"{mut_groups_dict.get('mt').upper()} is not a valid AA code or NA code. Possible values are {self.mutation_dict.keys()}")
-                mut_file.write(self.mutation_dict[mut_groups_dict.get('mt').upper()])
-                mut_file.write('\n')
 
-        container_io_dict = fu.copy_to_container(self.container_path, self.container_volume_path, self.io_dict)
+        mutations_dir = fu.create_unique_dir()
+        self.input_mutations_file = create_mutations_file(input_mutations_path=str(Path(mutations_dir).joinpath('mutations.txt')),
+                                                          mutation_list=self.mutation_list,
+                                                          mutation_dict=MUTATION_DICT)
 
-        cmd = [self.pmx_path, 'mutate',
-               '-f', container_io_dict["in"]["input_structure_path"],
-               '-o', container_io_dict["out"]["output_structure_path"],
-               '-ff', self.force_field,
-               '--script', container_io_dict["in"]["mutations"]]
+        # Copy extra files to container: mutations file
+        if self.container_path:
+            fu.log('Container execution enabled', self.out_log)
 
-        if container_io_dict["in"].get("input_b_structure_path"):
-            cmd.append('-fB')
-            cmd.append(container_io_dict["in"]["input_b_structure_path"])
+            shutil.copy2(self.input_mutations_file, self.stage_io_dict.get("unique_dir"))
+            self.input_mutations_file = str(Path(self.container_volume_path).joinpath(Path(self.input_mutations_file).name))
+
+        self.cmd = [self.pmx_path, 'mutate',
+                    '-f', self.stage_io_dict["in"]["input_structure_path"],
+                    '-o', self.stage_io_dict["out"]["output_structure_path"],
+                    '-ff', self.force_field,
+                    '--script', self.input_mutations_file]
+
+        if self.stage_io_dict["in"].get("input_b_structure_path"):
+            self.cmd.append('-fB')
+            self.cmd.append(self.stage_io_dict["in"]["input_b_structure_path"])
         if self.resinfo:
-            cmd.append('-resinfo')
-        new_env = None
+            self.cmd.append('-resinfo')
+
         if self.gmx_lib:
-            new_env = os.environ.copy()
-            new_env['GMXLIB'] = self.gmx_lib
+            self.environment = os.environ.copy()
+            self.environment['GMXLIB'] = self.gmx_lib
 
-        cmd = fu.create_cmd_line(cmd, container_path=self.container_path,
-                                 host_volume=container_io_dict.get("unique_dir"),
-                                 container_volume=self.container_volume_path,
-                                 container_working_dir=self.container_working_dir,
-                                 container_user_uid=self.container_user_id,
-                                 container_shell_path=self.container_shell_path,
-                                 container_image=self.container_image,
-                                 out_log=out_log, global_log=self.global_log)
+        # Run Biobb block
+        self.run_biobb()
 
-        returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
-        fu.copy_to_host(self.container_path, container_io_dict, self.io_dict)
+        # Copy files to host
+        self.copy_to_host()
 
-        # tmp_files.append(container_io_dict.get("unique_dir"))
-        tmp_files.append(unique_dir)
-        if self.remove_tmp:
-            fu.rm_file_list(tmp_files, out_log=out_log)
+        self.tmp_files.append(self.stage_io_dict.get("unique_dir"))
+        self.remove_tmp_files()
 
-        return returncode
+        return self.return_code
 
 
 def pmxmutate(input_structure_path: str, output_structure_path: str,

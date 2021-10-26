@@ -6,13 +6,14 @@ import argparse
 import shutil
 from pathlib import Path
 from typing import Mapping
+from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 from biobb_common.command_wrapper import cmd_wrapper
 
 
-class Pmxgentop:
+class Pmxgentop(BiobbObject):
     """
     | biobb_pmx Pmxgentop
     | Wrapper class for the `PMX gentop <https://github.com/deGrootLab/pmx>`_ module.
@@ -62,6 +63,9 @@ class Pmxgentop:
                  properties: Mapping = None, **kwargs) -> None:
         properties = properties or {}
 
+        # Call parent class constructor
+        super().__init__(properties)
+
         # Input/Output files
         self.io_dict = {
             "in": {},
@@ -75,7 +79,7 @@ class Pmxgentop:
         self.split = properties.get('split', False)
         self.scale_mass = properties.get('scale_mass', False)
 
-        # Properties common in all PMX BB
+        # Properties common.py in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
         if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
             self.gmx_lib = str(Path(os.environ.get('CONDA_PREFIX')).joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
@@ -83,100 +87,64 @@ class Pmxgentop:
                 self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
         self.pmx_path = properties.get('pmx_path', 'pmx')
 
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
-
-        # container Specific
-        self.container_path = properties.get('container_path')
-        self.container_image = properties.get('container_image', 'gromacs/gromacs:latest')
-        self.container_volume_path = properties.get('container_volume_path', '/inout')
-        self.container_working_dir = properties.get('container_working_dir')
-        self.container_user_id = properties.get('container_user_id')
-        self.container_shell_path = properties.get('container_shell_path', '/bin/bash')
-
         # Check the properties
-        fu.check_properties(self, properties)
+        self.check_properties(properties)
 
     @launchlogger
     def launch(self) -> int:
         """Execute the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` pmx.pmxgentop.Pmxgentop object."""
-        tmp_files = []
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
-        # Check if executable is exists
+        # Check if executable exists
         if not self.container_path:
             if not Path(self.pmx_path).is_file():
                 if not shutil.which(self.pmx_path):
                     raise FileNotFoundError('Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_path)
 
-        # Restart if needed
-        if self.restart:
-            if fu.check_complete_files(self.io_dict["out"].values()):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log,
-                       self.global_log)
-                return 0
-
         # Unzip topology to topology_out
-        top_file = fu.unzip_top(zip_file=self.input_top_zip_path, out_log=out_log)
+        top_file = fu.unzip_top(zip_file=self.input_top_zip_path, out_log=self.out_log)
         top_dir = str(Path(top_file).parent)
-        tmp_files.append(top_dir)
-        fu.log(f"top_file: {top_file}", out_log)
 
-        #  If using containers create unique dir and copy nothing there
-        container_io_dict = fu.copy_to_container(self.container_path, self.container_volume_path, self.io_dict)
-
+        # Copy extra files to container: topology folder
         if self.container_path:
-            fu.log(f"Unique dir: {container_io_dict['unique_dir']}", out_log)
-            fu.log(f"{container_io_dict['unique_dir']} files: {os.listdir(container_io_dict['unique_dir'])}", out_log)
-            # Copy all files of the unzipped topology to unique dir
-            fu.log(f"Copy all files of the unzipped original topology to unique dir:", out_log)
-            shutil.copytree(top_dir, Path(container_io_dict.get("unique_dir")).joinpath(Path(top_dir).name))
+            fu.log('Container execution enabled', self.out_log)
+            fu.log(f"Unique dir: {self.stage_io_dict['unique_dir']}", self.out_log)
+            fu.log(f"{self.stage_io_dict['unique_dir']} files: {os.listdir(self.stage_io_dict['unique_dir'])}", self.out_log)
+            fu.log(f"Copy all files of the unzipped original topology to unique dir:", self.out_log)
+            shutil.copytree(top_dir, str(Path(self.stage_io_dict.get("unique_dir")).joinpath(Path(top_dir).name)))
             top_file = str(Path(self.container_volume_path).joinpath(Path(top_dir).name, Path(top_file).name))
 
         output_file_name = fu.create_name(prefix=self.prefix, step=self.step, name=str(Path(top_file).name))
         unique_dir_output_file = str(Path(fu.create_unique_dir()).joinpath(output_file_name))
-        fu.log(f"unique_dir_output_file: {unique_dir_output_file}", out_log)
+        fu.log(f"unique_dir_output_file: {unique_dir_output_file}", self.out_log)
 
         if self.container_path:
-            fu.log("Change references for container:", out_log)
+            fu.log("Change references for container:", self.out_log)
             unique_dir_output_file = str(Path(self.container_volume_path).joinpath(Path(output_file_name)))
-            fu.log(f"    unique_dir_output_file: {unique_dir_output_file}", out_log)
+            fu.log(f"    unique_dir_output_file: {unique_dir_output_file}", self.out_log)
 
-        cmd = [self.pmx_path, 'gentop',
+        self.cmd = [self.pmx_path, 'gentop',
                '-o', str(Path(unique_dir_output_file)),
                '-ff', self.force_field,
                '-p', top_file]
 
         if self.split:
-            cmd.append('--split')
+            self.cmd.append('--split')
         if self.scale_mass:
-            cmd.append('--scale_mass')
+            self.cmd.append('--scale_mass')
 
-        new_env = None
         if self.gmx_lib:
-            new_env = os.environ.copy()
-            new_env['GMXLIB'] = self.gmx_lib
-            fu.log(f"Setting GMXLIB to: {self.gmx_lib}", out_log)
+            self.environment = os.environ.copy()
+            self.environment['GMXLIB'] = self.gmx_lib
 
-        cmd = fu.create_cmd_line(cmd, container_path=self.container_path,
-                                 host_volume=container_io_dict.get("unique_dir"),
-                                 container_volume=self.container_volume_path,
-                                 container_working_dir=self.container_working_dir,
-                                 container_user_uid=self.container_user_id,
-                                 container_shell_path=self.container_shell_path,
-                                 container_image=self.container_image,
-                                 out_log=out_log, global_log=self.global_log)
+        # Run Biobb block
+        self.run_biobb()
 
-        returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log, new_env).launch()
+        # Copy files to host
+        self.copy_to_host()
 
         if self.container_path:
             unique_dir_output_file = str(Path(container_io_dict.get("unique_dir")).joinpath(Path(unique_dir_output_file).name))
@@ -189,21 +157,19 @@ class Pmxgentop:
                 top_fh.write(line.replace(str(Path(unique_dir_output_file).parent)+'/', ''))
         # Copy the not modified itp files
         for orig_itp_file in Path(top_dir).iterdir():
-            fu.log(f'Check if {str(Path(unique_dir_output_file).parent.joinpath(Path(orig_itp_file).name))} exists', out_log, self.global_log)
+            fu.log(f'Check if {str(Path(unique_dir_output_file).parent.joinpath(Path(orig_itp_file).name))} exists', self.out_log, self.global_log)
             if not Path(unique_dir_output_file).parent.joinpath(Path(orig_itp_file).name).exists():
                 shutil.copy(orig_itp_file, Path(unique_dir_output_file).parent)
-                fu.log(f'Copying {str(orig_itp_file)} to: {str(Path(unique_dir_output_file).parent)}', out_log, self.global_log)
+                fu.log(f'Copying {str(orig_itp_file)} to: {str(Path(unique_dir_output_file).parent)}', self.out_log, self.global_log)
 
         # zip topology
-        fu.log('Compressing topology to: %s' % self.io_dict["out"]["output_top_zip_path"], out_log, self.global_log)
-        fu.zip_top(zip_file=self.io_dict["out"]["output_top_zip_path"], top_file=str(Path(unique_dir_output_file)), out_log=out_log)
+        fu.log('Compressing topology to: %s' % self.io_dict["out"]["output_top_zip_path"], self.out_log, self.global_log)
+        fu.zip_top(zip_file=self.io_dict["out"]["output_top_zip_path"], top_file=str(Path(unique_dir_output_file)), out_log=self.out_log)
 
-        tmp_files.append(top_dir)
-        tmp_files.append(container_io_dict.get("unique_dir"))
-        if self.remove_tmp:
-            fu.rm_file_list(tmp_files, out_log=out_log)
+        self.tmp_files.extend([self.stage_io_dict.get("unique_dir"), top_dir])
+        self.remove_tmp_files()
 
-        return returncode
+        return self.return_code
 
 
 def pmxgentop(input_top_zip_path: str, output_top_zip_path: str, properties: dict = None, **kwargs) -> int:

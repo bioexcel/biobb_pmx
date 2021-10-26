@@ -5,13 +5,13 @@ import argparse
 from pathlib import Path
 import shutil
 from typing import Mapping
+from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 
 
-class Pmxanalyse:
+class Pmxanalyse(BiobbObject):
     """
     | biobb_pmx Pmxanalyse
     | Wrapper class for the `PMX analyse <https://github.com/deGrootLab/pmx>`_ module.
@@ -77,6 +77,9 @@ class Pmxanalyse:
                 properties: Mapping = None, **kwargs) -> None:
         properties = properties or {}
 
+        # Call parent class constructor
+        super().__init__(properties)
+        
         # Input/Output files
         self.io_dict = {
             "in": {},
@@ -106,34 +109,16 @@ class Pmxanalyse:
         # Properties common in all PMX BB
         self.pmx_path = properties.get('pmx_path', 'pmx')
 
-        # container Specific
-        self.container_path = properties.get('container_path')
-        self.container_image = properties.get('container_image', 'gromacs/gromacs:latest')
-        self.container_volume_path = properties.get('container_volume_path', '/inout')
-        self.container_working_dir = properties.get('container_working_dir')
-        self.container_user_id = properties.get('container_user_id')
-        self.container_shell_path = properties.get('container_shell_path', '/bin/bash')
-
-        # Properties common in all BB
-        self.can_write_console_log = properties.get('can_write_console_log', True)
-        self.global_log = properties.get('global_log', None)
-        self.prefix = properties.get('prefix', None)
-        self.step = properties.get('step', None)
-        self.path = properties.get('path', '')
-        self.remove_tmp = properties.get('remove_tmp', True)
-        self.restart = properties.get('restart', False)
-
         # Check the properties
-        fu.check_properties(self, properties)
+        self.check_properties(properties)
 
     @launchlogger
     def launch(self) -> int:
         """Execute the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` pmx.pmxanalyse.Pmxanalyse object."""
-        tmp_files = []
 
-        # Get local loggers from launchlogger decorator
-        out_log = getattr(self, 'out_log', None)
-        err_log = getattr(self, 'err_log', None)
+        # Setup Biobb
+        if self.check_restart(): return 0
+        self.stage_files()
 
         # Check if executable is exists
         if not self.container_path:
@@ -142,94 +127,81 @@ class Pmxanalyse:
                     raise FileNotFoundError(
                         'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_path)
 
-        # Restart if needed
-        if self.restart:
-            if fu.check_complete_files(self.io_dict["out"].values()):
-                fu.log('Restart is enabled, this step: %s will the skipped' % self.step, out_log, self.global_log)
-                return 0
+
 
         list_a_dir = fu.create_unique_dir()
         list_b_dir = fu.create_unique_dir()
-        list_a = list(filter(lambda f: Path(f).exists() and Path(f).stat().st_size > 10, fu.unzip_list(self.input_a_xvg_zip_path, list_a_dir, out_log)))
-        list_b = list(filter(lambda f: Path(f).exists() and Path(f).stat().st_size > 10, fu.unzip_list(self.input_b_xvg_zip_path, list_b_dir, out_log)))
+        list_a = list(filter(lambda f: Path(f).exists() and Path(f).stat().st_size > 10, fu.unzip_list(self.input_a_xvg_zip_path, list_a_dir, self.out_log)))
+        list_b = list(filter(lambda f: Path(f).exists() and Path(f).stat().st_size > 10, fu.unzip_list(self.input_b_xvg_zip_path, list_b_dir, self.out_log)))
         string_a = " ".join(list_a)
         string_b = " ".join(list_b)
 
-        container_io_dict = fu.copy_to_container(self.container_path, self.container_volume_path, self.io_dict)
-
+        # Copy extra files to container: two directories containing the xvg files
         if self.container_path:
-            shutil.copytree(list_a_dir, Path(container_io_dict.get("unique_dir")).joinpath(Path(list_a_dir).name))
-            shutil.copytree(list_b_dir, Path(container_io_dict.get("unique_dir")).joinpath(Path(list_b_dir).name))
+            shutil.copytree(list_a_dir, Path(self.stage_io_dict.get("unique_dir")).joinpath(Path(list_a_dir).name))
+            shutil.copytree(list_b_dir, Path(self.stage_io_dict.get("unique_dir")).joinpath(Path(list_b_dir).name))
             container_volume = " " + self.container_volume_path + "/"
             string_a = self.container_volume_path + "/" + container_volume.join(list_a)
             string_b = self.container_volume_path + "/" + container_volume.join(list_b)
 
-        cmd = [self.pmx_path, 'analyse',
-               '-fA', string_a,
-               '-fB', string_b,
-               '-o', container_io_dict["out"]["output_result_path"],
-               '-w', container_io_dict["out"]["output_work_plot_path"]]
+        self.cmd = [self.pmx_path, 'analyse',
+                    '-fA', string_a,
+                    '-fB', string_b,
+                    '-o', self.stage_io_dict["out"]["output_result_path"],
+                    '-w', self.stage_io_dict["out"]["output_work_plot_path"]]
 
         if self.method:
-            cmd.append('-m')
-            cmd.append(self.method)
+            self.cmd.append('-m')
+            self.cmd.append(self.method)
         if self.temperature:
-            cmd.append('-t')
-            cmd.append(str(self.temperature))
+            self.cmd.append('-t')
+            self.cmd.append(str(self.temperature))
         if self.nboots:
-            cmd.append('-b')
-            cmd.append(str(self.nboots))
+            self.cmd.append('-b')
+            self.cmd.append(str(self.nboots))
         if self.nblocks:
-            cmd.append('-n')
-            cmd.append(str(self.nblocks))
+            self.cmd.append('-n')
+            self.cmd.append(str(self.nblocks))
         if self.integ_only:
-            cmd.append('--integ_only')
+            self.cmd.append('--integ_only')
         if self.reverseB:
-            cmd.append('--reverseB')
+            self.cmd.append('--reverseB')
         if self.skip:
-            cmd.append('--skip')
-            cmd.append(str(self.skip))
+            self.cmd.append('--skip')
+            self.cmd.append(str(self.skip))
         if self.slice:
-            cmd.append('--slice')
-            cmd.append(self.slice)
+            self.cmd.append('--slice')
+            self.cmd.append(self.slice)
         if self.rand:
-            cmd.append('--rand')
+            self.cmd.append('--rand')
         if self.index:
-            cmd.append('--index')
-            cmd.append(self.index)
+            self.cmd.append('--index')
+            self.cmd.append(self.index)
         if self.prec:
-            cmd.append('--prec')
-            cmd.append(str(self.prec))
+            self.cmd.append('--prec')
+            self.cmd.append(str(self.prec))
         if self.units:
-            cmd.append('--units')
-            cmd.append(self.units)
+            self.cmd.append('--units')
+            self.cmd.append(self.units)
         if self.no_ks:
-            cmd.append('--no_ks')
+            self.cmd.append('--no_ks')
         if self.nbins:
-            cmd.append('--nbins')
-            cmd.append(str(self.nbins))
+            self.cmd.append('--nbins')
+            self.cmd.append(str(self.nbins))
         if self.dpi:
-            cmd.append('--dpi')
-            cmd.append(str(self.dpi))
+            self.cmd.append('--dpi')
+            self.cmd.append(str(self.dpi))
 
-        cmd = fu.create_cmd_line(cmd, container_path=self.container_path,
-                                 host_volume=container_io_dict.get("unique_dir"),
-                                 container_volume=self.container_volume_path,
-                                 container_working_dir=self.container_working_dir,
-                                 container_user_uid=self.container_user_id,
-                                 container_shell_path=self.container_shell_path,
-                                 container_image=self.container_image,
-                                 out_log=out_log, global_log=self.global_log)
-        returncode = cmd_wrapper.CmdWrapper(cmd, out_log, err_log, self.global_log).launch()
-        fu.copy_to_host(self.container_path, container_io_dict, self.io_dict)
+        # Run Biobb block
+        self.run_biobb()
 
-        tmp_files.append(container_io_dict.get("unique_dir"))
-        tmp_files.append(list_a_dir)
-        tmp_files.append(list_b_dir)
-        if self.remove_tmp:
-            fu.rm_file_list(tmp_files, out_log=out_log)
+        # Copy files to host
+        self.copy_to_host()
 
-        return returncode
+        self.tmp_files.extend([self.stage_io_dict.get("unique_dir"), list_a_dir, list_b_dir])
+        self.remove_tmp_files()
+
+        return self.return_code
 
 
 def pmxanalyse(input_a_xvg_zip_path: str, input_b_xvg_zip_path: str,
