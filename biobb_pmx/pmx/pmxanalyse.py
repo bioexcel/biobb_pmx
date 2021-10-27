@@ -79,7 +79,7 @@ class Pmxanalyse(BiobbObject):
 
         # Call parent class constructor
         super().__init__(properties)
-        
+
         # Input/Output files
         self.io_dict = {
             "in": {},

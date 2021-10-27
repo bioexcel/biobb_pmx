@@ -242,7 +242,7 @@ Config parameters for this building block:
 * **remove_tmp** (*boolean*): (True) Remove temporal files..
 * **restart** (*boolean*): (False) Do not execute if output files exist..
 * **container_path** (*string*): (None) Path to the binary executable of your container..
-* **container_image** (*string*): (gromacs/gromacs:latest) Container Image identifier..
+* **container_image** (*string*): (None) Container Image identifier..
 * **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
 * **container_working_dir** (*string*): (None) Path to the internal CWD in the container..
 * **container_user_id** (*string*): (None) User number id to be mapped inside the container..
@@ -258,7 +258,6 @@ properties:
 #### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_docker.yml)
 ```python
 properties:
-  container_image: quay.io/biocontainers/pmx_biobb:1.0.0--py37h9d97f00_1
   container_path: docker
   force_field: amber99sb-star-ildn-mut
   mutation_list: 2Ala, 3Val
@@ -293,8 +292,7 @@ pmxmutate --config config_pmxmutate.yml --input_structure_path frame99.pdb --out
   "properties": {
     "mutation_list": "2Ala, 3Val",
     "force_field": "amber99sb-star-ildn-mut",
-    "container_path": "docker",
-    "container_image": "quay.io/biocontainers/pmx_biobb:1.0.0--py37h9d97f00_1"
+    "container_path": "docker"
   }
 }
 ```
