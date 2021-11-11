@@ -7,27 +7,31 @@
     "docker": "https://quay.io/biocontainers/biobb_pmx:3.6.0--pyhdfd78af_0",
     "singularity": "https://singularity-hub.org/collections/3854/usage",
     "version": "3.7.0",
+    "rest": true,
     "tools" : [
         {
             "block" : "Pmxmutate",
             "tool" : "pmx",
             "desc" : "Wrapper class for the PMX mutate module.",
             "exec" : "pmxmutate",
-            "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxmutate"
+            "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxmutate",
+            "rest": true
         },
         {
             "block" : "PmxGentop",
             "tool" : "pmx",
             "desc" : "Wrapper class for the PMX gentop module.",
             "exec" : "pmxgentop",
-            "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxgentop"
+            "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxgentop",
+            "rest": true
         },
         {
             "block" : "Pmxanalyse",
             "tool" : "pmx",
             "desc" : "Wrapper class for the PMX analyse module.",
             "exec" : "pmxanalyse",
-            "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxanalyse"
+            "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxanalyse",
+            "rest": true
         }
     ],
     "dep_pypi" : [
