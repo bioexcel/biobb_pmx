@@ -1,0 +1,7 @@
+properties:
+  force_field: amber99sb-star-ildn-mut.ff
+  mols:
+  - - MOL
+    - 1
+  system_name: Pmx topology BioBB Tutorial
+  water: spce

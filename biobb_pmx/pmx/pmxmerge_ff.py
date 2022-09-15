@@ -3,18 +3,14 @@
 """Module containing the PMX merge_ff class and the command line interface."""
 import os
 from pathlib import Path
-import re
-import shutil
 import glob
 import argparse
 import pmx
-from pmx import ligand_alchemy
 from typing import Mapping
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 
 
 class Pmxmerge_ff(BiobbObject):

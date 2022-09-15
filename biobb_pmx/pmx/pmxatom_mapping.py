@@ -3,15 +3,12 @@
 """Module containing the PMX atom_mapping class and the command line interface."""
 import os
 from pathlib import Path
-import re
 import shutil
 import argparse
 from typing import Mapping
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
-from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 
 
 class Pmxatom_mapping(BiobbObject):

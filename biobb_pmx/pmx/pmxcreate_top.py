@@ -3,17 +3,13 @@
 """Module containing the PMX create_top class and the command line interface."""
 import os
 from pathlib import Path, PurePath
-import re
 import shutil
 import argparse
-import pmx
-from pmx import ligand_alchemy
 from typing import Mapping
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
-from biobb_common.command_wrapper import cmd_wrapper
 
 
 class Pmxcreate_top(BiobbObject):

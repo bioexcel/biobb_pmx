@@ -1,0 +1,338 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/pmxligand_hybrid",
+    "name": "biobb_pmx Pmxligand_hybrid",
+    "title": "Wrapper class for the PMX ligand_hybrid module.",
+    "description": null,
+    "type": "object",
+    "info": {
+        "wrapped_software": {
+            "name": "PMX ligand_hybrid",
+            "version": ">=1.0.1",
+            "license": "GNU"
+        },
+        "ontology": {
+            "name": "EDAM",
+            "schema": "http://edamontology.org/EDAM.owl"
+        }
+    },
+    "required": [
+        "input_structure1_path",
+        "input_structure2_path",
+        "input_topology1_path",
+        "input_topology2_path",
+        "output_log_path",
+        "output_structure1_path",
+        "output_structure2_path",
+        "output_topology_path",
+        "output_atomtypes_path"
+    ],
+    "properties": {
+        "input_structure1_path": {
+            "type": "string",
+            "description": "Path to the input ligand structure file 1",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb",
+            "enum": [
+                ".*\\.pdb$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.pdb$",
+                    "description": "Path to the input ligand structure file 1",
+                    "edam": "format_1476"
+                }
+            ]
+        },
+        "input_structure2_path": {
+            "type": "string",
+            "description": "Path to the input ligand structure file 2",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb",
+            "enum": [
+                ".*\\.pdb$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.pdb$",
+                    "description": "Path to the input ligand structure file 2",
+                    "edam": "format_1476"
+                }
+            ]
+        },
+        "input_topology1_path": {
+            "type": "string",
+            "description": "Path to the input ligand topology file 1",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp",
+            "enum": [
+                ".*\\.itp$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.itp$",
+                    "description": "Path to the input ligand topology file 1",
+                    "edam": "format_3883"
+                }
+            ]
+        },
+        "input_topology2_path": {
+            "type": "string",
+            "description": "Path to the input ligand topology file 2",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp",
+            "enum": [
+                ".*\\.itp$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.itp$",
+                    "description": "Path to the input ligand topology file 2",
+                    "edam": "format_3883"
+                }
+            ]
+        },
+        "input_pairs_path": {
+            "type": "string",
+            "description": "Path to the input atom pair mapping",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_mapping_pairs.dat",
+            "enum": [
+                ".*\\.dat$",
+                ".*\\.txt$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.dat$",
+                    "description": "Path to the input atom pair mapping",
+                    "edam": "format_1637"
+                },
+                {
+                    "extension": ".*\\.txt$",
+                    "description": "Path to the input atom pair mapping",
+                    "edam": "format_2330"
+                }
+            ]
+        },
+        "input_scaffold1_path": {
+            "type": "string",
+            "description": "Path to the index of atoms to consider for the ligand structure 1",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atoms_to_consider.ndx",
+            "enum": [
+                ".*\\.ndx$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.ndx$",
+                    "description": "Path to the index of atoms to consider for the ligand structure 1",
+                    "edam": "format_2033"
+                }
+            ]
+        },
+        "input_scaffold2_path": {
+            "type": "string",
+            "description": "Path to the index of atoms to consider for the ligand structure 2",
+            "filetype": "input",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atoms_to_consider.ndx",
+            "enum": [
+                ".*\\.ndx$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.ndx$",
+                    "description": "Path to the index of atoms to consider for the ligand structure 2",
+                    "edam": "format_2033"
+                }
+            ]
+        },
+        "output_log_path": {
+            "type": "string",
+            "description": "Path to the log file",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atom_mapping.log",
+            "enum": [
+                ".*\\.log$",
+                ".*\\.txt$",
+                ".*\\.out$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.log$",
+                    "description": "Path to the log file",
+                    "edam": "format_2330"
+                },
+                {
+                    "extension": ".*\\.txt$",
+                    "description": "Path to the log file",
+                    "edam": "format_2330"
+                },
+                {
+                    "extension": ".*\\.out$",
+                    "description": "Path to the log file",
+                    "edam": "format_2330"
+                }
+            ]
+        },
+        "output_structure1_path": {
+            "type": "string",
+            "description": "Path to the output hybrid structure based on the ligand 1",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb",
+            "enum": [
+                ".*\\.pdb$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.pdb$",
+                    "description": "Path to the output hybrid structure based on the ligand 1",
+                    "edam": "format_1476"
+                }
+            ]
+        },
+        "output_structure2_path": {
+            "type": "string",
+            "description": "Path to the output hybrid structure based on the ligand 2",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb",
+            "enum": [
+                ".*\\.pdb$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.pdb$",
+                    "description": "Path to the output hybrid structure based on the ligand 2",
+                    "edam": "format_1476"
+                }
+            ]
+        },
+        "output_topology_path": {
+            "type": "string",
+            "description": "Path to the output hybrid topology",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ligand_hybrid.itp",
+            "enum": [
+                ".*\\.itp$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.itp$",
+                    "description": "Path to the output hybrid topology",
+                    "edam": "format_3883"
+                }
+            ]
+        },
+        "output_atomtypes_path": {
+            "type": "string",
+            "description": "Path to the atom types for the output hybrid topology",
+            "filetype": "output",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ligand_hybrid_atomtypes.itp",
+            "enum": [
+                ".*\\.itp$"
+            ],
+            "file_formats": [
+                {
+                    "extension": ".*\\.itp$",
+                    "description": "Path to the atom types for the output hybrid topology",
+                    "edam": "format_3883"
+                }
+            ]
+        },
+        "properties": {
+            "type": "object",
+            "properties": {
+                "fit": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Fit ligand structure 1 onto ligand structure 2 (Only used if input_pairs_path is provided)."
+                },
+                "split": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Split the topology into separate transitions."
+                },
+                "scDUMm": {
+                    "type": "number",
+                    "default": 1.0,
+                    "wf_prop": false,
+                    "description": "Scale dummy masses using the counterpart atoms."
+                },
+                "scDUMa": {
+                    "type": "number",
+                    "default": 1.0,
+                    "wf_prop": false,
+                    "description": "Scale bonded dummy angle parameters."
+                },
+                "scDUMd": {
+                    "type": "number",
+                    "default": 1.0,
+                    "wf_prop": false,
+                    "description": "Scale bonded dummy dihedral parameters."
+                },
+                "deAng": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": false,
+                    "description": "Decouple angles composed of 1 dummy and 2 non-dummies."
+                },
+                "distance": {
+                    "type": "number",
+                    "default": 0.05,
+                    "wf_prop": false,
+                    "description": "Distance (nm) between atoms to consider them morphable for alignment approach (Only used if input_pairs_path is not provided)."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
+                },
+                "restart": {
+                    "type": "boolean",
+                    "default": false,
+                    "wf_prop": true,
+                    "description": "Do not execute if output files exist."
+                },
+                "container_path": {
+                    "type": "string",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Path to the binary executable of your container."
+                },
+                "container_image": {
+                    "type": "string",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Container Image identifier."
+                },
+                "container_volume_path": {
+                    "type": "string",
+                    "default": "/inout",
+                    "wf_prop": false,
+                    "description": "Path to an internal directory in the container."
+                },
+                "container_working_dir": {
+                    "type": "string",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "Path to the internal CWD in the container."
+                },
+                "container_user_id": {
+                    "type": "string",
+                    "default": null,
+                    "wf_prop": false,
+                    "description": "User number id to be mapped inside the container."
+                },
+                "container_shell_path": {
+                    "type": "string",
+                    "default": "/bin/bash",
+                    "wf_prop": false,
+                    "description": "Path to the binary executable of the container shell."
+                }
+            }
+        }
+    },
+    "additionalProperties": false
+}

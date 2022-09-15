@@ -6,7 +6,7 @@
     "conda": "https://anaconda.org/bioconda/biobb_pmx",
     "docker": "https://quay.io/biocontainers/biobb_pmx:3.6.0--pyhdfd78af_0",
     "singularity": "https://singularity-hub.org/collections/3854/usage",
-    "version": "3.7.0",
+    "version": "3.8.0",
     "rest": true,
     "tools" : [
         {
@@ -32,15 +32,47 @@
             "exec" : "pmxanalyse",
             "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxanalyse",
             "rest": true
+        },
+        {
+            "block" : "Pmxatom_mapping",
+            "tool" : "pmx",
+            "desc" : "Wrapper class for the PMX atom mapping module.",
+            "exec" : "pmxatom_mapping",
+            "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxatom_mapping",
+            "rest": true
+        },
+        {
+            "block" : "Pmxcreate_top",
+            "tool" : "pmx",
+            "desc" : "Wrapper class for the PMX create topology module.",
+            "exec" : "pmxcreate_top",
+            "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxcreate_top",
+            "rest": true
+        },
+        {
+            "block" : "Pmxligand_hybrid",
+            "tool" : "pmx",
+            "desc" : "Wrapper class for the PMX hybrid ligand module.",
+            "exec" : "pmxligand_hybrid",
+            "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxligand_hybrid",
+            "rest": true
+        },
+        {
+            "block" : "Pmxmerge_ff",
+            "tool" : "pmx",
+            "desc" : "Wrapper class for the PMX merge forcefield module.",
+            "exec" : "pmxmerge_ff",
+            "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxmerge_ff",
+            "rest": true
         }
     ],
     "dep_pypi" : [
-        "install_requires=['biobb_common==3.7.0']",
-        "python_requires='==3.7.*'"
+        "install_requires=['biobb_common==3.8.1']",
+        "python_requires='>=3.7'"
     ],
     "dep_conda" : [
-        "python ==3.7.*",
-        "biobb_common ==3.7.0",
+        "python >=3.7",
+        "biobb_common ==3.8.1",
         "pmx_biobb ==1.0.0"
     ],
     "keywords" : [
