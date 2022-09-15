@@ -6,7 +6,7 @@
     "conda": "https://anaconda.org/bioconda/biobb_pmx",
     "docker": "https://quay.io/biocontainers/biobb_pmx:3.6.0--pyhdfd78af_0",
     "singularity": "https://singularity-hub.org/collections/3854/usage",
-    "version": "3.8.0",
+    "version": "3.8.1",
     "rest": true,
     "tools" : [
         {
