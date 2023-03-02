@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 import glob
 import argparse
-import pmx
+# import pmx
 from typing import Mapping
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
@@ -54,8 +54,7 @@ class Pmxmerge_ff(BiobbObject):
 
     """
 
-    def __init__(self, input_topology_path: str, output_topology_path: str, 
-     properties: Mapping = None, **kwargs) -> None:
+    def __init__(self, input_topology_path: str, output_topology_path: str, properties: Mapping = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -87,7 +86,8 @@ class Pmxmerge_ff(BiobbObject):
         """Execute the :class:`Pmxmerge_ff <pmx.pmxmerge_ff.Pmxmerge_ff>` pmx.pmxmerge_ff.Pmxmerge_ff object."""
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # Creating temporary folder
@@ -101,14 +101,13 @@ class Pmxmerge_ff(BiobbObject):
             ffsIn_list.append(itp)
 
         self.out_log.info('Running merge_FF_files from pmx package...\n')
-        pmx.ligand_alchemy._merge_FF_files( self.stage_io_dict["out"]["output_topology_path"], 
-        ffsIn=ffsIn_list)
-        #ffsIn=[self.stage_io_dict["in"]["input_topology1_path"],self.stage_io_dict["in"]["input_topology2_path"]] )
+        # pmx.ligand_alchemy._merge_FF_files(self.stage_io_dict["out"]["output_topology_path"], ffsIn=ffsIn_list)
+        # ffsIn=[self.stage_io_dict["in"]["input_topology1_path"],self.stage_io_dict["in"]["input_topology2_path"]] )
 
         self.out_log.info('Exit code 0\n')
 
         # Run Biobb block
-        #self.run_biobb()
+        # self.run_biobb()
 
         # Copy files to host
         self.copy_to_host()
@@ -119,14 +118,13 @@ class Pmxmerge_ff(BiobbObject):
         return self.return_code
 
 
-def pmxmerge_ff(input_topology_path: str, output_topology_path: str, 
-     properties: dict = None, **kwargs) -> int:
+def pmxmerge_ff(input_topology_path: str, output_topology_path: str, properties: dict = None, **kwargs) -> int:
     """Execute the :class:`Pmxmerge_ff <pmx.pmxmerge_ff.Pmxmerge_ff>` class and
     execute the :meth:`launch() <pmx.pmxmerge_ff.Pmxmerge_ff.launch> method."""
 
-    return Pmxmerge_ff(input_topology_path=input_topology_path, 
-                     output_topology_path=output_topology_path, 
-                     properties=properties, **kwargs).launch()
+    return Pmxmerge_ff(input_topology_path=input_topology_path,
+                       output_topology_path=output_topology_path,
+                       properties=properties, **kwargs).launch()
 
 
 def main():
@@ -145,9 +143,10 @@ def main():
     properties = settings.ConfReader(config=config).get_prop_dic()
 
     # Specific call of each building block
-    pmxmerge_ff(input_topology_path=args.input_topology_path, 
-              output_topology_path=args.output_topology_path, 
-              properties=properties)
+    pmxmerge_ff(input_topology_path=args.input_topology_path,
+                output_topology_path=args.output_topology_path,
+                properties=properties)
+
 
 if __name__ == '__main__':
     main()

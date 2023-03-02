@@ -13,7 +13,40 @@ Command:
 ```python
 pmxligand_hybrid -h
 ```
-    /bin/sh: pmxligand_hybrid: command not found
+    usage: pmxligand_hybrid [-h] [-c CONFIG] --input_structure1_path INPUT_STRUCTURE1_PATH --input_structure2_path INPUT_STRUCTURE2_PATH --input_topology1_path INPUT_TOPOLOGY1_PATH --input_topology2_path INPUT_TOPOLOGY2_PATH --output_structure1_path OUTPUT_STRUCTURE1_PATH --output_structure2_path OUTPUT_STRUCTURE2_PATH --output_topology1_path OUTPUT_TOPOLOGY1_PATH --output_topology2_path OUTPUT_TOPOLOGY2_PATH --output_log_path OUTPUT_LOG_PATH [--input_scaffold1_path INPUT_SCAFFOLD1_PATH] [--input_scaffold2_path INPUT_SCAFFOLD2_PATH] [--input_pairs_path INPUT_PAIRS_PATH]
+    
+    Run PMX ligand hybrid module
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c CONFIG, --config CONFIG
+                            This file can be a YAML file, JSON file or JSON string
+      --input_scaffold1_path INPUT_SCAFFOLD1_PATH
+                            Path to the index of atoms to consider for the ligand structure 1
+      --input_scaffold2_path INPUT_SCAFFOLD2_PATH
+                            Path to the index of atoms to consider for the ligand structure 2
+      --input_pairs_path INPUT_PAIRS_PATH
+                            Path to the input atom pair mapping.
+    
+    required arguments:
+      --input_structure1_path INPUT_STRUCTURE1_PATH
+                            Path to the input ligand structure file 1
+      --input_structure2_path INPUT_STRUCTURE2_PATH
+                            Path to the input ligand structure file 2
+      --input_topology1_path INPUT_TOPOLOGY1_PATH
+                            Path to the input ligand topology file 1
+      --input_topology2_path INPUT_TOPOLOGY2_PATH
+                            Path to the input ligand topology file 2
+      --output_structure1_path OUTPUT_STRUCTURE1_PATH
+                            Path to the output ligand structure file 1
+      --output_structure2_path OUTPUT_STRUCTURE2_PATH
+                            Path to the output ligand structure file 2
+      --output_topology1_path OUTPUT_TOPOLOGY1_PATH
+                            Path to the output ligand topology file 1
+      --output_topology2_path OUTPUT_TOPOLOGY2_PATH
+                            Path to the output ligand topology file 2
+      --output_log_path OUTPUT_LOG_PATH
+                            Path to the log file
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -83,7 +116,24 @@ Command:
 ```python
 pmxanalyse -h
 ```
-    /bin/sh: pmxanalyse: command not found
+    usage: pmxanalyse [-h] [-c CONFIG] --input_a_xvg_zip_path INPUT_A_XVG_ZIP_PATH --input_b_xvg_zip_path INPUT_B_XVG_ZIP_PATH --output_result_path OUTPUT_RESULT_PATH --output_work_plot_path OUTPUT_WORK_PLOT_PATH
+    
+    Wrapper class for the PMX analyse module.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c CONFIG, --config CONFIG
+                            This file can be a YAML file, JSON file or JSON string
+    
+    required arguments:
+      --input_a_xvg_zip_path INPUT_A_XVG_ZIP_PATH
+                            Path the zip file containing the dgdl.xvg files of the A state. Accepted formats: zip.
+      --input_b_xvg_zip_path INPUT_B_XVG_ZIP_PATH
+                            Path the zip file containing the dgdl.xvg files of the B state. Accepted formats: zip.
+      --output_result_path OUTPUT_RESULT_PATH
+                            Path to the TXT results file. Accepted formats: txt.
+      --output_work_plot_path OUTPUT_WORK_PLOT_PATH
+                            Path to the PNG plot results file. Accepted formats: png.
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -200,7 +250,20 @@ Command:
 ```python
 pmxmerge_ff -h
 ```
-    /bin/sh: pmxmerge_ff: command not found
+    usage: pmxmerge_ff [-h] [-c CONFIG] --input_topology_path INPUT_TOPOLOGY_PATH --output_topology_path OUTPUT_TOPOLOGY_PATH
+    
+    Run PMX merge_ff module
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c CONFIG, --config CONFIG
+                            This file can be a YAML file, JSON file or JSON string
+    
+    required arguments:
+      --input_topology_path INPUT_TOPOLOGY_PATH
+                            Path to the input ligand topologies as a zip file containing a list of itp files.
+      --output_topology_path OUTPUT_TOPOLOGY_PATH
+                            Path to the merged ligand topology file
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -251,7 +314,22 @@ Command:
 ```python
 pmxcreate_top -h
 ```
-    /bin/sh: pmxcreate_top: command not found
+    usage: pmxcreate_top [-h] [-c CONFIG] --input_topology1_path INPUT_TOPOLOGY1_PATH --input_topology2_path INPUT_TOPOLOGY2_PATH --output_topology_path OUTPUT_TOPOLOGY_PATH
+    
+    Run PMX create_top module
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c CONFIG, --config CONFIG
+                            This file can be a YAML file, JSON file or JSON string
+    
+    required arguments:
+      --input_topology1_path INPUT_TOPOLOGY1_PATH
+                            Path to the input topology file 1
+      --input_topology2_path INPUT_TOPOLOGY2_PATH
+                            Path to the input topology file 2
+      --output_topology_path OUTPUT_TOPOLOGY_PATH
+                            Path to the complete ligand topology file
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -320,7 +398,20 @@ Command:
 ```python
 pmxgentop -h
 ```
-    /bin/sh: pmxgentop: command not found
+    usage: pmxgentop [-h] [-c CONFIG] --input_top_zip_path INPUT_TOP_ZIP_PATH --output_top_zip_path OUTPUT_TOP_ZIP_PATH
+    
+    Wrapper class for the PMX gentop module
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c CONFIG, --config CONFIG
+                            This file can be a YAML file, JSON file or JSON string
+    
+    required arguments:
+      --input_top_zip_path INPUT_TOP_ZIP_PATH
+                            Path to the input topology zip file
+      --output_top_zip_path OUTPUT_TOP_ZIP_PATH
+                            Path to the output topology zip file
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -412,7 +503,40 @@ Command:
 ```python
 pmxatom_mapping -h
 ```
-    /bin/sh: pmxatom_mapping: command not found
+    usage: pmxatom_mapping [-h] [-c CONFIG] --input_structure1_path INPUT_STRUCTURE1_PATH --input_structure2_path INPUT_STRUCTURE2_PATH --output_pairs1_path OUTPUT_PAIRS1_PATH --output_pairs2_path OUTPUT_PAIRS2_PATH --output_log_path OUTPUT_LOG_PATH [--output_structure1_path OUTPUT_STRUCTURE1_PATH] [--output_structure2_path OUTPUT_STRUCTURE2_PATH] [--output_morph1_path OUTPUT_MORPH1_PATH] [--output_morph2_path OUTPUT_MORPH2_PATH] [--output_scaffold1_path OUTPUT_SCAFFOLD1_PATH] [--output_scaffold2_path OUTPUT_SCAFFOLD2_PATH] [--output_score_path OUTPUT_SCORE_PATH]
+    
+    Run PMX atom mapping module
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c CONFIG, --config CONFIG
+                            This file can be a YAML file, JSON file or JSON string
+      --output_structure1_path OUTPUT_STRUCTURE1_PATH
+                            Path to the superimposed structure for the ligand structure 1
+      --output_structure2_path OUTPUT_STRUCTURE2_PATH
+                            Path to the superimposed structure for the ligand structure 2
+      --output_morph1_path OUTPUT_MORPH1_PATH
+                            Path to the morphable atoms for the ligand structure 1
+      --output_morph2_path OUTPUT_MORPH2_PATH
+                            Path to the morphable atoms for the ligand structure 2
+      --output_scaffold1_path OUTPUT_SCAFFOLD1_PATH
+                            Path to the index of atoms to consider for the ligand structure 1
+      --output_scaffold2_path OUTPUT_SCAFFOLD2_PATH
+                            Path to the index of atoms to consider for the ligand structure 2
+      --output_score_path OUTPUT_SCORE_PATH
+                            Path to the morphing score. File type: output
+    
+    required arguments:
+      --input_structure1_path INPUT_STRUCTURE1_PATH
+                            Path to the input ligand structure file 1
+      --input_structure2_path INPUT_STRUCTURE2_PATH
+                            Path to the input ligand structure file 2
+      --output_pairs1_path OUTPUT_PAIRS1_PATH
+                            Path to the output pairs for the ligand structure 1
+      --output_pairs2_path OUTPUT_PAIRS2_PATH
+                            Path to the output pairs for the ligand structure 2
+      --output_log_path OUTPUT_LOG_PATH
+                            Path to the log file
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -486,7 +610,22 @@ Command:
 ```python
 pmxmutate -h
 ```
-    /bin/sh: pmxmutate: command not found
+    usage: pmxmutate [-h] [-c CONFIG] --input_structure_path INPUT_STRUCTURE_PATH --output_structure_path OUTPUT_STRUCTURE_PATH [--input_b_structure_path INPUT_B_STRUCTURE_PATH]
+    
+    Run PMX mutate module
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c CONFIG, --config CONFIG
+                            This file can be a YAML file, JSON file or JSON string
+      --input_b_structure_path INPUT_B_STRUCTURE_PATH
+                            Path to the mutated input structure file
+    
+    required arguments:
+      --input_structure_path INPUT_STRUCTURE_PATH
+                            Path to the input structure file
+      --output_structure_path OUTPUT_STRUCTURE_PATH
+                            Path to the output structure file
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
