@@ -1,5 +1,14 @@
 # Biobb PMX changelog
 
+## What's new in version [4.0.0](https://github.com/bioexcel/biobb_pmx/releases/tag/v4.0.0)?
+In version 4.0.0 the dependency biobb_common has been updated to 4.0.0 version.
+Three new modules have been added
+
+### New features
+
+* Update to biobb_common 4.0.0 (general)
+* Support for ligands in PMX
+
 ## What's new in version [3.8.1](https://github.com/bioexcel/biobb_pmx/releases/tag/v3.8.1)?
 In version 3.8.1 the dependency biobb_common has been updated to 3.8.1 version.
 Three new modules have been added

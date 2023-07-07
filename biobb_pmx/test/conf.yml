@@ -3,23 +3,23 @@ working_dir_path: /tmp/biobb/unitests
 
 pmxmutate:
   paths:
-    input_structure_path: file:test_data_dir/pmx/frame99.pdb
+    input_structure_path: file:test_data_dir/pmx/frameA0.pdb
     output_structure_path: output_structure.pdb
     ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure.pdb
   properties:
-    mutation_list: 2Ala, 3Val
+    mutation_list: 10Ala
     force_field: amber99sb-star-ildn-mut
 
 pmxmutate_docker:
   paths:
-    input_structure_path: file:test_data_dir/pmx/frame99.pdb
+    input_structure_path: file:test_data_dir/pmx/frameA0.pdb
     output_structure_path: output_structure.pdb
-    ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure.pdb
+    ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure_docker.pdb
   properties:
     mutation_list: 2Ala, 3Val
     force_field: amber99sb-star-ildn-mut
     container_path: docker
-    #container_image: quay.io/biocontainers/pmx_biobb:1.0.0--py37h9d97f00_1
+    container_image: quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0
 
 pmxmutate_singularity:
   paths:
@@ -44,12 +44,11 @@ pmxgentop_docker:
   paths:
     input_top_zip_path: file:test_data_dir/pmx/mut_gmx.top.zip
     output_top_zip_path: output_topology.zip
-    output_log_path: gentop.log
-    ref_output_top_zip_path: file:test_reference_dir/pmx/ref_mut_gmx_hybrid_top_docker.zip
+    ref_output_top_zip_path: file:test_reference_dir/pmx/ref_output_topology_container.zip
   properties:
     force_field: amber99sb-star-ildn-mut
     container_path: docker
-    container_image: mmbirb/pmx:1.0
+    container_image: quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0
 
 pmxgentop_singularity:
   paths:
@@ -73,7 +72,7 @@ pmxanalyse:
   properties:
     method: CGI BAR JARZ
     temperature: 298.15
-    dpi: 600 
+    dpi: 600
 
 pmxanalyse_docker:
   paths:
@@ -85,9 +84,9 @@ pmxanalyse_docker:
   properties:
     method: CGI BAR JARZ
     temperature: 298.15
-    dpi: 600 
+    dpi: 600
     container_path: docker
-    container_image: mmbirb/pmx:1.0
+    container_image: quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0
 
 pmxanalyse_singularity:
   paths:
@@ -99,7 +98,7 @@ pmxanalyse_singularity:
   properties:
     method: CGI BAR JARZ
     temperature: 298.15
-    dpi: 600 
+    dpi: 600
     container_path: docker
     container_image: shub://bioexcel/pmx_docker
 
@@ -111,7 +110,7 @@ pmxatom_mapping:
     output_pairs2_path: pairs2.dat
     output_log_path: atom_mapping.log
     ref_output_pairs1_path: file:test_reference_dir/pmx/ref_pairs1.dat
-    ref_output_pairs2_path: file:test_reference_dir/pmx/ref_pairs2.dat    
+    ref_output_pairs2_path: file:test_reference_dir/pmx/ref_pairs2.dat
   properties:
     noalignment : False
     distance: 0.05

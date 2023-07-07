@@ -1,12 +1,12 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_pmx.pmx.pmxmerge_ff import pmxmerge_ff
+from biobb_pmx.pmxbiobb.pmxmerge_ff import pmxmerge_ff
 
 
 class TestPmxmerge_ff:
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self, 'pmxmerge_ff')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
 
     def test_pmxmerge_ff(self):

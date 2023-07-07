@@ -15,7 +15,7 @@ class Pmxanalyse(BiobbObject):
     """
     | biobb_pmx Pmxanalyse
     | Wrapper class for the `PMX analyse <https://github.com/deGrootLab/pmx>`_ module.
-   
+
     Args:
         input_a_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the A state. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/xvg_A.zip>`_. Accepted formats: zip (edam:format_3987).
         input_b_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the B state. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/xvg_B.zip>`_. Accepted formats: zip (edam:format_3987).
@@ -37,7 +37,7 @@ class Pmxanalyse(BiobbObject):
             * **no_ks** (*bool*) - (False) Whether to do a Kolmogorov-Smirnov test to check whether the Gaussian assumption for CGI holds.
             * **nbins** (*int*) - (20) [0~1000|1] Number of histograms bins for the plot.
             * **dpi** (*int*) - (300) [72~2048|1] Resolution of the plot.
-            * **pmx_path** (*str*) - ("pmx") Path to the PMX command line interface.
+            * **binary_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
@@ -50,13 +50,13 @@ class Pmxanalyse(BiobbObject):
     Examples:
         This is a use example of how to use the building block from Python::
 
-            from biobb_pmx.pmx.pmxanalyse import pmxanalyse
-            prop = { 
-                'method': 'CGI BAR JARZ', 
-                'temperature': 298.15, 
-                'dpi': 600 
+            from biobb_pmx.pmxbiobb.pmxanalyse import pmxanalyse
+            prop = {
+                'method': 'CGI BAR JARZ',
+                'temperature': 298.15,
+                'dpi': 600
             }
-            pmxanalyse(input_a_xvg_zip_path='/path/to/myAStateFiles.zip', 
+            pmxanalyse(input_a_xvg_zip_path='/path/to/myAStateFiles.zip',
                        input_b_xvg_zip_path='/path/to/myBStateFiles.zip',
                        output_result_path='/path/to/newResults.txt',
                        output_work_plot_path='/path/to/newResults.png',
@@ -73,12 +73,13 @@ class Pmxanalyse(BiobbObject):
 
     """
 
-    def __init__(self, input_a_xvg_zip_path: str, input_b_xvg_zip_path: str, output_result_path: str, output_work_plot_path: str, 
-                properties: Mapping = None, **kwargs) -> None:
+    def __init__(self, input_a_xvg_zip_path: str, input_b_xvg_zip_path: str, output_result_path: str, output_work_plot_path: str,
+                 properties: Mapping = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
         super().__init__(properties)
+        self.locals_var_dict = locals().copy()
 
         # Input/Output files
         self.io_dict = {
@@ -107,27 +108,27 @@ class Pmxanalyse(BiobbObject):
         self.dpi = properties.get('dpi', 300)
 
         # Properties common in all PMX BB
-        self.pmx_path = properties.get('pmx_path', 'pmx')
+        self.binary_path = properties.get('binary_path', 'pmx')
 
         # Check the properties
         self.check_properties(properties)
+        self.check_arguments()
 
     @launchlogger
     def launch(self) -> int:
         """Execute the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` pmx.pmxanalyse.Pmxanalyse object."""
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # Check if executable is exists
         if not self.container_path:
-            if not Path(self.pmx_path).is_file():
-                if not shutil.which(self.pmx_path):
+            if not Path(self.binary_path).is_file():
+                if not shutil.which(self.binary_path):
                     raise FileNotFoundError(
-                        'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_path)
-
-
+                        'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.binary_path)
 
         list_a_dir = fu.create_unique_dir()
         list_b_dir = fu.create_unique_dir()
@@ -144,7 +145,7 @@ class Pmxanalyse(BiobbObject):
             string_a = self.container_volume_path + "/" + container_volume.join(list_a)
             string_b = self.container_volume_path + "/" + container_volume.join(list_b)
 
-        self.cmd = [self.pmx_path, 'analyse',
+        self.cmd = [self.binary_path, 'analyse',
                     '-fA', string_a,
                     '-fB', string_b,
                     '-o', self.stage_io_dict["out"]["output_result_path"],
@@ -201,6 +202,7 @@ class Pmxanalyse(BiobbObject):
         self.tmp_files.extend([self.stage_io_dict.get("unique_dir"), list_a_dir, list_b_dir])
         self.remove_tmp_files()
 
+        self.check_arguments(output_files_created=True, raise_exception=False)
         return self.return_code
 
 
@@ -210,7 +212,7 @@ def pmxanalyse(input_a_xvg_zip_path: str, input_b_xvg_zip_path: str,
     """Execute the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` class and
     execute the :meth:`launch() <pmx.pmxanalyse.Pmxanalyse.launch> method."""
 
-    return Pmxanalyse(input_a_xvg_zip_path=input_a_xvg_zip_path, 
+    return Pmxanalyse(input_a_xvg_zip_path=input_a_xvg_zip_path,
                       input_b_xvg_zip_path=input_b_xvg_zip_path,
                       output_result_path=output_result_path,
                       output_work_plot_path=output_work_plot_path,

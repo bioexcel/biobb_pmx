@@ -76,11 +76,11 @@
                 },
                 "gmx_lib": {
                     "type": "string",
-                    "default": "$CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff45/",
+                    "default": "$CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff/",
                     "wf_prop": false,
                     "description": "Path to the GMXLIB folder in your computer."
                 },
-                "pmx_path": {
+                "binary_path": {
                     "type": "string",
                     "default": "pmx",
                     "wf_prop": false,

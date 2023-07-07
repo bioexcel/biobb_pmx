@@ -2,6 +2,7 @@
   "properties": {
     "mutation_list": "2Ala, 3Val",
     "force_field": "amber99sb-star-ildn-mut",
-    "container_path": "docker"
+    "container_path": "docker",
+    "container_image": "quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0"
   }
 }

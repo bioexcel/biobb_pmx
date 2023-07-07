@@ -2,10 +2,11 @@
 
 """Module containing the PMX merge_ff class and the command line interface."""
 import os
+import sys
 from pathlib import Path
 import glob
 import argparse
-# import pmx
+from pmx import ligand_alchemy
 from typing import Mapping
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
@@ -35,7 +36,7 @@ class Pmxmerge_ff(BiobbObject):
     Examples:
         This is a use example of how to use the building block from Python::
 
-            from biobb_pmx.pmx.pmxmerge_ff import pmxmerge_ff
+            from biobb_pmx.pmxbiobb.pmxmerge_ff import pmxmerge_ff
             prop = {
                 'remove_tmp' : True
             }
@@ -59,6 +60,7 @@ class Pmxmerge_ff(BiobbObject):
 
         # Call parent class constructor
         super().__init__(properties)
+        self.locals_var_dict = locals().copy()
 
         # Input/Output files
         self.io_dict = {
@@ -72,14 +74,16 @@ class Pmxmerge_ff(BiobbObject):
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
         if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
+            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
-                Path(os.environ.get('CONDA_PREFIX')).joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
+                Path(os.environ.get('CONDA_PREFIX')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
             if properties.get('container_path'):
-                self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
-        self.pmx_path = properties.get('pmx_path', 'pmx')
+                self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff/"))
+        self.binary_path = properties.get('binary_path', 'pmx')
 
         # Check the properties
         self.check_properties(properties)
+        self.check_arguments()
 
     @launchlogger
     def launch(self) -> int:
@@ -101,10 +105,13 @@ class Pmxmerge_ff(BiobbObject):
             ffsIn_list.append(itp)
 
         self.out_log.info('Running merge_FF_files from pmx package...\n')
-        # pmx.ligand_alchemy._merge_FF_files(self.stage_io_dict["out"]["output_topology_path"], ffsIn=ffsIn_list)
+        ligand_alchemy._merge_FF_files(self.stage_io_dict["out"]["output_topology_path"], ffsIn=ffsIn_list)
         # ffsIn=[self.stage_io_dict["in"]["input_topology1_path"],self.stage_io_dict["in"]["input_topology2_path"]] )
 
         self.out_log.info('Exit code 0\n')
+
+        if self.gmx_lib:
+            self.env_vars_dict['GMXLIB'] = self.gmx_lib
 
         # Run Biobb block
         # self.run_biobb()
@@ -115,6 +122,7 @@ class Pmxmerge_ff(BiobbObject):
         self.tmp_files.append(self.stage_io_dict.get("unique_dir"))
         self.remove_tmp_files()
 
+        self.check_arguments(output_files_created=True, raise_exception=False)
         return self.return_code
 
 

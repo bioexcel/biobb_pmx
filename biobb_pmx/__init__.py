@@ -1,3 +1,3 @@
 name = "biobb_pmx"
-__all__ = ["pmx"]
-__version__ = "3.8.1"
+__all__ = ["pmxbiobb"]
+__version__ = "4.0.0"

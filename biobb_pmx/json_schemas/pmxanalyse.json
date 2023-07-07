@@ -242,7 +242,7 @@
                     "max": 2048,
                     "step": 1
                 },
-                "pmx_path": {
+                "binary_path": {
                     "type": "string",
                     "default": "pmx",
                     "wf_prop": false,

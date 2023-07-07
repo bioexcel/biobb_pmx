@@ -1,12 +1,12 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_pmx.pmx.pmxligand_hybrid import pmxligand_hybrid
+from biobb_pmx.pmxbiobb.pmxligand_hybrid import pmxligand_hybrid
 
 
 class TestPmxligand_hybrid:
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self, 'pmxligand_hybrid')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
 
     def test_pmxligand_hybrid(self):

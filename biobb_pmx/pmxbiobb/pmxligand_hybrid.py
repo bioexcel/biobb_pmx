@@ -1,7 +1,8 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 """Module containing the PMX ligand_hybrid class and the command line interface."""
 import os
+import sys
 from pathlib import Path
 import shutil
 import argparse
@@ -29,7 +30,7 @@ class Pmxligand_hybrid(BiobbObject):
         output_structure2_path (str): Path to the output hybrid structure based on the ligand 2. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb>`_. Accepted formats: pdb (edam:format_1476).
         output_topology_path (str): Path to the output hybrid topology. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ligand_hybrid.itp>`_. Accepted formats: itp (edam:format_3883).
         output_atomtypes_path (str): Path to the atom types for the output hybrid topology. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ligand_hybrid_atomtypes.itp>`_. Accepted formats: itp (edam:format_3883).
- 
+
         properties (dic):
             * **fit** (*bool*) - (False) Fit ligand structure 1 onto ligand structure 2 (Only used if input_pairs_path is provided).
             * **split** (*bool*) - (False) Split the topology into separate transitions.
@@ -50,7 +51,7 @@ class Pmxligand_hybrid(BiobbObject):
     Examples:
         This is a use example of how to use the building block from Python::
 
-            from biobb_pmx.pmx.pmxligand_hybrid import pmxligand_hybrid
+            from biobb_pmx.pmxbiobb.pmxligand_hybrid import pmxligand_hybrid
             prop = {
                 'fit' : True,
                 'distance': 0.05
@@ -79,34 +80,35 @@ class Pmxligand_hybrid(BiobbObject):
     """
 
     def __init__(self, input_structure1_path: str, input_structure2_path: str, input_topology1_path: str, input_topology2_path: str,
-     output_log_path: str, output_structure1_path: str, output_structure2_path: str, output_topology_path: str, output_atomtypes_path: str,
-     input_scaffold1_path: str = None, input_scaffold2_path: str = None, input_pairs_path: str = None,
-     properties: Mapping = None, **kwargs) -> None:
+                 output_log_path: str, output_structure1_path: str, output_structure2_path: str, output_topology_path: str, output_atomtypes_path: str,
+                 input_scaffold1_path: str = None, input_scaffold2_path: str = None, input_pairs_path: str = None,
+                 properties: Mapping = None, **kwargs) -> None:
 
         properties = properties or {}
 
         # Call parent class constructor
         super().__init__(properties)
+        self.locals_var_dict = locals().copy()
 
         # Input/Output files
         self.io_dict = {
             "in": {"input_structure1_path": input_structure1_path, "input_structure2_path": input_structure2_path,
-             "input_topology1_path": input_topology1_path, "input_topology2_path": input_topology2_path,
-             "input_scaffold1_path": input_scaffold1_path, "input_scaffold2_path": input_scaffold2_path,
-             "input_pairs_path": input_pairs_path},
+                   "input_topology1_path": input_topology1_path, "input_topology2_path": input_topology2_path,
+                   "input_scaffold1_path": input_scaffold1_path, "input_scaffold2_path": input_scaffold2_path,
+                   "input_pairs_path": input_pairs_path},
             "out": {"output_structure1_path": output_structure1_path, "output_structure2_path": output_structure2_path,
-             "output_topology_path": output_topology_path, "output_atomtypes_path": output_atomtypes_path,
-             "output_log_path": output_log_path}
+                    "output_topology_path": output_topology_path, "output_atomtypes_path": output_atomtypes_path,
+                    "output_log_path": output_log_path}
         }
 
         # Properties specific for BB
-        #self.fit = properties.get('fit', False)
-        #self.split = properties.get('split', False)
-        #self.scDUMm = properties.get('scDUMm', 1.0)
-        #self.scDUMa = properties.get('scDUMa', 1.0)
-        #self.scDUMd = properties.get('scDUMd', 1.0)
-        #self.deAng = properties.get('deAng', False)
-        #self.distance = properties.get('distance', 0.05)
+        # self.fit = properties.get('fit', False)
+        # self.split = properties.get('split', False)
+        # self.scDUMm = properties.get('scDUMm', 1.0)
+        # self.scDUMa = properties.get('scDUMa', 1.0)
+        # self.scDUMd = properties.get('scDUMd', 1.0)
+        # self.deAng = properties.get('deAng', False)
+        # self.distance = properties.get('distance', 0.05)
 
         self.fit = properties.get('fit')
         self.split = properties.get('split')
@@ -119,31 +121,34 @@ class Pmxligand_hybrid(BiobbObject):
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
         if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
+            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
-                Path(os.environ.get('CONDA_PREFIX')).joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
+                Path(os.environ.get('CONDA_PREFIX')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
             if properties.get('container_path'):
-                self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
-        self.pmx_path = properties.get('pmx_path', 'pmx')
+                self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff/"))
+        self.binary_path = properties.get('binary_path', 'pmx')
 
         # Check the properties
         self.check_properties(properties)
+        self.check_arguments()
 
     @launchlogger
     def launch(self) -> int:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # Check if executable exists
         if not self.container_path:
-            if not Path(self.pmx_path).is_file():
-                if not shutil.which(self.pmx_path):
+            if not Path(self.binary_path).is_file():
+                if not shutil.which(self.binary_path):
                     raise FileNotFoundError(
-                        'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_path)
+                        'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.binary_path)
 
-        self.cmd = [self.pmx_path, 'ligandHybrid',
+        self.cmd = [self.binary_path, 'ligandHybrid',
                     '-i1', self.stage_io_dict["in"]["input_structure1_path"],
                     '-i2', self.stage_io_dict["in"]["input_structure2_path"],
                     '-itp1', self.stage_io_dict["in"]["input_topology1_path"],
@@ -154,16 +159,16 @@ class Pmxligand_hybrid(BiobbObject):
                     '-oitp', self.stage_io_dict["out"]["output_topology_path"],
                     '-offitp', self.stage_io_dict["out"]["output_atomtypes_path"],
                     '-log', self.stage_io_dict["out"]["output_log_path"]
-                    ]                    
+                    ]
 
         if self.stage_io_dict["in"].get("output_scaffold1_path"):
             self.cmd.append('-n1')
             self.cmd.append(self.stage_io_dict["in"]["output_scaffold1_path"])
-  
+
         if self.stage_io_dict["in"].get("output_scaffold2_path"):
             self.cmd.append('-n2')
             self.cmd.append(self.stage_io_dict["in"]["output_scaffold2_path"])
-  
+
         if self.fit:
             self.cmd.append('--fit')
         if self.split:
@@ -183,6 +188,9 @@ class Pmxligand_hybrid(BiobbObject):
             self.cmd.append('--scDUMd')
             self.cmd.append(str(self.scDUMd))
 
+        if self.gmx_lib:
+            self.env_vars_dict['GMXLIB'] = self.gmx_lib
+
         # Run Biobb block
         self.run_biobb()
 
@@ -192,24 +200,25 @@ class Pmxligand_hybrid(BiobbObject):
         self.tmp_files.append(self.stage_io_dict.get("unique_dir"))
         self.remove_tmp_files()
 
+        self.check_arguments(output_files_created=True, raise_exception=False)
         return self.return_code
 
 
 def pmxligand_hybrid(input_structure1_path: str, input_structure2_path: str, input_topology1_path: str, input_topology2_path: str,
-     output_log_path: str, output_structure1_path: str, output_structure2_path: str, output_topology_path: str, output_atomtypes_path: str,
-     input_scaffold1_path: str = None, input_scaffold2_path: str = None, input_pairs_path: str = None,
-     properties: dict = None, **kwargs) -> int:
+                     output_log_path: str, output_structure1_path: str, output_structure2_path: str, output_topology_path: str, output_atomtypes_path: str,
+                     input_scaffold1_path: str = None, input_scaffold2_path: str = None, input_pairs_path: str = None,
+                     properties: dict = None, **kwargs) -> int:
     """Execute the :class:`Pmxligand_hybrid <pmx.pmxmutate.Pmxligand_hybrid>` class and
     execute the :meth:`launch() <pmx.pmxligand_hybrid.Pmxligand_hybrid.launch> method."""
 
     return Pmxligand_hybrid(input_structure1_path=input_structure1_path, input_structure2_path=input_structure2_path,
-                     input_topology1_path=input_topology1_path, input_topology2_path=input_topology2_path,
-                     output_log_path=output_log_path,
-                     output_structure1_path=output_structure1_path, output_structure2_path=output_structure2_path,
-                     output_topology_path=output_topology_path, output_atomtypes_path=output_atomtypes_path,
-                     input_scaffold1_path=input_scaffold1_path, input_scaffold2_path=input_scaffold2_path,
-                     input_pairs_path=input_pairs_path,
-                     properties=properties, **kwargs).launch()
+                            input_topology1_path=input_topology1_path, input_topology2_path=input_topology2_path,
+                            output_log_path=output_log_path,
+                            output_structure1_path=output_structure1_path, output_structure2_path=output_structure2_path,
+                            output_topology_path=output_topology_path, output_atomtypes_path=output_atomtypes_path,
+                            input_scaffold1_path=input_scaffold1_path, input_scaffold2_path=input_scaffold2_path,
+                            input_pairs_path=input_pairs_path,
+                            properties=properties, **kwargs).launch()
 
 
 def main():
@@ -239,12 +248,13 @@ def main():
 
     # Specific call of each building block
     pmxligand_hybrid(input_structure1_path=args.input_structure1_path, input_structure2_path=args.input_structure2_path,
-              input_topology1_path=args.input_topology1_path, input_topology2_path=args.input_topology2_path,
-              input_scaffold1_path=input_scaffold1_path, input_scaffold2_path=input_scaffold2_path,
-              input_pairs_path=input_pairs_path, output_log_path=output_log_path,
-              output_structure1_path=output_structure1_path, output_structure2_path=output_structure2_path,
-              output_topology1_path=output_topology1_path, output_topology2_path=output_topology2_path,
-              properties=properties)
+                     input_topology1_path=args.input_topology1_path, input_topology2_path=args.input_topology2_path,
+                     input_scaffold1_path=args.input_scaffold1_path, input_scaffold2_path=args.input_scaffold2_path,
+                     input_pairs_path=args.input_pairs_path, output_log_path=args.output_log_path,
+                     output_structure1_path=args.output_structure1_path, output_structure2_path=args.output_structure2_path,
+                     output_topology1_path=args.output_topology1_path, output_topology2_path=args.output_topology2_path,
+                     properties=properties)
+
 
 if __name__ == '__main__':
     main()

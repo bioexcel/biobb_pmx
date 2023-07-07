@@ -1,12 +1,12 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_pmx.pmx.pmxmutate import pmxmutate
+from biobb_pmx.pmxbiobb.pmxmutate import pmxmutate
 
 
 class TestPmxmutate:
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self, 'pmxmutate')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
 
     def test_pmxmutate(self):

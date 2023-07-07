@@ -1,7 +1,7 @@
 [![](https://readthedocs.org/projects/biobb-pmx/badge/?version=latest)](https://biobb-pmx.readthedocs.io/en/latest/?badge=latest)
 [![](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](https://anaconda.org/bioconda/biobb_pmx)
 [![](https://img.shields.io/badge/docker-Quay.io-blue)](https://quay.io/repository/biocontainers/biobb_pmx?tab=tags)
-[![](https://img.shields.io/badge/singularity-GalaxyProject-blue)](https://depot.galaxyproject.org/singularity/biobb_pmx:3.8.1--pyhdfd78af_0)
+[![](https://img.shields.io/badge/singularity-GalaxyProject-blue)](https://depot.galaxyproject.org/singularity/biobb_pmx:4.0.0--pyhdfd78af_0)
 [![](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # biobb_pmx
@@ -15,7 +15,7 @@ The latest documentation of this package can be found in our readthedocs site:
 [latest API documentation](http://biobb_pmx.readthedocs.io/en/latest/).
 
 ### Version
-v3.8.1 2022.3
+v4.0.0 2023.2
 
 ### Installation
 Using PIP:
@@ -24,7 +24,7 @@ Using PIP:
 
 * Installation:
 
-        pip install "biobb_pmx>=3.8.1"
+        pip install "biobb_pmx>=4.0.0"
 
 
 * Usage: [Python API documentation](https://biobb-pmx.readthedocs.io/en/latest/modules.html)
@@ -34,7 +34,7 @@ Using ANACONDA:
 * Installation:
 
 
-        conda install -c bioconda "biobb_pmx>=3.8.1"
+        conda install -c bioconda "biobb_pmx>=4.0.0"
 
 
 * Usage: With conda installation BioBBs can be used with the [Python API documentation](https://biobb-pmx.readthedocs.io/en/latest/modules.html) and the [Command Line documentation](https://biobb-pmx.readthedocs.io/en/latest/command_line.html)
@@ -44,13 +44,13 @@ Using DOCKER:
 * Installation:
 
 
-        docker pull quay.io/biocontainers/biobb_pmx:3.8.1--pyhdfd78af_0
+        docker pull quay.io/biocontainers/biobb_pmx:4.0.0--pyhdfd78af_0
 
 
 * Usage:
 
 
-        docker run quay.io/biocontainers/biobb_pmx:3.8.1--pyhdfd78af_0 <command>
+        docker run quay.io/biocontainers/biobb_pmx:4.0.0--pyhdfd78af_0 <command>
 
 
 Using SINGULARITY:
@@ -60,7 +60,7 @@ Using SINGULARITY:
 * Installation:
 
 
-        singularity pull --name biobb_pmx.sif https://depot.galaxyproject.org/singularity/biobb_pmx:3.8.1--pyhdfd78af_0
+        singularity pull --name biobb_pmx.sif https://depot.galaxyproject.org/singularity/biobb_pmx:4.0.0--pyhdfd78af_0
 
 
 * Usage:

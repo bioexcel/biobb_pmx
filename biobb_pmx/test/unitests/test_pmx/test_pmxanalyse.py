@@ -1,15 +1,17 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_pmx.pmx.pmxanalyse import pmxanalyse
+from biobb_pmx.pmxbiobb.pmxanalyse import pmxanalyse
+import pytest
 
 
 class TestPmxanalyse:
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self, 'pmxanalyse')
 
-    def tearDown(self):
-        #pass
+    def teardown_class(self):
+        # pass
         fx.test_teardown(self)
 
+    # @pytest.mark.skip(reason="Should add all the matplotlib functions")
     def test_pmxanalyse(self):
         pmxanalyse(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_result_path'])

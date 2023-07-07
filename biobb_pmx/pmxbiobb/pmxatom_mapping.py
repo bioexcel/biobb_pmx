@@ -2,6 +2,7 @@
 
 """Module containing the PMX atom_mapping class and the command line interface."""
 import os
+import sys
 from pathlib import Path
 import shutil
 import argparse
@@ -54,7 +55,7 @@ class Pmxatom_mapping(BiobbObject):
     Examples:
         This is a use example of how to use the building block from Python::
 
-            from biobb_pmx.pmx.pmxatom_mapping import pmxatom_mapping
+            from biobb_pmx.pmxbiobb.pmxatom_mapping import pmxatom_mapping
             prop = {
                 'no-alignment' : True,
                 'distance': 0.05
@@ -78,23 +79,24 @@ class Pmxatom_mapping(BiobbObject):
     """
 
     def __init__(self, input_structure1_path: str, input_structure2_path: str, output_pairs1_path: str, output_pairs2_path: str,
-     output_log_path: str, output_structure1_path: str = None, output_structure2_path: str = None, output_morph1_path: str = None, 
-     output_morph2_path: str = None, output_scaffold1_path: str = None, output_scaffold2_path: str = None, output_score_path: str = None,
-     properties: Mapping = None, **kwargs) -> None:
+                 output_log_path: str, output_structure1_path: str = None, output_structure2_path: str = None, output_morph1_path: str = None,
+                 output_morph2_path: str = None, output_scaffold1_path: str = None, output_scaffold2_path: str = None, output_score_path: str = None,
+                 properties: Mapping = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
         super().__init__(properties)
+        self.locals_var_dict = locals().copy()
 
         # Input/Output files
         self.io_dict = {
             "in": {"input_structure1_path": input_structure1_path, "input_structure2_path": input_structure2_path},
             "out": {"output_pairs1_path": output_pairs1_path, "output_pairs2_path": output_pairs2_path,
-             "output_log_path": output_log_path, 
-             "output_structure1_path": output_structure1_path, "output_structure2_path": output_structure2_path,
-             "output_morph1_path": output_morph1_path, "output_morph2_path": output_morph2_path,
-             "output_scaffold1_path": output_scaffold1_path, "output_scaffold2_path": output_scaffold2_path,
-             "output_score_path": output_score_path}
+                    "output_log_path": output_log_path,
+                    "output_structure1_path": output_structure1_path, "output_structure2_path": output_structure2_path,
+                    "output_morph1_path": output_morph1_path, "output_morph2_path": output_morph2_path,
+                    "output_scaffold1_path": output_scaffold1_path, "output_scaffold2_path": output_scaffold2_path,
+                    "output_score_path": output_score_path}
         }
 
         # Properties specific for BB
@@ -125,66 +127,69 @@ class Pmxatom_mapping(BiobbObject):
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
         if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
+            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
-                Path(os.environ.get('CONDA_PREFIX')).joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
+                Path(os.environ.get('CONDA_PREFIX')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
             if properties.get('container_path'):
-                self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff45/"))
-        self.pmx_path = properties.get('pmx_path', 'pmx')
+                self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff/"))
+        self.binary_path = properties.get('binary_path', 'pmx')
 
         # Check the properties
         self.check_properties(properties)
+        self.check_arguments()
 
     @launchlogger
     def launch(self) -> int:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
 
         # Setup Biobb
-        if self.check_restart(): return 0
+        if self.check_restart():
+            return 0
         self.stage_files()
 
         # Check if executable exists
         if not self.container_path:
-            if not Path(self.pmx_path).is_file():
-                if not shutil.which(self.pmx_path):
+            if not Path(self.binary_path).is_file():
+                if not shutil.which(self.binary_path):
                     raise FileNotFoundError(
-                        'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.pmx_path)
+                        'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.binary_path)
 
-        self.cmd = [self.pmx_path, 'atomMapping',
+        self.cmd = [self.binary_path, 'atomMapping',
                     '-i1', self.stage_io_dict["in"]["input_structure1_path"],
                     '-i2', self.stage_io_dict["in"]["input_structure2_path"],
                     '-o1', self.stage_io_dict["out"]["output_pairs1_path"],
                     '-o2', self.stage_io_dict["out"]["output_pairs2_path"],
                     '-log', self.stage_io_dict["out"]["output_log_path"]
-                    ]                    
+                    ]
 
         if self.stage_io_dict["out"].get("output_structure1_path"):
             self.cmd.append('-opdb1')
             self.cmd.append(self.stage_io_dict["out"]["output_structure1_path"])
-  
+
         if self.stage_io_dict["out"].get("output_structure2_path"):
             self.cmd.append('-opdb2')
             self.cmd.append(self.stage_io_dict["out"]["output_structure2_path"])
-  
+
         if self.stage_io_dict["out"].get("output_morph1_path"):
             self.cmd.append('-opdbm1')
             self.cmd.append(self.stage_io_dict["out"]["output_morph1_path"])
-  
+
         if self.stage_io_dict["out"].get("output_morph2_path"):
             self.cmd.append('-opdbm2')
             self.cmd.append(self.stage_io_dict["out"]["output_morph2_path"])
- 
+
         if self.stage_io_dict["out"].get("output_scaffold1_path"):
             self.cmd.append('-n1')
             self.cmd.append(self.stage_io_dict["out"]["output_scaffold1_path"])
-  
+
         if self.stage_io_dict["out"].get("output_scaffold2_path"):
             self.cmd.append('-n2')
             self.cmd.append(self.stage_io_dict["out"]["output_scaffold2_path"])
- 
+
         if self.stage_io_dict["out"].get("output_score_path"):
             self.cmd.append('-score')
             self.cmd.append(self.stage_io_dict["out"]["output_score_path"])
- 
+
         if self.noalignment:
             self.cmd.append('--no-alignment')
         if self.nomcs:
@@ -210,6 +215,9 @@ class Pmxatom_mapping(BiobbObject):
             self.cmd.append('--timeout')
             self.cmd.append(str(self.timeout))
 
+        if self.gmx_lib:
+            self.env_vars_dict['GMXLIB'] = self.gmx_lib
+
         # Run Biobb block
         self.run_biobb()
 
@@ -219,24 +227,25 @@ class Pmxatom_mapping(BiobbObject):
         self.tmp_files.append(self.stage_io_dict.get("unique_dir"))
         self.remove_tmp_files()
 
+        self.check_arguments(output_files_created=True, raise_exception=False)
         return self.return_code
 
 
 def pmxatom_mapping(input_structure1_path: str, input_structure2_path: str, output_pairs1_path: str, output_pairs2_path: str,
-     output_log_path: str, output_structure1_path: str = None, output_structure2_path: str = None, output_morph1_path: str = None, 
-     output_morph2_path: str = None, output_scaffold1_path: str = None, output_scaffold2_path: str = None, output_score_path: str = None,
-     properties: dict = None, **kwargs) -> int:
+                    output_log_path: str, output_structure1_path: str = None, output_structure2_path: str = None, output_morph1_path: str = None,
+                    output_morph2_path: str = None, output_scaffold1_path: str = None, output_scaffold2_path: str = None, output_score_path: str = None,
+                    properties: dict = None, **kwargs) -> int:
     """Execute the :class:`Pmxatom_mapping <pmx.pmxmutate.Pmxatom_mapping>` class and
     execute the :meth:`launch() <pmx.pmxatom_mapping.Pmxatom_mapping.launch> method."""
 
     return Pmxatom_mapping(input_structure1_path=input_structure1_path, input_structure2_path=input_structure2_path,
-                     output_pairs1_path=output_pairs1_path, output_pairs2_path=output_pairs2_path,
-                     output_log_path=output_log_path,
-                     output_structure1_path=output_structure1_path, output_structure2_path=output_structure2_path,
-                     output_morph1_path=output_morph1_path, output_morph2_path=output_morph2_path,
-                     output_scaffold1_path=output_scaffold1_path, output_scaffold2_path=output_scaffold2_path,
-                     output_score_path=output_score_path,
-                     properties=properties, **kwargs).launch()
+                           output_pairs1_path=output_pairs1_path, output_pairs2_path=output_pairs2_path,
+                           output_log_path=output_log_path,
+                           output_structure1_path=output_structure1_path, output_structure2_path=output_structure2_path,
+                           output_morph1_path=output_morph1_path, output_morph2_path=output_morph2_path,
+                           output_scaffold1_path=output_scaffold1_path, output_scaffold2_path=output_scaffold2_path,
+                           output_score_path=output_score_path,
+                           properties=properties, **kwargs).launch()
 
 
 def main():
@@ -266,13 +275,14 @@ def main():
 
     # Specific call of each building block
     pmxatom_mapping(input_structure1_path=args.input_structure1_path, input_structure2_path=args.input_structure2_path,
-              output_pairs1_path=args.output_pairs1_path, output_pairs2_path=args.output_pairs2_path,
-              output_log_path=output_log_path,
-              output_structure1_path=output_structure1_path, output_structure2_path=output_structure2_path,
-              output_morph1_path=output_morph1_path, output_morph2_path=output_morph2_path,
-              output_scaffold1_path=output_scaffold1_path, output_scaffold2_path=output_scaffold2_path,
-              output_score_path=output_score_path,
-              properties=properties)
+                    output_pairs1_path=args.output_pairs1_path, output_pairs2_path=args.output_pairs2_path,
+                    output_log_path=args.output_log_path,
+                    output_structure1_path=args.output_structure1_path, output_structure2_path=args.output_structure2_path,
+                    output_morph1_path=args.output_morph1_path, output_morph2_path=args.output_morph2_path,
+                    output_scaffold1_path=args.output_scaffold1_path, output_scaffold2_path=args.output_scaffold2_path,
+                    output_score_path=args.output_score_path,
+                    properties=properties)
+
 
 if __name__ == '__main__':
     main()

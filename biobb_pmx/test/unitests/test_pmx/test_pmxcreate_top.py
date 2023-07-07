@@ -1,12 +1,12 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_pmx.pmx.pmxcreate_top import pmxcreate_top
+from biobb_pmx.pmxbiobb.pmxcreate_top import pmxcreate_top
 
 
 class TestPmxcreate_top:
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self, 'pmxcreate_top')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
 
     def test_pmxcreate_top(self):

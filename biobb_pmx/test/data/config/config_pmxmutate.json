@@ -1,6 +1,6 @@
 {
   "properties": {
-    "mutation_list": "2Ala, 3Val",
+    "mutation_list": "10Ala",
     "force_field": "amber99sb-star-ildn-mut"
   }
 }

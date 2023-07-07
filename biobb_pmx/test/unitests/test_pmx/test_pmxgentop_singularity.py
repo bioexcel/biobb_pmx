@@ -1,14 +1,16 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_pmx.pmx.pmxgentop import pmxgentop
+from biobb_pmx.pmxbiobb.pmxgentop import pmxgentop
+import pytest
 
 
 class TestPmxgentopSingularity:
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self, 'pmxgentop_singularity')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
 
+    @pytest.mark.skip(reason="singularity currently not available")
     def test_pmxgentop_singularity(self):
         pmxgentop(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_top_zip_path'])

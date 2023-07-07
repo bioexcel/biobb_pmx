@@ -1,12 +1,12 @@
 from biobb_common.tools import test_fixtures as fx
-from biobb_pmx.pmx.pmxatom_mapping import pmxatom_mapping
+from biobb_pmx.pmxbiobb.pmxatom_mapping import pmxatom_mapping
 
 
 class TestPmxatom_mapping:
-    def setUp(self):
+    def setup_class(self):
         fx.test_setup(self, 'pmxatom_mapping')
 
-    def tearDown(self):
+    def teardown_class(self):
         fx.test_teardown(self)
 
     def test_pmxatom_mapping(self):
