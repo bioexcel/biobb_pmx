@@ -1,5 +1,9 @@
 # Biobb PMX changelog
 
+## What's new in version [4.1.0](https://github.com/bioexcel/biobb_pmx/releases/tag/v4.1.0)?
+In version 4.1.0 the dependency biobb_common has been updated to 4.1.0 version.
+New Python minimum version is 3.8.0.
+
 ## What's new in version [4.0.0](https://github.com/bioexcel/biobb_pmx/releases/tag/v4.0.0)?
 In version 4.0.0 the dependency biobb_common has been updated to 4.0.0 version.
 Three new modules have been added
