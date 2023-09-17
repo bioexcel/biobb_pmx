@@ -15,4 +15,3 @@ class TestPmxatom_mapping:
         assert fx.not_empty(self.paths['output_pairs2_path'])
         assert fx.equal(self.paths['output_pairs1_path'], self.paths['ref_output_pairs1_path'])
         assert fx.equal(self.paths['output_pairs2_path'], self.paths['ref_output_pairs2_path'])
-
