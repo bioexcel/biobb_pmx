@@ -1,6 +1,5 @@
 from biobb_common.tools import test_fixtures as fx
 from biobb_pmx.pmxbiobb.pmxanalyse import pmxanalyse
-import pytest
 
 
 class TestPmxanalyse:
