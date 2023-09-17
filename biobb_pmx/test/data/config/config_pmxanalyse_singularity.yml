@@ -1,6 +1,0 @@
-properties:
-  container_image: shub://bioexcel/pmx_docker
-  container_path: docker
-  dpi: 600
-  method: CGI BAR JARZ
-  temperature: 298.15
