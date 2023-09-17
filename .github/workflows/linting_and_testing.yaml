@@ -99,7 +99,7 @@ jobs:
           mkdir -p ./reports/junit
 
           # Producction one
-          pytest biobb_gromacs/test/unitests/ --cov=biobb_gromacs/ --cov-report=xml --ignore-glob=*container.py --ignore-glob=*docker.py --ignore-glob=*singularity.py --junit-xml=./reports/junit/junit.xml --html=./reports/junit/report.html
+          pytest biobb_pmx/test/unitests/ --cov=biobb_pmx/ --cov-report=xml --ignore-glob=*container.py --ignore-glob=*docker.py --ignore-glob=*singularity.py --junit-xml=./reports/junit/junit.xml --html=./reports/junit/report.html
 
       - name: Generate Tests badge
         shell: micromamba-shell {0}  # necessary for conda env to be active
