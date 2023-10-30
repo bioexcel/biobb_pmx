@@ -5,25 +5,57 @@ Submodules
 ----------
 
 
-pmx.analyse module
+pmxbiobb.pmxanalyse module
 ---------------------------
 
-.. automodule:: pmx.pmxanalyse
+.. automodule:: pmxbiobb.pmxanalyse
     :members:
     :undoc-members:
     :show-inheritance:
 
-pmx.gentop module
--------------------
-.. automodule:: pmx.pmxgentop
+pmxbiobb.pmxgentop module
+--------------------------
+.. automodule:: pmxbiobb.pmxgentop
     :members:
     :undoc-members:
     :show-inheritance:
 
-pmx.mutate module
-------------------
+pmxbiobb.pmxmutate module
+-------------------------
 
-.. automodule:: pmx.pmxmutate
+.. automodule:: pmxbiobb.pmxmutate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pmxbiobb.pmxatom_mapping module
+--------------------------------
+
+.. automodule:: pmxbiobb.pmxatom_mapping
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pmxbiobb.pmxcreate_top module
+------------------------------
+
+.. automodule:: pmxbiobb.pmxcreate_top
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pmxbiobb.pmxligand_hybrid module
+---------------------------------
+
+.. automodule:: pmxbiobb.pmxligand_hybrid
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pmxbiobb.pmxmerge_ff module
+----------------------------
+
+.. automodule:: pmxbiobb.pmxmerge_ff
     :members:
     :undoc-members:
     :show-inheritance:
