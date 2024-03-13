@@ -1,0 +1,18 @@
+{
+  "@context": "http://schema.org",
+  "@id": "https://github.com/bioexcel/biobb_pmx",
+  "@type": "ItemList",
+  "name": "biobb_pmx",
+  "itemListElement":[  
+    {
+      "@type": "SoftwareApplication",
+      "description": "pmx is a python library that allows users to setup and analyse molecular dynamics simulations with the Gromacs package.",
+      "name": "pmx",
+      "url": "https://github.com/deGrootLab/pmx",
+      "applicationCategory": "Computational Biology tool",
+      "citation": "https://doi.org/10.1002/jcc.23804",
+      "license": "https://www.gnu.org/licenses/lgpl-3.0.en.html",
+      "softwareVersion": "4.1.3"
+    }
+  ]
+}
