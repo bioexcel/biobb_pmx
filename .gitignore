@@ -112,3 +112,11 @@ traj_comp.xtc
 
 # pycharm
 .idea
+
+# vscode
+.vscode
+
+# Pytest cache
+__pycache__/
+.pytest_cache/
+
