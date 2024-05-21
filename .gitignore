@@ -116,7 +116,10 @@ traj_comp.xtc
 # vscode
 .vscode
 
-# Pytest cache
+# Pytest
 __pycache__/
 .pytest_cache/
+
+# MyPy
+.mypy_cache/
 
