@@ -3,7 +3,7 @@
     "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/pmxligand_hybrid",
     "name": "biobb_pmx Pmxligand_hybrid",
     "title": "Wrapper class for the PMX ligand_hybrid module.",
-    "description": null,
+    "description": "Create a hybrid topology and structure based on two ligand structures.",
     "type": "object",
     "info": {
         "wrapped_software": {

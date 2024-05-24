@@ -3,7 +3,7 @@
     "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/pmxcreate_top",
     "name": "biobb_pmx Pmxcreate_top",
     "title": "Wrapper class for the PMX create_top module.",
-    "description": null,
+    "description": "Create a complete ligand topology file from two input topology files.",
     "type": "object",
     "info": {
         "wrapped_software": {

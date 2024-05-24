@@ -3,7 +3,7 @@
     "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/pmxmutate",
     "name": "biobb_pmx Pmxmutate",
     "title": "Wrapper class for the PMX mutate module.",
-    "description": null,
+    "description": "Mutate residues in a protein structure.",
     "type": "object",
     "info": {
         "wrapped_software": {

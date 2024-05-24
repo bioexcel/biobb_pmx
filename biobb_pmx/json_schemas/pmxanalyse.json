@@ -3,7 +3,7 @@
     "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/pmxanalyse",
     "name": "biobb_pmx Pmxanalyse",
     "title": "Wrapper class for the PMX analyse module.",
-    "description": null,
+    "description": "Analyze the work values from the dgdl.xvg files of the A and B states to calculate the free energy difference between two states.",
     "type": "object",
     "info": {
         "wrapped_software": {

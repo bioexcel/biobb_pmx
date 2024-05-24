@@ -3,7 +3,7 @@
     "$id": "http://bioexcel.eu/biobb_pmx/json_schemas/1.0/pmxatom_mapping",
     "name": "biobb_pmx Pmxatom_mapping",
     "title": "Wrapper class for the PMX atom_mapping module.",
-    "description": null,
+    "description": "Perform atom mapping between two ligand structures.",
     "type": "object",
     "info": {
         "wrapped_software": {
