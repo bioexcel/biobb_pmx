@@ -18,6 +18,7 @@ class Pmxmutate(BiobbObject):
     """
     | biobb_pmx Pmxmutate
     | Wrapper class for the `PMX mutate <https://github.com/deGrootLab/pmx>`_ module.
+    | Mutate residues in a protein structure.
 
     Args:
         input_structure_path (str): Path to the input structure file. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/frame99.pdb>`_. Accepted formats: pdb (edam:format_1476), gro (edam:format_2033).

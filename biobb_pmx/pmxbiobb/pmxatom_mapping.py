@@ -16,6 +16,7 @@ class Pmxatom_mapping(BiobbObject):
     """
     | biobb_pmx Pmxatom_mapping
     | Wrapper class for the `PMX atom_mapping <https://github.com/deGrootLab/pmx>`_ module.
+    | Perform atom mapping between two ligand structures.
 
     Args:
         input_structure1_path (str): Path to the input ligand structure file 1. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb>`_. Accepted formats: pdb (edam:format_1476).

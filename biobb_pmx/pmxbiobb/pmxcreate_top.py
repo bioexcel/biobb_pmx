@@ -17,6 +17,7 @@ class Pmxcreate_top(BiobbObject):
     """
     | biobb_pmx Pmxcreate_top
     | Wrapper class for the `PMX create_top <https://github.com/deGrootLab/pmx>`_ module.
+    | Create a complete ligand topology file from two input topology files.
 
     Args:
         input_topology1_path (str): Path to the input topology file 1. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp>`_. Accepted formats: itp (edam:format_3883).

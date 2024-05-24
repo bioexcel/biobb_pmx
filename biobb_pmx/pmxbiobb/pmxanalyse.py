@@ -15,6 +15,7 @@ class Pmxanalyse(BiobbObject):
     """
     | biobb_pmx Pmxanalyse
     | Wrapper class for the `PMX analyse <https://github.com/deGrootLab/pmx>`_ module.
+    | Analyze the work values from the dgdl.xvg files of the A and B states to calculate the free energy difference between two states.
 
     Args:
         input_a_xvg_zip_path (str): Path the zip file containing the dgdl.xvg files of the A state. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/xvg_A.zip>`_. Accepted formats: zip (edam:format_3987).

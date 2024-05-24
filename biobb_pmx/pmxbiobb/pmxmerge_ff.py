@@ -18,6 +18,7 @@ class Pmxmerge_ff(BiobbObject):
     """
     | biobb_pmx Pmxmerge_ff
     | Wrapper class for the `PMX merge_ff <https://github.com/deGrootLab/pmx>`_ module.
+    | Merge ligand topology files.
 
     Args:
         input_topology_path (str): Path to the input ligand topologies as a zip file containing a list of itp files. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand_itps.zip>`_. Accepted formats: zip (edam:format_3987).

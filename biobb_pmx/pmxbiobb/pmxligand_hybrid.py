@@ -16,6 +16,7 @@ class Pmxligand_hybrid(BiobbObject):
     """
     | biobb_pmx Pmxligand_hybrid
     | Wrapper class for the `PMX ligand_hybrid <https://github.com/deGrootLab/pmx>`_ module.
+    | Create a hybrid topology and structure based on two ligand structures.
 
     Args:
         input_structure1_path (str): Path to the input ligand structure file 1. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb>`_. Accepted formats: pdb (edam:format_1476).

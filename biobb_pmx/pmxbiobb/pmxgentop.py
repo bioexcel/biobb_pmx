@@ -17,6 +17,7 @@ class Pmxgentop(BiobbObject):
     """
     | biobb_pmx Pmxgentop
     | Wrapper class for the `PMX gentop <https://github.com/deGrootLab/pmx>`_ module.
+    | Generate a topology file for a morphing simulation.
 
     Args:
         input_top_zip_path (str): Path the input GROMACS topology TOP and ITP files in zip format. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topology.zip>`_. Accepted formats: zip (edam:format_3987).
