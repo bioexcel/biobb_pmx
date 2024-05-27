@@ -1,5 +1,19 @@
 # Biobb PMX changelog
 
+## What's new in version [4.2.0](https://github.com/bioexcel/biobb_pmx/releases/tag/v4.2.0)?
+
+### Changes
+
+* [UPDATE] Updating json schemas
+* [DOCS] Adding description to all modules
+* [FIX] Adding additional paths
+* [DOCS] Adding fair software badge and GA
+* [DOCS] Added references file
+* [CI/CD] Adding Castiel Gitlab push sync github Action
+* [DOCS] Fixing Read the Docs
+* [DOCS] Updating README
+* [DOCS] Change json file
+
 ## What's new in version [4.1.0](https://github.com/bioexcel/biobb_pmx/releases/tag/v4.1.0)?
 In version 4.1.0 the dependency biobb_common has been updated to 4.1.0 version.
 New Python minimum version is 3.8.0.
