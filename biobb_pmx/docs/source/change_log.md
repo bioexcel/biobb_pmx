@@ -1,5 +1,14 @@
 # Biobb PMX changelog
 
+## What's new in version [4.2.1](https://github.com/bioexcel/biobb_pmx/releases/tag/v4.2.1)?
+
+### Changes
+
+* [DOCS] Update JSON
+* [TEST] Updating GMXLIB of docker test
+* [CI/CD] Update actions/checkout to v4
+* [FIX] Fix type hints
+
 ## What's new in version [4.2.0](https://github.com/bioexcel/biobb_pmx/releases/tag/v4.2.0)?
 
 ### Changes
