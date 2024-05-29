@@ -6,7 +6,7 @@ import sys
 import argparse
 import shutil
 from pathlib import Path
-from typing import Mapping
+from typing import Dict, Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
@@ -61,7 +61,7 @@ class Pmxgentop(BiobbObject):
     """
 
     def __init__(self, input_top_zip_path: str, output_top_zip_path: str,
-                 properties: Mapping = None, **kwargs) -> None:
+                 properties: Optional[Dict] = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -83,10 +83,10 @@ class Pmxgentop(BiobbObject):
 
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
-        if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
+        if not self.gmx_lib and os.environ.get('CONDA_PREFIX', ''):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
-                Path(os.environ.get('CONDA_PREFIX')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
+                Path(os.environ.get('CONDA_PREFIX', '')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
             if properties.get('container_path'):
                 self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.8/site-packages/pmx/data/mutff/"))
         self.binary_path = properties.get('binary_path', 'pmx')
@@ -120,7 +120,7 @@ class Pmxgentop(BiobbObject):
             fu.log(f"Unique dir: {self.stage_io_dict['unique_dir']}", self.out_log)
             fu.log(f"{self.stage_io_dict['unique_dir']} files: {os.listdir(self.stage_io_dict['unique_dir'])}", self.out_log)
             fu.log(f"Copy all files of the unzipped original topology to unique dir: {self.out_log}")
-            shutil.copytree(top_dir, str(Path(self.stage_io_dict.get("unique_dir")).joinpath(Path(top_dir).name)))
+            shutil.copytree(top_dir, str(Path(self.stage_io_dict.get("unique_dir", "")).joinpath(Path(top_dir).name)))
             top_file = str(Path(self.container_volume_path).joinpath(Path(top_dir).name, Path(top_file).name))
 
         output_file_name = fu.create_name(prefix=self.prefix, step=self.step, name=str(Path(top_file).name))
@@ -152,7 +152,7 @@ class Pmxgentop(BiobbObject):
         self.copy_to_host()
 
         if self.container_path:
-            unique_dir_output_file = str(Path(self.stage_io_dict.get("unique_dir")).joinpath(Path(unique_dir_output_file).name))
+            unique_dir_output_file = str(Path(self.stage_io_dict.get("unique_dir", "")).joinpath(Path(unique_dir_output_file).name))
 
         # Remove paths from top file
         with open(Path(unique_dir_output_file)) as top_fh:
@@ -171,14 +171,14 @@ class Pmxgentop(BiobbObject):
         fu.log('Compressing topology to: %s' % self.io_dict["out"]["output_top_zip_path"], self.out_log, self.global_log)
         fu.zip_top(zip_file=self.io_dict["out"]["output_top_zip_path"], top_file=str(Path(unique_dir_output_file)), out_log=self.out_log)
 
-        self.tmp_files.extend([self.stage_io_dict.get("unique_dir"), top_dir])
+        self.tmp_files.extend([self.stage_io_dict.get("unique_dir", ""), top_dir])
         # self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)
         return self.return_code
 
 
-def pmxgentop(input_top_zip_path: str, output_top_zip_path: str, properties: dict = None, **kwargs) -> int:
+def pmxgentop(input_top_zip_path: str, output_top_zip_path: str, properties: Optional[Dict] = None, **kwargs) -> int:
     """Execute the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` class and
     execute the :meth:`launch() <pmx.pmxgentop.Pmxgentop.launch> method."""
 

@@ -1,3 +1,4 @@
+# type: ignore
 from biobb_common.tools import test_fixtures as fx
 from biobb_pmx.pmxbiobb.pmxligand_hybrid import pmxligand_hybrid
 

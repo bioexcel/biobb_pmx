@@ -1,4 +1,4 @@
-import pytest
+# type: ignore
 from biobb_common.tools import test_fixtures as fx
 from biobb_pmx.pmxbiobb.pmxmutate import pmxmutate
 
@@ -11,7 +11,6 @@ class TestPmxmutateDocker:
         # pass
         fx.test_teardown(self)
 
-    @pytest.mark.skip(reason="singularity currently not available")
     def test_pmxmutate_docker(self):
         pmxmutate(properties=self.properties, **self.paths)
         assert fx.not_empty(self.paths['output_structure_path'])

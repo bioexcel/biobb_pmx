@@ -4,7 +4,7 @@
 import argparse
 from pathlib import Path
 import shutil
-from typing import Mapping
+from typing import Dict, Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
@@ -75,7 +75,7 @@ class Pmxanalyse(BiobbObject):
     """
 
     def __init__(self, input_a_xvg_zip_path: str, input_b_xvg_zip_path: str, output_result_path: str, output_work_plot_path: str,
-                 properties: Mapping = None, **kwargs) -> None:
+                 properties: Optional[Dict] = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -140,8 +140,8 @@ class Pmxanalyse(BiobbObject):
 
         # Copy extra files to container: two directories containing the xvg files
         if self.container_path:
-            shutil.copytree(list_a_dir, Path(self.stage_io_dict.get("unique_dir")).joinpath(Path(list_a_dir).name))
-            shutil.copytree(list_b_dir, Path(self.stage_io_dict.get("unique_dir")).joinpath(Path(list_b_dir).name))
+            shutil.copytree(list_a_dir, Path(self.stage_io_dict.get("unique_dir", "")).joinpath(Path(list_a_dir).name))
+            shutil.copytree(list_b_dir, Path(self.stage_io_dict.get("unique_dir", "")).joinpath(Path(list_b_dir).name))
             container_volume = " " + self.container_volume_path + "/"
             string_a = self.container_volume_path + "/" + container_volume.join(list_a)
             string_b = self.container_volume_path + "/" + container_volume.join(list_b)
@@ -200,7 +200,7 @@ class Pmxanalyse(BiobbObject):
         # Copy files to host
         self.copy_to_host()
 
-        self.tmp_files.extend([self.stage_io_dict.get("unique_dir"), list_a_dir, list_b_dir])
+        self.tmp_files.extend([self.stage_io_dict.get("unique_dir", ""), list_a_dir, list_b_dir])
         self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)
@@ -209,7 +209,7 @@ class Pmxanalyse(BiobbObject):
 
 def pmxanalyse(input_a_xvg_zip_path: str, input_b_xvg_zip_path: str,
                output_result_path: str, output_work_plot_path: str,
-               properties: dict = None, **kwargs) -> int:
+               properties: Optional[Dict] = None, **kwargs) -> int:
     """Execute the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` class and
     execute the :meth:`launch() <pmx.pmxanalyse.Pmxanalyse.launch> method."""
 

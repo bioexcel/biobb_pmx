@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 import shutil
 import argparse
-from typing import Mapping
+from typing import Dict, Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools.file_utils import launchlogger
@@ -82,8 +82,8 @@ class Pmxligand_hybrid(BiobbObject):
 
     def __init__(self, input_structure1_path: str, input_structure2_path: str, input_topology1_path: str, input_topology2_path: str,
                  output_log_path: str, output_structure1_path: str, output_structure2_path: str, output_topology_path: str, output_atomtypes_path: str,
-                 input_scaffold1_path: str = None, input_scaffold2_path: str = None, input_pairs_path: str = None,
-                 properties: Mapping = None, **kwargs) -> None:
+                 input_scaffold1_path: Optional[str] = None, input_scaffold2_path: Optional[str] = None, input_pairs_path: Optional[str] = None,
+                 properties: Optional[Dict] = None, **kwargs) -> None:
 
         properties = properties or {}
 
@@ -121,10 +121,10 @@ class Pmxligand_hybrid(BiobbObject):
 
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
-        if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
+        if not self.gmx_lib and os.environ.get('CONDA_PREFIX', ''):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
-                Path(os.environ.get('CONDA_PREFIX')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
+                Path(os.environ.get('CONDA_PREFIX', '')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
             if properties.get('container_path'):
                 self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff/"))
         self.binary_path = properties.get('binary_path', 'pmx')
@@ -198,7 +198,7 @@ class Pmxligand_hybrid(BiobbObject):
         # Copy files to host
         self.copy_to_host()
 
-        self.tmp_files.append(self.stage_io_dict.get("unique_dir"))
+        self.tmp_files.append(self.stage_io_dict.get("unique_dir", ""))
         self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)
@@ -207,8 +207,8 @@ class Pmxligand_hybrid(BiobbObject):
 
 def pmxligand_hybrid(input_structure1_path: str, input_structure2_path: str, input_topology1_path: str, input_topology2_path: str,
                      output_log_path: str, output_structure1_path: str, output_structure2_path: str, output_topology_path: str, output_atomtypes_path: str,
-                     input_scaffold1_path: str = None, input_scaffold2_path: str = None, input_pairs_path: str = None,
-                     properties: dict = None, **kwargs) -> int:
+                     input_scaffold1_path: Optional[str] = None, input_scaffold2_path: Optional[str] = None, input_pairs_path: Optional[str] = None,
+                     properties: Optional[Dict] = None, **kwargs) -> int:
     """Execute the :class:`Pmxligand_hybrid <pmx.pmxmutate.Pmxligand_hybrid>` class and
     execute the :meth:`launch() <pmx.pmxligand_hybrid.Pmxligand_hybrid.launch> method."""
 
@@ -250,10 +250,10 @@ def main():
     # Specific call of each building block
     pmxligand_hybrid(input_structure1_path=args.input_structure1_path, input_structure2_path=args.input_structure2_path,
                      input_topology1_path=args.input_topology1_path, input_topology2_path=args.input_topology2_path,
-                     input_scaffold1_path=args.input_scaffold1_path, input_scaffold2_path=args.input_scaffold2_path,
-                     input_pairs_path=args.input_pairs_path, output_log_path=args.output_log_path,
-                     output_structure1_path=args.output_structure1_path, output_structure2_path=args.output_structure2_path,
-                     output_topology1_path=args.output_topology1_path, output_topology2_path=args.output_topology2_path,
+                     output_log_path=args.output_log_path, output_structure1_path=args.output_structure1_path,
+                     output_structure2_path=args.output_structure2_path, output_topology_path=args.output_topology_path,
+                     output_atomtypes_path=args.output_atomtypes_path, input_scaffold1_path=args.input_scaffold1_path,
+                     input_scaffold2_path=args.input_scaffold2_path, input_pairs_path=args.input_pairs_path,
                      properties=properties)
 
 

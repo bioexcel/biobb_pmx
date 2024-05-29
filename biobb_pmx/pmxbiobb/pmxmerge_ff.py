@@ -6,8 +6,8 @@ import sys
 from pathlib import Path
 import glob
 import argparse
-from pmx import ligand_alchemy
-from typing import Mapping
+from pmx import ligand_alchemy  # type: ignore
+from typing import Dict, Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
@@ -56,7 +56,7 @@ class Pmxmerge_ff(BiobbObject):
 
     """
 
-    def __init__(self, input_topology_path: str, output_topology_path: str, properties: Mapping = None, **kwargs) -> None:
+    def __init__(self, input_topology_path: str, output_topology_path: str, properties: Optional[Dict] = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -74,10 +74,10 @@ class Pmxmerge_ff(BiobbObject):
 
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
-        if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
+        if not self.gmx_lib and os.environ.get('CONDA_PREFIX', ''):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
-                Path(os.environ.get('CONDA_PREFIX')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
+                Path(os.environ.get('CONDA_PREFIX', '')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
             if properties.get('container_path'):
                 self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff/"))
         self.binary_path = properties.get('binary_path', 'pmx')
@@ -97,7 +97,7 @@ class Pmxmerge_ff(BiobbObject):
 
         # Creating temporary folder
         self.tmp_folder = fu.create_unique_dir()
-        self.out_log.info('Creating %s temporary folder' % self.tmp_folder)
+        fu.log('Creating %s temporary folder' % self.tmp_folder, self.out_log)
 
         fu.unzip_list(self.stage_io_dict["in"]["input_topology_path"], self.tmp_folder, out_log=self.out_log)
         files = glob.glob(self.tmp_folder+"/*.itp")
@@ -105,11 +105,11 @@ class Pmxmerge_ff(BiobbObject):
         for itp in files:
             ffsIn_list.append(itp)
 
-        self.out_log.info('Running merge_FF_files from pmx package...\n')
+        fu.log('Running merge_FF_files from pmx package...\n', self.out_log)
         ligand_alchemy._merge_FF_files(self.stage_io_dict["out"]["output_topology_path"], ffsIn=ffsIn_list)
         # ffsIn=[self.stage_io_dict["in"]["input_topology1_path"],self.stage_io_dict["in"]["input_topology2_path"]] )
 
-        self.out_log.info('Exit code 0\n')
+        fu.log('Exit code 0\n', self.out_log)
 
         if self.gmx_lib:
             self.env_vars_dict['GMXLIB'] = self.gmx_lib
@@ -120,14 +120,14 @@ class Pmxmerge_ff(BiobbObject):
         # Copy files to host
         self.copy_to_host()
 
-        self.tmp_files.append(self.stage_io_dict.get("unique_dir"))
+        self.tmp_files.append(self.stage_io_dict.get("unique_dir", ""))
         self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)
         return self.return_code
 
 
-def pmxmerge_ff(input_topology_path: str, output_topology_path: str, properties: dict = None, **kwargs) -> int:
+def pmxmerge_ff(input_topology_path: str, output_topology_path: str, properties: Optional[Dict] = None, **kwargs) -> int:
     """Execute the :class:`Pmxmerge_ff <pmx.pmxmerge_ff.Pmxmerge_ff>` class and
     execute the :meth:`launch() <pmx.pmxmerge_ff.Pmxmerge_ff.launch> method."""
 

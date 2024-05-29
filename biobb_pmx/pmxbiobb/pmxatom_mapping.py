@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 import shutil
 import argparse
-from typing import Mapping
+from typing import Dict, Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools.file_utils import launchlogger
@@ -80,9 +80,9 @@ class Pmxatom_mapping(BiobbObject):
     """
 
     def __init__(self, input_structure1_path: str, input_structure2_path: str, output_pairs1_path: str, output_pairs2_path: str,
-                 output_log_path: str, output_structure1_path: str = None, output_structure2_path: str = None, output_morph1_path: str = None,
-                 output_morph2_path: str = None, output_scaffold1_path: str = None, output_scaffold2_path: str = None, output_score_path: str = None,
-                 properties: Mapping = None, **kwargs) -> None:
+                 output_log_path: str, output_structure1_path: Optional[str] = None, output_structure2_path: Optional[str] = None, output_morph1_path: Optional[str] = None,
+                 output_morph2_path: Optional[str] = None, output_scaffold1_path: Optional[str] = None, output_scaffold2_path: Optional[str] = None, output_score_path: Optional[str] = None,
+                 properties: Optional[Dict] = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -127,10 +127,10 @@ class Pmxatom_mapping(BiobbObject):
 
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
-        if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
+        if not self.gmx_lib and os.environ.get('CONDA_PREFIX', ''):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
-                Path(os.environ.get('CONDA_PREFIX')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
+                Path(os.environ.get('CONDA_PREFIX', '')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
             if properties.get('container_path'):
                 self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff/"))
         self.binary_path = properties.get('binary_path', 'pmx')
@@ -225,7 +225,7 @@ class Pmxatom_mapping(BiobbObject):
         # Copy files to host
         self.copy_to_host()
 
-        self.tmp_files.append(self.stage_io_dict.get("unique_dir"))
+        self.tmp_files.append(self.stage_io_dict.get("unique_dir", ""))
         self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)
@@ -233,9 +233,9 @@ class Pmxatom_mapping(BiobbObject):
 
 
 def pmxatom_mapping(input_structure1_path: str, input_structure2_path: str, output_pairs1_path: str, output_pairs2_path: str,
-                    output_log_path: str, output_structure1_path: str = None, output_structure2_path: str = None, output_morph1_path: str = None,
-                    output_morph2_path: str = None, output_scaffold1_path: str = None, output_scaffold2_path: str = None, output_score_path: str = None,
-                    properties: dict = None, **kwargs) -> int:
+                    output_log_path: str, output_structure1_path: Optional[str] = None, output_structure2_path: Optional[str] = None, output_morph1_path: Optional[str] = None,
+                    output_morph2_path: Optional[str] = None, output_scaffold1_path: Optional[str] = None, output_scaffold2_path: Optional[str] = None, output_score_path: Optional[str] = None,
+                    properties: Optional[Dict] = None, **kwargs) -> int:
     """Execute the :class:`Pmxatom_mapping <pmx.pmxmutate.Pmxatom_mapping>` class and
     execute the :meth:`launch() <pmx.pmxatom_mapping.Pmxatom_mapping.launch> method."""
 

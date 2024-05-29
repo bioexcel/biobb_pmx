@@ -6,7 +6,7 @@ from pathlib import Path
 import sys
 import shutil
 import argparse
-from typing import Mapping
+from typing import Dict, Optional
 from biobb_pmx.pmxbiobb.common import create_mutations_file, MUTATION_DICT
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
@@ -64,8 +64,8 @@ class Pmxmutate(BiobbObject):
 
     """
 
-    def __init__(self, input_structure_path: str, output_structure_path: str, input_b_structure_path: str = None,
-                 properties: Mapping = None, **kwargs) -> None:
+    def __init__(self, input_structure_path: str, output_structure_path: str, input_b_structure_path: Optional[str] = None,
+                 properties: Optional[Dict] = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -86,10 +86,10 @@ class Pmxmutate(BiobbObject):
 
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
-        if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
+        if not self.gmx_lib and os.environ.get('CONDA_PREFIX', ''):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
-                Path(os.environ.get('CONDA_PREFIX')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
+                Path(os.environ.get('CONDA_PREFIX', '')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
             if properties.get('container_path'):
                 self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff/"))
         self.binary_path = properties.get('binary_path', 'pmx')
@@ -125,7 +125,7 @@ class Pmxmutate(BiobbObject):
         if self.container_path:
             fu.log('Container execution enabled', self.out_log)
 
-            shutil.copy2(self.input_mutations_file, self.stage_io_dict.get("unique_dir"))
+            shutil.copy2(self.input_mutations_file, self.stage_io_dict.get("unique_dir", ""))
             self.input_mutations_file = str(Path(self.container_volume_path).joinpath(Path(self.input_mutations_file).name))
 
         self.cmd = [self.binary_path, 'mutate',
@@ -149,7 +149,7 @@ class Pmxmutate(BiobbObject):
         # Copy files to host
         self.copy_to_host()
 
-        self.tmp_files.append(self.stage_io_dict.get("unique_dir"))
+        self.tmp_files.append(self.stage_io_dict.get("unique_dir", ""))
         self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)
@@ -157,7 +157,7 @@ class Pmxmutate(BiobbObject):
 
 
 def pmxmutate(input_structure_path: str, output_structure_path: str,
-              input_b_structure_path: str = None, properties: dict = None,
+              input_b_structure_path: Optional[str] = None, properties: Optional[Dict] = None,
               **kwargs) -> int:
     """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` class and
     execute the :meth:`launch() <pmx.pmxmutate.Pmxmutate.launch> method."""

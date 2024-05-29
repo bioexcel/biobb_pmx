@@ -6,7 +6,7 @@ import sys
 from pathlib import Path, PurePath
 import shutil
 import argparse
-from typing import Mapping
+from typing import Dict, Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
@@ -62,7 +62,7 @@ class Pmxcreate_top(BiobbObject):
     """
 
     def __init__(self, input_topology1_path: str, input_topology2_path: str, output_topology_path: str,
-                 properties: Mapping = None, **kwargs) -> None:
+                 properties: Optional[Dict] = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -83,10 +83,10 @@ class Pmxcreate_top(BiobbObject):
 
         # Properties common in all PMX BB
         self.gmx_lib = properties.get('gmx_lib', None)
-        if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
+        if not self.gmx_lib and os.environ.get('CONDA_PREFIX', ''):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
-                Path(os.environ.get('CONDA_PREFIX')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
+                Path(os.environ.get('CONDA_PREFIX', '')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
             if properties.get('container_path'):
                 self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff/"))
         self.binary_path = properties.get('binary_path', 'pmx')
@@ -104,19 +104,19 @@ class Pmxcreate_top(BiobbObject):
             return 0
         self.stage_files()
 
-        self.out_log.info('Running create_top from pmx package...\n')
+        fu.log('Running create_top from pmx package...\n', self.out_log)
 
         # Creating temporary folder
         self.tmp_folder = fu.create_unique_dir()
-        self.out_log.info('Creating %s temporary folder' % self.tmp_folder)
+        fu.log('Creating %s temporary folder' % self.tmp_folder, self.out_log)
 
         itp = os.path.basename(os.path.normpath(self.stage_io_dict["in"]["input_topology1_path"]))
-        self.out_log.info('Creating %s itp file in temporary folder' % itp)
+        fu.log('Creating %s itp file in temporary folder' % itp, self.out_log)
         itp_local = str(PurePath(self.tmp_folder).joinpath(itp))
         shutil.copyfile(self.io_dict['in']['input_topology1_path'], itp_local)
 
         itp2 = os.path.basename(os.path.normpath(self.stage_io_dict["in"]["input_topology2_path"]))
-        self.out_log.info('Creating %s itp file in temporary folder' % itp2)
+        fu.log('Creating %s itp file in temporary folder' % itp2, self.out_log)
         itp2_local = str(PurePath(self.tmp_folder).joinpath(itp2))
         shutil.copyfile(self.io_dict['in']['input_topology2_path'], itp2_local)
 
@@ -156,7 +156,7 @@ class Pmxcreate_top(BiobbObject):
         fu.zip_top(zip_file=top_final, top_file="topology.top", out_log=self.out_log)
         os.chdir(current_cwd)
 
-        self.out_log.info('Exit code 0\n')
+        fu.log('Exit code 0\n', self.out_log)
 
         # Run Biobb block
         # self.run_biobb()
@@ -164,7 +164,7 @@ class Pmxcreate_top(BiobbObject):
         # Copy files to host
         self.copy_to_host()
 
-        self.tmp_files.append(self.stage_io_dict.get("unique_dir"))
+        self.tmp_files.append(self.stage_io_dict.get("unique_dir", ""))
         self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)
@@ -172,7 +172,7 @@ class Pmxcreate_top(BiobbObject):
 
 
 def pmxcreate_top(input_topology1_path: str, input_topology2_path: str, output_topology_path: str,
-                  properties: dict = None, **kwargs) -> int:
+                  properties: Optional[Dict] = None, **kwargs) -> int:
     """Execute the :class:`Pmxcreate_top <pmx.pmxcreate_top.Pmxcreate_top>` class and
     execute the :meth:`launch() <pmx.pmxmcreate_top.Pmxmcreate_top.launch> method."""
 
