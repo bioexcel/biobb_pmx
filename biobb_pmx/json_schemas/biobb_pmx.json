@@ -1,6 +1,6 @@
 {
     "_id": "biobb_pmx",
-    "desc": "Biobb_pmx is the Biobb module collection to perform PMX executions.",
+    "desc": "Biobb_pmx is the Biobb module collection to perform PMX executions",
     "github": "https://github.com/bioexcel/biobb_pmx",
     "readthedocs": "https://biobb-pmx.readthedocs.io/en/latest/",
     "conda": "https://anaconda.org/bioconda/biobb_pmx",
