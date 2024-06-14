@@ -46,6 +46,7 @@ class Pmxatom_mapping(BiobbObject):
             * **timeout** (*int*) - (10) Maximum time (s) for an MCS search.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
+            * **sandbox_path** (*str*) - ("./") [WF property] Parent path to the sandbox directory.
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
             * **container_image** (*str*) - (None) Container Image identifier.
             * **container_volume_path** (*str*) - ("/inout") Path to an internal directory in the container.
