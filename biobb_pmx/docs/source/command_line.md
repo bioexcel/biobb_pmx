@@ -54,6 +54,7 @@ Config parameters for this building block:
 * **distance** (*number*): (0.05) Distance (nm) between atoms to consider them morphable for alignment approach (Only used if input_pairs_path is not provided)..
 * **remove_tmp** (*boolean*): (True) Remove temporal files..
 * **restart** (*boolean*): (False) Do not execute if output files exist..
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
 * **container_path** (*string*): (None) Path to the binary executable of your container..
 * **container_image** (*string*): (None) Container Image identifier..
 * **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
@@ -142,6 +143,7 @@ Config parameters for this building block:
 * **binary_path** (*string*): (pmx) Path to the PMX command line interface..
 * **remove_tmp** (*boolean*): (True) Remove temporal files..
 * **restart** (*boolean*): (False) Do not execute if output files exist..
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
 * **container_path** (*string*): (None) Path to the binary executable of your container..
 * **container_image** (*string*): (gromacs/gromacs:latest) Container Image identifier..
 * **container_volume_path** (*string*): (/data) Path to an internal directory in the container..
@@ -254,6 +256,7 @@ Syntax: input_parameter (datatype) - (default_value) Definition
 Config parameters for this building block:
 * **remove_tmp** (*boolean*): (True) Remove temporal files..
 * **restart** (*boolean*): (False) Do not execute if output files exist..
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
 * **container_path** (*string*): (None) Path to the binary executable of your container..
 * **container_image** (*string*): (None) Container Image identifier..
 * **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
@@ -325,6 +328,7 @@ Config parameters for this building block:
 * **mols** (*array*): ([[Protein,1],[Ligand,1]]) Molecules to be included in the generated topology..
 * **remove_tmp** (*boolean*): (True) Remove temporal files..
 * **restart** (*boolean*): (False) Do not execute if output files exist..
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
 * **container_path** (*string*): (None) Path to the binary executable of your container..
 * **container_image** (*string*): (None) Container Image identifier..
 * **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
@@ -407,6 +411,7 @@ Config parameters for this building block:
 * **binary_path** (*string*): (pmx) Path to the PMX command line interface..
 * **remove_tmp** (*boolean*): (True) Remove temporal files..
 * **restart** (*boolean*): (False) Do not execute if output files exist..
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
 * **container_path** (*string*): (None) Path to the binary executable of your container..
 * **container_image** (*string*): (gromacs/gromacs:latest) Container Image identifier..
 * **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
@@ -548,6 +553,7 @@ Config parameters for this building block:
 * **timeout** (*integer*): (10) Maximum time (s) for an MCS search..
 * **remove_tmp** (*boolean*): (True) Remove temporal files..
 * **restart** (*boolean*): (False) Do not execute if output files exist..
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
 * **container_path** (*string*): (None) Path to the binary executable of your container..
 * **container_image** (*string*): (None) Container Image identifier..
 * **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
@@ -622,6 +628,7 @@ Config parameters for this building block:
 * **binary_path** (*string*): (pmx) Path to the PMX command line interface..
 * **remove_tmp** (*boolean*): (True) Remove temporal files..
 * **restart** (*boolean*): (False) Do not execute if output files exist..
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
 * **container_path** (*string*): (None) Path to the binary executable of your container..
 * **container_image** (*string*): (None) Container Image identifier..
 * **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
