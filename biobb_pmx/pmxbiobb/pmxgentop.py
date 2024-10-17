@@ -4,9 +4,10 @@
 import os
 import sys
 import argparse
+from typing import Optional
 import shutil
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
@@ -62,7 +63,7 @@ class Pmxgentop(BiobbObject):
     """
 
     def __init__(self, input_top_zip_path: str, output_top_zip_path: str,
-                 properties: Optional[Dict] = None, **kwargs) -> None:
+                 properties: Optional[dict] = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -179,7 +180,7 @@ class Pmxgentop(BiobbObject):
         return self.return_code
 
 
-def pmxgentop(input_top_zip_path: str, output_top_zip_path: str, properties: Optional[Dict] = None, **kwargs) -> int:
+def pmxgentop(input_top_zip_path: str, output_top_zip_path: str, properties: Optional[dict] = None, **kwargs) -> int:
     """Execute the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` class and
     execute the :meth:`launch() <pmx.pmxgentop.Pmxgentop.launch> method."""
 

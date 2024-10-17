@@ -6,7 +6,8 @@ from pathlib import Path
 import sys
 import shutil
 import argparse
-from typing import Dict, Optional
+from typing import Optional
+from typing import Optional
 from biobb_pmx.pmxbiobb.common import create_mutations_file, MUTATION_DICT
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
@@ -66,7 +67,7 @@ class Pmxmutate(BiobbObject):
     """
 
     def __init__(self, input_structure_path: str, output_structure_path: str, input_b_structure_path: Optional[str] = None,
-                 properties: Optional[Dict] = None, **kwargs) -> None:
+                 properties: Optional[dict] = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -158,7 +159,7 @@ class Pmxmutate(BiobbObject):
 
 
 def pmxmutate(input_structure_path: str, output_structure_path: str,
-              input_b_structure_path: Optional[str] = None, properties: Optional[Dict] = None,
+              input_b_structure_path: Optional[str] = None, properties: Optional[dict] = None,
               **kwargs) -> int:
     """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` class and
     execute the :meth:`launch() <pmx.pmxmutate.Pmxmutate.launch> method."""

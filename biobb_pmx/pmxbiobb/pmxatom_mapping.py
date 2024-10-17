@@ -6,7 +6,8 @@ import sys
 from pathlib import Path
 import shutil
 import argparse
-from typing import Dict, Optional
+from typing import Optional
+from typing import Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools.file_utils import launchlogger
@@ -83,7 +84,7 @@ class Pmxatom_mapping(BiobbObject):
     def __init__(self, input_structure1_path: str, input_structure2_path: str, output_pairs1_path: str, output_pairs2_path: str,
                  output_log_path: str, output_structure1_path: Optional[str] = None, output_structure2_path: Optional[str] = None, output_morph1_path: Optional[str] = None,
                  output_morph2_path: Optional[str] = None, output_scaffold1_path: Optional[str] = None, output_scaffold2_path: Optional[str] = None, output_score_path: Optional[str] = None,
-                 properties: Optional[Dict] = None, **kwargs) -> None:
+                 properties: Optional[dict] = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -236,7 +237,7 @@ class Pmxatom_mapping(BiobbObject):
 def pmxatom_mapping(input_structure1_path: str, input_structure2_path: str, output_pairs1_path: str, output_pairs2_path: str,
                     output_log_path: str, output_structure1_path: Optional[str] = None, output_structure2_path: Optional[str] = None, output_morph1_path: Optional[str] = None,
                     output_morph2_path: Optional[str] = None, output_scaffold1_path: Optional[str] = None, output_scaffold2_path: Optional[str] = None, output_score_path: Optional[str] = None,
-                    properties: Optional[Dict] = None, **kwargs) -> int:
+                    properties: Optional[dict] = None, **kwargs) -> int:
     """Execute the :class:`Pmxatom_mapping <pmx.pmxmutate.Pmxatom_mapping>` class and
     execute the :meth:`launch() <pmx.pmxatom_mapping.Pmxatom_mapping.launch> method."""
 

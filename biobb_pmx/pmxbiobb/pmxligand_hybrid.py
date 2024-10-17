@@ -6,7 +6,8 @@ import sys
 from pathlib import Path
 import shutil
 import argparse
-from typing import Dict, Optional
+from typing import Optional
+from typing import Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools.file_utils import launchlogger
@@ -84,7 +85,7 @@ class Pmxligand_hybrid(BiobbObject):
     def __init__(self, input_structure1_path: str, input_structure2_path: str, input_topology1_path: str, input_topology2_path: str,
                  output_log_path: str, output_structure1_path: str, output_structure2_path: str, output_topology_path: str, output_atomtypes_path: str,
                  input_scaffold1_path: Optional[str] = None, input_scaffold2_path: Optional[str] = None, input_pairs_path: Optional[str] = None,
-                 properties: Optional[Dict] = None, **kwargs) -> None:
+                 properties: Optional[dict] = None, **kwargs) -> None:
 
         properties = properties or {}
 
@@ -209,7 +210,7 @@ class Pmxligand_hybrid(BiobbObject):
 def pmxligand_hybrid(input_structure1_path: str, input_structure2_path: str, input_topology1_path: str, input_topology2_path: str,
                      output_log_path: str, output_structure1_path: str, output_structure2_path: str, output_topology_path: str, output_atomtypes_path: str,
                      input_scaffold1_path: Optional[str] = None, input_scaffold2_path: Optional[str] = None, input_pairs_path: Optional[str] = None,
-                     properties: Optional[Dict] = None, **kwargs) -> int:
+                     properties: Optional[dict] = None, **kwargs) -> int:
     """Execute the :class:`Pmxligand_hybrid <pmx.pmxmutate.Pmxligand_hybrid>` class and
     execute the :meth:`launch() <pmx.pmxligand_hybrid.Pmxligand_hybrid.launch> method."""
 

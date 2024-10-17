@@ -6,7 +6,8 @@ import sys
 from pathlib import Path, PurePath
 import shutil
 import argparse
-from typing import Dict, Optional
+from typing import Optional
+from typing import Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
@@ -63,7 +64,7 @@ class Pmxcreate_top(BiobbObject):
     """
 
     def __init__(self, input_topology1_path: str, input_topology2_path: str, output_topology_path: str,
-                 properties: Optional[Dict] = None, **kwargs) -> None:
+                 properties: Optional[dict] = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -173,7 +174,7 @@ class Pmxcreate_top(BiobbObject):
 
 
 def pmxcreate_top(input_topology1_path: str, input_topology2_path: str, output_topology_path: str,
-                  properties: Optional[Dict] = None, **kwargs) -> int:
+                  properties: Optional[dict] = None, **kwargs) -> int:
     """Execute the :class:`Pmxcreate_top <pmx.pmxcreate_top.Pmxcreate_top>` class and
     execute the :meth:`launch() <pmx.pmxmcreate_top.Pmxmcreate_top.launch> method."""
 

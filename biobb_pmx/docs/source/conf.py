@@ -14,7 +14,6 @@
 
 import sys
 from pathlib import Path
-from typing import List, Dict
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -92,9 +91,9 @@ language = None
 # Else, today_fmt is used as the format for a strftime call.
 # today_fmt = '%B %d, %Y'
 
-# List of patterns, relative to source directory, that match files and
+# list of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns: List[str] = []
+exclude_patterns: list[str] = []
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -120,7 +119,7 @@ pygments_style = 'sphinx'
 # If true, keep warnings as "system message" paragraphs in the built documents.
 # keep_warnings = False
 
-# If true, `todo` and `todoList` produce output, else they produce nothing.
+# If true, `todo` and `todolist` produce output, else they produce nothing.
 todo_include_todos = False
 
 
@@ -228,7 +227,7 @@ htmlhelp_basename = 'biobb_pmx_doc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements: Dict[str, str] = {
+latex_elements: dict[str, str] = {
     # The paper size ('letterpaper' or 'a4paper').
     # 'papersize': 'letterpaper',
 
@@ -242,7 +241,7 @@ latex_elements: Dict[str, str] = {
     # 'figure_align': 'htbp',
 }
 
-# Grouping the document tree into LaTeX files. List of tuples
+# Grouping the document tree into LaTeX files. list of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
@@ -273,7 +272,7 @@ latex_documents = [
 
 # -- Options for manual page output ---------------------------------------
 
-# One entry per manual page. List of tuples
+# One entry per manual page. list of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
     (master_doc, 'biobb_pmx', u'biobb_pmx Documentation',
@@ -286,7 +285,7 @@ man_pages = [
 
 # -- Options for Texinfo output -------------------------------------------
 
-# Grouping the document tree into Texinfo files. List of tuples
+# Grouping the document tree into Texinfo files. list of tuples
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [

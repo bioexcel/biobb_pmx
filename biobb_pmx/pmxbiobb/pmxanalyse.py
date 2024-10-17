@@ -2,9 +2,10 @@
 
 """Module containing the PMX analyse class and the command line interface."""
 import argparse
+from typing import Optional
 from pathlib import Path
 import shutil
-from typing import Dict, Optional
+from typing import Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
@@ -76,7 +77,7 @@ class Pmxanalyse(BiobbObject):
     """
 
     def __init__(self, input_a_xvg_zip_path: str, input_b_xvg_zip_path: str, output_result_path: str, output_work_plot_path: str,
-                 properties: Optional[Dict] = None, **kwargs) -> None:
+                 properties: Optional[dict] = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -210,7 +211,7 @@ class Pmxanalyse(BiobbObject):
 
 def pmxanalyse(input_a_xvg_zip_path: str, input_b_xvg_zip_path: str,
                output_result_path: str, output_work_plot_path: str,
-               properties: Optional[Dict] = None, **kwargs) -> int:
+               properties: Optional[dict] = None, **kwargs) -> int:
     """Execute the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` class and
     execute the :meth:`launch() <pmx.pmxanalyse.Pmxanalyse.launch> method."""
 

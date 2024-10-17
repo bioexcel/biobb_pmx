@@ -6,8 +6,9 @@ import sys
 from pathlib import Path
 import glob
 import argparse
+from typing import Optional
 from pmx import ligand_alchemy  # type: ignore
-from typing import Dict, Optional
+from typing import Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
 from biobb_common.tools import file_utils as fu
@@ -57,7 +58,7 @@ class Pmxmerge_ff(BiobbObject):
 
     """
 
-    def __init__(self, input_topology_path: str, output_topology_path: str, properties: Optional[Dict] = None, **kwargs) -> None:
+    def __init__(self, input_topology_path: str, output_topology_path: str, properties: Optional[dict] = None, **kwargs) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -128,7 +129,7 @@ class Pmxmerge_ff(BiobbObject):
         return self.return_code
 
 
-def pmxmerge_ff(input_topology_path: str, output_topology_path: str, properties: Optional[Dict] = None, **kwargs) -> int:
+def pmxmerge_ff(input_topology_path: str, output_topology_path: str, properties: Optional[dict] = None, **kwargs) -> int:
     """Execute the :class:`Pmxmerge_ff <pmx.pmxmerge_ff.Pmxmerge_ff>` class and
     execute the :meth:`launch() <pmx.pmxmerge_ff.Pmxmerge_ff.launch> method."""
 
