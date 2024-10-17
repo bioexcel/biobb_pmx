@@ -1,4 +1,4 @@
-# !/usr/bin/env python3
+#!/usr/bin/env python3
 
 """Module containing the PMX ligand_hybrid class and the command line interface."""
 import os
@@ -6,7 +6,6 @@ import sys
 from pathlib import Path
 import shutil
 import argparse
-from typing import Optional
 from typing import Optional
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
@@ -221,7 +220,7 @@ def pmxligand_hybrid(input_structure1_path: str, input_structure2_path: str, inp
                             output_topology_path=output_topology_path, output_atomtypes_path=output_atomtypes_path,
                             input_scaffold1_path=input_scaffold1_path, input_scaffold2_path=input_scaffold2_path,
                             input_pairs_path=input_pairs_path,
-                            properties=properties, **kwargs).launch()
+                            properties=properties).launch()
 
 
 def main():

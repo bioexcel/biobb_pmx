@@ -13,18 +13,40 @@ Command:
 ```python
 pmxligand_hybrid -h
 ```
-    /Users/pau/mambaforge/envs/dev38/bin/pmxligand_hybrid: line 3: Module containing the PMX ligand_hybrid class and the command line interface.: command not found
-    /Users/pau/mambaforge/envs/dev38/bin/pmxligand_hybrid: line 4: import: command not found
-    /Users/pau/mambaforge/envs/dev38/bin/pmxligand_hybrid: line 5: import: command not found
-    from: can't read /var/mail/pathlib
-    /Users/pau/mambaforge/envs/dev38/bin/pmxligand_hybrid: line 7: import: command not found
-    /Users/pau/mambaforge/envs/dev38/bin/pmxligand_hybrid: line 8: import: command not found
-    from: can't read /var/mail/typing
-    from: can't read /var/mail/biobb_common.generic.biobb_object
-    from: can't read /var/mail/biobb_common.configuration
-    from: can't read /var/mail/biobb_common.tools.file_utils
-    /Users/pau/mambaforge/envs/dev38/bin/pmxligand_hybrid: line 15: syntax error near unexpected token `('
-    /Users/pau/mambaforge/envs/dev38/bin/pmxligand_hybrid: line 15: `class Pmxligand_hybrid(BiobbObject):'
+    usage: pmxligand_hybrid [-h] [-c CONFIG] --input_structure1_path INPUT_STRUCTURE1_PATH --input_structure2_path INPUT_STRUCTURE2_PATH --input_topology1_path INPUT_TOPOLOGY1_PATH --input_topology2_path INPUT_TOPOLOGY2_PATH --output_structure1_path OUTPUT_STRUCTURE1_PATH --output_structure2_path OUTPUT_STRUCTURE2_PATH --output_topology1_path OUTPUT_TOPOLOGY1_PATH --output_topology2_path OUTPUT_TOPOLOGY2_PATH --output_log_path OUTPUT_LOG_PATH [--input_scaffold1_path INPUT_SCAFFOLD1_PATH] [--input_scaffold2_path INPUT_SCAFFOLD2_PATH] [--input_pairs_path INPUT_PAIRS_PATH]
+    
+    Run PMX ligand hybrid module
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c CONFIG, --config CONFIG
+                            This file can be a YAML file, JSON file or JSON string
+      --input_scaffold1_path INPUT_SCAFFOLD1_PATH
+                            Path to the index of atoms to consider for the ligand structure 1
+      --input_scaffold2_path INPUT_SCAFFOLD2_PATH
+                            Path to the index of atoms to consider for the ligand structure 2
+      --input_pairs_path INPUT_PAIRS_PATH
+                            Path to the input atom pair mapping.
+    
+    required arguments:
+      --input_structure1_path INPUT_STRUCTURE1_PATH
+                            Path to the input ligand structure file 1
+      --input_structure2_path INPUT_STRUCTURE2_PATH
+                            Path to the input ligand structure file 2
+      --input_topology1_path INPUT_TOPOLOGY1_PATH
+                            Path to the input ligand topology file 1
+      --input_topology2_path INPUT_TOPOLOGY2_PATH
+                            Path to the input ligand topology file 2
+      --output_structure1_path OUTPUT_STRUCTURE1_PATH
+                            Path to the output ligand structure file 1
+      --output_structure2_path OUTPUT_STRUCTURE2_PATH
+                            Path to the output ligand structure file 2
+      --output_topology1_path OUTPUT_TOPOLOGY1_PATH
+                            Path to the output ligand topology file 1
+      --output_topology2_path OUTPUT_TOPOLOGY2_PATH
+                            Path to the output ligand topology file 2
+      --output_log_path OUTPUT_LOG_PATH
+                            Path to the log file
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
