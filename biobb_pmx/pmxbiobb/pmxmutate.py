@@ -7,7 +7,6 @@ import sys
 import shutil
 import argparse
 from typing import Optional
-from typing import Optional
 from biobb_pmx.pmxbiobb.common import create_mutations_file, MUTATION_DICT
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.configuration import settings
