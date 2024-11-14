@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 
 """Module containing the PMX create_top class and the command line interface."""
+
+import argparse
 import os
+import shutil
 import sys
 from pathlib import Path, PurePath
-import shutil
-import argparse
 from typing import Optional
-from biobb_common.generic.biobb_object import BiobbObject
+
 from biobb_common.configuration import settings
+from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
 
@@ -62,8 +64,14 @@ class Pmxcreate_top(BiobbObject):
 
     """
 
-    def __init__(self, input_topology1_path: str, input_topology2_path: str, output_topology_path: str,
-                 properties: Optional[dict] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        input_topology1_path: str,
+        input_topology2_path: str,
+        output_topology_path: str,
+        properties: Optional[dict] = None,
+        **kwargs,
+    ) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -72,25 +80,35 @@ class Pmxcreate_top(BiobbObject):
 
         # Input/Output files
         self.io_dict = {
-            "in": {"input_topology1_path": input_topology1_path, "input_topology2_path": input_topology2_path},
-            "out": {"output_topology_path": output_topology_path}
+            "in": {
+                "input_topology1_path": input_topology1_path,
+                "input_topology2_path": input_topology2_path,
+            },
+            "out": {"output_topology_path": output_topology_path},
         }
 
         # Properties specific for BB
-        self.force_field = properties.get('force_field', "amber99sb-star-ildn-mut.ff")
-        self.water = properties.get('water', "tip3p")
-        self.system_name = properties.get('system_name', "Pmx topology")
-        self.mols = properties.get('mols', [['Protein', 1], ['Ligand', 1]])
+        self.force_field = properties.get("force_field", "amber99sb-star-ildn-mut.ff")
+        self.water = properties.get("water", "tip3p")
+        self.system_name = properties.get("system_name", "Pmx topology")
+        self.mols = properties.get("mols", [["Protein", 1], ["Ligand", 1]])
 
         # Properties common in all PMX BB
-        self.gmx_lib = properties.get('gmx_lib', None)
-        if not self.gmx_lib and os.environ.get('CONDA_PREFIX', ''):
+        self.gmx_lib = properties.get("gmx_lib", None)
+        if not self.gmx_lib and os.environ.get("CONDA_PREFIX", ""):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
-                Path(os.environ.get('CONDA_PREFIX', '')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
-            if properties.get('container_path'):
-                self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff/"))
-        self.binary_path = properties.get('binary_path', 'pmx')
+                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
+                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
+                )
+            )
+            if properties.get("container_path"):
+                self.gmx_lib = str(
+                    Path("/usr/local/").joinpath(
+                        "lib/python3.7/site-packages/pmx/data/mutff/"
+                    )
+                )
+        self.binary_path = properties.get("binary_path", "pmx")
 
         # Check the properties
         self.check_properties(properties)
@@ -99,33 +117,37 @@ class Pmxcreate_top(BiobbObject):
     @launchlogger
     def launch(self) -> int:
         """Execute the :class:`Pmxcreate_top <pmx.pmxcreate_top.Pmxcreate_top>` pmx.pmxcreate_top.Pmxcreate_top object."""
-#        os.chdir("/Users/hospital/BioBB/Notebooks_dev/biobb_wf_pmx_tutorial_ligands/biobb_wf_pmx_tutorial/notebooks")
+        #        os.chdir("/Users/hospital/BioBB/Notebooks_dev/biobb_wf_pmx_tutorial_ligands/biobb_wf_pmx_tutorial/notebooks")
         # Setup Biobb
         if self.check_restart():
             return 0
         self.stage_files()
 
-        fu.log('Running create_top from pmx package...\n', self.out_log)
+        fu.log("Running create_top from pmx package...\n", self.out_log)
 
         # Creating temporary folder
         self.tmp_folder = fu.create_unique_dir()
-        fu.log('Creating %s temporary folder' % self.tmp_folder, self.out_log)
+        fu.log("Creating %s temporary folder" % self.tmp_folder, self.out_log)
 
-        itp = os.path.basename(os.path.normpath(self.stage_io_dict["in"]["input_topology1_path"]))
-        fu.log('Creating %s itp file in temporary folder' % itp, self.out_log)
+        itp = os.path.basename(
+            os.path.normpath(self.stage_io_dict["in"]["input_topology1_path"])
+        )
+        fu.log("Creating %s itp file in temporary folder" % itp, self.out_log)
         itp_local = str(PurePath(self.tmp_folder).joinpath(itp))
-        shutil.copyfile(self.io_dict['in']['input_topology1_path'], itp_local)
+        shutil.copyfile(self.io_dict["in"]["input_topology1_path"], itp_local)
 
-        itp2 = os.path.basename(os.path.normpath(self.stage_io_dict["in"]["input_topology2_path"]))
-        fu.log('Creating %s itp file in temporary folder' % itp2, self.out_log)
+        itp2 = os.path.basename(
+            os.path.normpath(self.stage_io_dict["in"]["input_topology2_path"])
+        )
+        fu.log("Creating %s itp file in temporary folder" % itp2, self.out_log)
         itp2_local = str(PurePath(self.tmp_folder).joinpath(itp2))
-        shutil.copyfile(self.io_dict['in']['input_topology2_path'], itp2_local)
+        shutil.copyfile(self.io_dict["in"]["input_topology2_path"], itp2_local)
 
         top_local = str(PurePath(self.tmp_folder).joinpath("topology.top"))
 
         # _create_top function, taken from the pmx AZ tutorial:
         # https://github.com/deGrootLab/pmx/blob/develop/tutorials/AZtutorial.py
-        fp = open(top_local, 'w')
+        fp = open(top_local, "w")
         # BioBB signature
         fp.write("; Topology generated by the BioBB pmxcreate_top building block\n\n")
         # ff itp
@@ -140,24 +162,26 @@ class Pmxcreate_top(BiobbObject):
         # ions
         fp.write('#include "%s/ions.itp"\n\n' % self.force_field)
         # system
-        fp.write('[ system ]\n')
-        fp.write('{0}\n\n'.format(self.system_name))
+        fp.write("[ system ]\n")
+        fp.write("{0}\n\n".format(self.system_name))
         # molecules
-        fp.write('[ molecules ]\n')
+        fp.write("[ molecules ]\n")
         for mol in self.mols:
-            fp.write('%s %s\n' % (mol[0], mol[1]))
+            fp.write("%s %s\n" % (mol[0], mol[1]))
         fp.close()
 
         # zip topology
         current_cwd = os.getcwd()
-        top_final = str(PurePath(current_cwd).joinpath(self.io_dict["out"]["output_topology_path"]))
+        top_final = str(
+            PurePath(current_cwd).joinpath(self.io_dict["out"]["output_topology_path"])
+        )
 
         os.chdir(self.tmp_folder)
-        fu.log('Compressing topology to: %s' % top_final, self.out_log, self.global_log)
+        fu.log("Compressing topology to: %s" % top_final, self.out_log, self.global_log)
         fu.zip_top(zip_file=top_final, top_file="topology.top", out_log=self.out_log)
         os.chdir(current_cwd)
 
-        fu.log('Exit code 0\n', self.out_log)
+        fu.log("Exit code 0\n", self.out_log)
 
         # Run Biobb block
         # self.run_biobb()
@@ -172,37 +196,68 @@ class Pmxcreate_top(BiobbObject):
         return self.return_code
 
 
-def pmxcreate_top(input_topology1_path: str, input_topology2_path: str, output_topology_path: str,
-                  properties: Optional[dict] = None, **kwargs) -> int:
+def pmxcreate_top(
+    input_topology1_path: str,
+    input_topology2_path: str,
+    output_topology_path: str,
+    properties: Optional[dict] = None,
+    **kwargs,
+) -> int:
     """Execute the :class:`Pmxcreate_top <pmx.pmxcreate_top.Pmxcreate_top>` class and
     execute the :meth:`launch() <pmx.pmxmcreate_top.Pmxmcreate_top.launch> method."""
 
-    return Pmxcreate_top(input_topology1_path=input_topology1_path, input_topology2_path=input_topology2_path,
-                         output_topology_path=output_topology_path,
-                         properties=properties, **kwargs).launch()
+    return Pmxcreate_top(
+        input_topology1_path=input_topology1_path,
+        input_topology2_path=input_topology2_path,
+        output_topology_path=output_topology_path,
+        properties=properties,
+        **kwargs,
+    ).launch()
 
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(description="Run PMX create_top module",
-                                     formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
-    parser.add_argument('-c', '--config', required=False, help="This file can be a YAML file, JSON file or JSON string")
+    parser = argparse.ArgumentParser(
+        description="Run PMX create_top module",
+        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999),
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        required=False,
+        help="This file can be a YAML file, JSON file or JSON string",
+    )
 
     # Specific args of each building block
-    required_args = parser.add_argument_group('required arguments')
-    required_args.add_argument('--input_topology1_path', required=True, help="Path to the input topology file 1")
-    required_args.add_argument('--input_topology2_path', required=True, help="Path to the input topology file 2")
-    required_args.add_argument('--output_topology_path', required=True, help="Path to the complete ligand topology file")
+    required_args = parser.add_argument_group("required arguments")
+    required_args.add_argument(
+        "--input_topology1_path",
+        required=True,
+        help="Path to the input topology file 1",
+    )
+    required_args.add_argument(
+        "--input_topology2_path",
+        required=True,
+        help="Path to the input topology file 2",
+    )
+    required_args.add_argument(
+        "--output_topology_path",
+        required=True,
+        help="Path to the complete ligand topology file",
+    )
 
     args = parser.parse_args()
     config = args.config if args.config else None
     properties = settings.ConfReader(config=config).get_prop_dic()
 
     # Specific call of each building block
-    pmxcreate_top(input_topology1_path=args.input_topology1_path, input_topology2_path=args.input_topology2_path,
-                  output_topology_path=args.output_topology_path,
-                  properties=properties)
+    pmxcreate_top(
+        input_topology1_path=args.input_topology1_path,
+        input_topology2_path=args.input_topology2_path,
+        output_topology_path=args.output_topology_path,
+        properties=properties,
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
