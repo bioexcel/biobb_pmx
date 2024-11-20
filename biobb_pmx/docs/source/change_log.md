@@ -1,6 +1,21 @@
 # Biobb PMX changelog
 
-## What's new in version [4.2.1](https://github.com/bioexcel/biobb_pmx/releases/tag/v4.2.1)?
+## What's new in version [5.0.0](https://github.com/bioexcel/biobb_pmx/releases/tag/v5.0.0)?
+
+### Changes
+
+* [FIX](all): Accept lists in different formats on input properties.
+* [FIX](all): Removing compatibility with python 3.11
+* [DEPENDENCIES](all): Force scipy to <1.14 because of simps deprecation
+* [CI/CD](linting_and_testing.yml): Update set-up micromamba.
+* [CI/CD](conf.yml): Adding global properties to test yaml configuration
+* [CI/CD](linting_and_testing.yaml): Update GA test workflow to Python >3.9
+* [DOCS](.readthedocs.yaml): Updating to Python 3.9
+* [CI/CD](GITIGNORE): Update .gitignore to include the new file extensions to ignore
+* [CI/CD](conf.yml): Change test conf.yml to adapt to new settings configuration
+* [FEATURE] New sandbox_path property
+
+## What's new in version [4.2.1](https://github.com/bioexcel/biobb_pmx/releases/tag/v5.0.0)?
 
 ### Changes
 
@@ -9,7 +24,7 @@
 * [CI/CD] Update actions/checkout to v4
 * [FIX] Fix type hints
 
-## What's new in version [4.2.0](https://github.com/bioexcel/biobb_pmx/releases/tag/v4.2.0)?
+## What's new in version [4.2.0](https://github.com/bioexcel/biobb_pmx/releases/tag/v5.0.0)?
 
 ### Changes
 

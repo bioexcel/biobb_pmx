@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="biobb_pmx",
-    version="4.2.1",
+    version="5.0.0",
     author="Biobb developers",
     author_email="pau.andrio@bsc.es",
     description="Biobb_pmx is the Biobb module collection to perform PMX (http://pmx.mpibpc.mpg.de) executions.",
@@ -15,12 +15,12 @@ setuptools.setup(
     url="https://github.com/bioexcel/biobb_pmx",
     project_urls={
         "Documentation": "http://biobb-pmx.readthedocs.io/en/latest/",
-        "Bioexcel": "https://bioexcel.eu/"
+        "Bioexcel": "https://bioexcel.eu/",
     },
-    packages=setuptools.find_packages(exclude=['docs']),
-    package_data={'biobb_pmx': ['py.typed']},
-    install_requires=['biobb_common==4.2.0', 'pmx-biobb==4.1.3'],
-    python_requires='>=3.8',
+    packages=setuptools.find_packages(exclude=["docs"]),
+    package_data={"biobb_pmx": ["py.typed"]},
+    install_requires=["biobb_common==5.0.0", "pmx-biobb==4.1.3"],
+    python_requires=">=3.9",
     entry_points={
         "console_scripts": [
             "pmxanalyse = biobb_pmx.pmxbiobb.pmxanalyse:main",
@@ -29,17 +29,15 @@ setuptools.setup(
             "pmxatom_mapping = biobb_pmx.pmxbiobb.pmxatom_mapping:main",
             "pmxcreate_top = biobb_pmx.pmxbiobb.pmxcreate_top:main",
             "pmxligand_hybrid = biobb_pmx.pmxbiobb.pmxligand_hybrid:main",
-            "pmxmerge_ff = biobb_pmx.pmxbiobb.pmxmerge_ff:main"
+            "pmxmerge_ff = biobb_pmx.pmxbiobb.pmxmerge_ff:main",
         ]
     },
     classifiers=[
         "Development Status :: 5 - Production/Stable",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: POSIX",
-        "Operating System :: Unix"
+        "Operating System :: Unix",
     ],
 )

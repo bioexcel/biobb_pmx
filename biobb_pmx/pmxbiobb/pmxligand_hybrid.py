@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 
 """Module containing the PMX ligand_hybrid class and the command line interface."""
+
+import argparse
 import os
+import shutil
 import sys
 from pathlib import Path
-import shutil
-import argparse
 from typing import Optional
-from biobb_common.generic.biobb_object import BiobbObject
+
 from biobb_common.configuration import settings
+from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.tools.file_utils import launchlogger
 
 
@@ -81,11 +83,23 @@ class Pmxligand_hybrid(BiobbObject):
 
     """
 
-    def __init__(self, input_structure1_path: str, input_structure2_path: str, input_topology1_path: str, input_topology2_path: str,
-                 output_log_path: str, output_structure1_path: str, output_structure2_path: str, output_topology_path: str, output_atomtypes_path: str,
-                 input_scaffold1_path: Optional[str] = None, input_scaffold2_path: Optional[str] = None, input_pairs_path: Optional[str] = None,
-                 properties: Optional[dict] = None, **kwargs) -> None:
-
+    def __init__(
+        self,
+        input_structure1_path: str,
+        input_structure2_path: str,
+        input_topology1_path: str,
+        input_topology2_path: str,
+        output_log_path: str,
+        output_structure1_path: str,
+        output_structure2_path: str,
+        output_topology_path: str,
+        output_atomtypes_path: str,
+        input_scaffold1_path: Optional[str] = None,
+        input_scaffold2_path: Optional[str] = None,
+        input_pairs_path: Optional[str] = None,
+        properties: Optional[dict] = None,
+        **kwargs,
+    ) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -94,13 +108,22 @@ class Pmxligand_hybrid(BiobbObject):
 
         # Input/Output files
         self.io_dict = {
-            "in": {"input_structure1_path": input_structure1_path, "input_structure2_path": input_structure2_path,
-                   "input_topology1_path": input_topology1_path, "input_topology2_path": input_topology2_path,
-                   "input_scaffold1_path": input_scaffold1_path, "input_scaffold2_path": input_scaffold2_path,
-                   "input_pairs_path": input_pairs_path},
-            "out": {"output_structure1_path": output_structure1_path, "output_structure2_path": output_structure2_path,
-                    "output_topology_path": output_topology_path, "output_atomtypes_path": output_atomtypes_path,
-                    "output_log_path": output_log_path}
+            "in": {
+                "input_structure1_path": input_structure1_path,
+                "input_structure2_path": input_structure2_path,
+                "input_topology1_path": input_topology1_path,
+                "input_topology2_path": input_topology2_path,
+                "input_scaffold1_path": input_scaffold1_path,
+                "input_scaffold2_path": input_scaffold2_path,
+                "input_pairs_path": input_pairs_path,
+            },
+            "out": {
+                "output_structure1_path": output_structure1_path,
+                "output_structure2_path": output_structure2_path,
+                "output_topology_path": output_topology_path,
+                "output_atomtypes_path": output_atomtypes_path,
+                "output_log_path": output_log_path,
+            },
         }
 
         # Properties specific for BB
@@ -112,23 +135,30 @@ class Pmxligand_hybrid(BiobbObject):
         # self.deAng = properties.get('deAng', False)
         # self.distance = properties.get('distance', 0.05)
 
-        self.fit = properties.get('fit')
-        self.split = properties.get('split')
-        self.scDUMm = properties.get('scDUMm')
-        self.scDUMa = properties.get('scDUMa')
-        self.scDUMd = properties.get('scDUMd')
-        self.deAng = properties.get('deAng')
-        self.distance = properties.get('distance')
+        self.fit = properties.get("fit")
+        self.split = properties.get("split")
+        self.scDUMm = properties.get("scDUMm")
+        self.scDUMa = properties.get("scDUMa")
+        self.scDUMd = properties.get("scDUMd")
+        self.deAng = properties.get("deAng")
+        self.distance = properties.get("distance")
 
         # Properties common in all PMX BB
-        self.gmx_lib = properties.get('gmx_lib', None)
-        if not self.gmx_lib and os.environ.get('CONDA_PREFIX', ''):
+        self.gmx_lib = properties.get("gmx_lib", None)
+        if not self.gmx_lib and os.environ.get("CONDA_PREFIX", ""):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
-                Path(os.environ.get('CONDA_PREFIX', '')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
-            if properties.get('container_path'):
-                self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.7/site-packages/pmx/data/mutff/"))
-        self.binary_path = properties.get('binary_path', 'pmx')
+                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
+                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
+                )
+            )
+            if properties.get("container_path"):
+                self.gmx_lib = str(
+                    Path("/usr/local/").joinpath(
+                        "lib/python3.7/site-packages/pmx/data/mutff/"
+                    )
+                )
+        self.binary_path = properties.get("binary_path", "pmx")
 
         # Check the properties
         self.check_properties(properties)
@@ -148,50 +178,64 @@ class Pmxligand_hybrid(BiobbObject):
             if not Path(self.binary_path).is_file():
                 if not shutil.which(self.binary_path):
                     raise FileNotFoundError(
-                        'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.binary_path)
+                        "Executable %s not found. Check if it is installed in your system and correctly defined in the properties"
+                        % self.binary_path
+                    )
 
-        self.cmd = [self.binary_path, 'ligandHybrid',
-                    '-i1', self.stage_io_dict["in"]["input_structure1_path"],
-                    '-i2', self.stage_io_dict["in"]["input_structure2_path"],
-                    '-itp1', self.stage_io_dict["in"]["input_topology1_path"],
-                    '-itp2', self.stage_io_dict["in"]["input_topology2_path"],
-                    '-pairs', self.stage_io_dict["in"]["input_pairs_path"],
-                    '-oA', self.stage_io_dict["out"]["output_structure1_path"],
-                    '-oB', self.stage_io_dict["out"]["output_structure2_path"],
-                    '-oitp', self.stage_io_dict["out"]["output_topology_path"],
-                    '-offitp', self.stage_io_dict["out"]["output_atomtypes_path"],
-                    '-log', self.stage_io_dict["out"]["output_log_path"]
-                    ]
+        self.cmd = [
+            self.binary_path,
+            "ligandHybrid",
+            "-i1",
+            self.stage_io_dict["in"]["input_structure1_path"],
+            "-i2",
+            self.stage_io_dict["in"]["input_structure2_path"],
+            "-itp1",
+            self.stage_io_dict["in"]["input_topology1_path"],
+            "-itp2",
+            self.stage_io_dict["in"]["input_topology2_path"],
+            "-pairs",
+            self.stage_io_dict["in"]["input_pairs_path"],
+            "-oA",
+            self.stage_io_dict["out"]["output_structure1_path"],
+            "-oB",
+            self.stage_io_dict["out"]["output_structure2_path"],
+            "-oitp",
+            self.stage_io_dict["out"]["output_topology_path"],
+            "-offitp",
+            self.stage_io_dict["out"]["output_atomtypes_path"],
+            "-log",
+            self.stage_io_dict["out"]["output_log_path"],
+        ]
 
         if self.stage_io_dict["in"].get("output_scaffold1_path"):
-            self.cmd.append('-n1')
+            self.cmd.append("-n1")
             self.cmd.append(self.stage_io_dict["in"]["output_scaffold1_path"])
 
         if self.stage_io_dict["in"].get("output_scaffold2_path"):
-            self.cmd.append('-n2')
+            self.cmd.append("-n2")
             self.cmd.append(self.stage_io_dict["in"]["output_scaffold2_path"])
 
         if self.fit:
-            self.cmd.append('--fit')
+            self.cmd.append("--fit")
         if self.split:
-            self.cmd.append('--split')
+            self.cmd.append("--split")
         if self.deAng:
-            self.cmd.append('--deAng')
+            self.cmd.append("--deAng")
         if self.distance:
-            self.cmd.append('--d')
+            self.cmd.append("--d")
             self.cmd.append(str(self.distance))
         if self.scDUMm:
-            self.cmd.append('--scDUMm')
+            self.cmd.append("--scDUMm")
             self.cmd.append(str(self.scDUMm))
         if self.scDUMa:
-            self.cmd.append('--scDUMa')
+            self.cmd.append("--scDUMa")
             self.cmd.append(str(self.scDUMa))
         if self.scDUMd:
-            self.cmd.append('--scDUMd')
+            self.cmd.append("--scDUMd")
             self.cmd.append(str(self.scDUMd))
 
         if self.gmx_lib:
-            self.env_vars_dict['GMXLIB'] = self.gmx_lib
+            self.env_vars_dict["GMXLIB"] = self.gmx_lib
 
         # Run Biobb block
         self.run_biobb()
@@ -206,57 +250,137 @@ class Pmxligand_hybrid(BiobbObject):
         return self.return_code
 
 
-def pmxligand_hybrid(input_structure1_path: str, input_structure2_path: str, input_topology1_path: str, input_topology2_path: str,
-                     output_log_path: str, output_structure1_path: str, output_structure2_path: str, output_topology_path: str, output_atomtypes_path: str,
-                     input_scaffold1_path: Optional[str] = None, input_scaffold2_path: Optional[str] = None, input_pairs_path: Optional[str] = None,
-                     properties: Optional[dict] = None, **kwargs) -> int:
+def pmxligand_hybrid(
+    input_structure1_path: str,
+    input_structure2_path: str,
+    input_topology1_path: str,
+    input_topology2_path: str,
+    output_log_path: str,
+    output_structure1_path: str,
+    output_structure2_path: str,
+    output_topology_path: str,
+    output_atomtypes_path: str,
+    input_scaffold1_path: Optional[str] = None,
+    input_scaffold2_path: Optional[str] = None,
+    input_pairs_path: Optional[str] = None,
+    properties: Optional[dict] = None,
+    **kwargs,
+) -> int:
     """Execute the :class:`Pmxligand_hybrid <pmx.pmxmutate.Pmxligand_hybrid>` class and
     execute the :meth:`launch() <pmx.pmxligand_hybrid.Pmxligand_hybrid.launch> method."""
 
-    return Pmxligand_hybrid(input_structure1_path=input_structure1_path, input_structure2_path=input_structure2_path,
-                            input_topology1_path=input_topology1_path, input_topology2_path=input_topology2_path,
-                            output_log_path=output_log_path,
-                            output_structure1_path=output_structure1_path, output_structure2_path=output_structure2_path,
-                            output_topology_path=output_topology_path, output_atomtypes_path=output_atomtypes_path,
-                            input_scaffold1_path=input_scaffold1_path, input_scaffold2_path=input_scaffold2_path,
-                            input_pairs_path=input_pairs_path,
-                            properties=properties).launch()
+    return Pmxligand_hybrid(
+        input_structure1_path=input_structure1_path,
+        input_structure2_path=input_structure2_path,
+        input_topology1_path=input_topology1_path,
+        input_topology2_path=input_topology2_path,
+        output_log_path=output_log_path,
+        output_structure1_path=output_structure1_path,
+        output_structure2_path=output_structure2_path,
+        output_topology_path=output_topology_path,
+        output_atomtypes_path=output_atomtypes_path,
+        input_scaffold1_path=input_scaffold1_path,
+        input_scaffold2_path=input_scaffold2_path,
+        input_pairs_path=input_pairs_path,
+        properties=properties,
+    ).launch()
 
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(description="Run PMX ligand hybrid module",
-                                     formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
-    parser.add_argument('-c', '--config', required=False, help="This file can be a YAML file, JSON file or JSON string")
+    parser = argparse.ArgumentParser(
+        description="Run PMX ligand hybrid module",
+        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999),
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        required=False,
+        help="This file can be a YAML file, JSON file or JSON string",
+    )
 
     # Specific args of each building block
-    required_args = parser.add_argument_group('required arguments')
-    required_args.add_argument('--input_structure1_path', required=True, help="Path to the input ligand structure file 1")
-    required_args.add_argument('--input_structure2_path', required=True, help="Path to the input ligand structure file 2")
-    required_args.add_argument('--input_topology1_path', required=True, help="Path to the input ligand topology file 1")
-    required_args.add_argument('--input_topology2_path', required=True, help="Path to the input ligand topology file 2")
-    required_args.add_argument('--output_structure1_path', required=True, help="Path to the output ligand structure file 1")
-    required_args.add_argument('--output_structure2_path', required=True, help="Path to the output ligand structure file 2")
-    required_args.add_argument('--output_topology1_path', required=True, help="Path to the output ligand topology file 1")
-    required_args.add_argument('--output_topology2_path', required=True, help="Path to the output ligand topology file 2")
-    required_args.add_argument('--output_log_path', required=True, help="Path to the log file")
-    parser.add_argument('--input_scaffold1_path', required=False, help="Path to the index of atoms to consider for the ligand structure 1")
-    parser.add_argument('--input_scaffold2_path', required=False, help="Path to the index of atoms to consider for the ligand structure 2")
-    parser.add_argument('--input_pairs_path', required=False, help="Path to the input atom pair mapping.")
+    required_args = parser.add_argument_group("required arguments")
+    required_args.add_argument(
+        "--input_structure1_path",
+        required=True,
+        help="Path to the input ligand structure file 1",
+    )
+    required_args.add_argument(
+        "--input_structure2_path",
+        required=True,
+        help="Path to the input ligand structure file 2",
+    )
+    required_args.add_argument(
+        "--input_topology1_path",
+        required=True,
+        help="Path to the input ligand topology file 1",
+    )
+    required_args.add_argument(
+        "--input_topology2_path",
+        required=True,
+        help="Path to the input ligand topology file 2",
+    )
+    required_args.add_argument(
+        "--output_structure1_path",
+        required=True,
+        help="Path to the output ligand structure file 1",
+    )
+    required_args.add_argument(
+        "--output_structure2_path",
+        required=True,
+        help="Path to the output ligand structure file 2",
+    )
+    required_args.add_argument(
+        "--output_topology1_path",
+        required=True,
+        help="Path to the output ligand topology file 1",
+    )
+    required_args.add_argument(
+        "--output_topology2_path",
+        required=True,
+        help="Path to the output ligand topology file 2",
+    )
+    required_args.add_argument(
+        "--output_log_path", required=True, help="Path to the log file"
+    )
+    parser.add_argument(
+        "--input_scaffold1_path",
+        required=False,
+        help="Path to the index of atoms to consider for the ligand structure 1",
+    )
+    parser.add_argument(
+        "--input_scaffold2_path",
+        required=False,
+        help="Path to the index of atoms to consider for the ligand structure 2",
+    )
+    parser.add_argument(
+        "--input_pairs_path",
+        required=False,
+        help="Path to the input atom pair mapping.",
+    )
 
     args = parser.parse_args()
     config = args.config if args.config else None
     properties = settings.ConfReader(config=config).get_prop_dic()
 
     # Specific call of each building block
-    pmxligand_hybrid(input_structure1_path=args.input_structure1_path, input_structure2_path=args.input_structure2_path,
-                     input_topology1_path=args.input_topology1_path, input_topology2_path=args.input_topology2_path,
-                     output_log_path=args.output_log_path, output_structure1_path=args.output_structure1_path,
-                     output_structure2_path=args.output_structure2_path, output_topology_path=args.output_topology_path,
-                     output_atomtypes_path=args.output_atomtypes_path, input_scaffold1_path=args.input_scaffold1_path,
-                     input_scaffold2_path=args.input_scaffold2_path, input_pairs_path=args.input_pairs_path,
-                     properties=properties)
+    pmxligand_hybrid(
+        input_structure1_path=args.input_structure1_path,
+        input_structure2_path=args.input_structure2_path,
+        input_topology1_path=args.input_topology1_path,
+        input_topology2_path=args.input_topology2_path,
+        output_log_path=args.output_log_path,
+        output_structure1_path=args.output_structure1_path,
+        output_structure2_path=args.output_structure2_path,
+        output_topology_path=args.output_topology_path,
+        output_atomtypes_path=args.output_atomtypes_path,
+        input_scaffold1_path=args.input_scaffold1_path,
+        input_scaffold2_path=args.input_scaffold2_path,
+        input_pairs_path=args.input_pairs_path,
+        properties=properties,
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

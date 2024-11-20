@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 
 """Module containing the PMX mutate class and the command line interface."""
-import os
-from pathlib import Path
-import sys
-import shutil
+
 import argparse
+import os
+import shutil
+import sys
+from pathlib import Path
 from typing import Optional
-from biobb_pmx.pmxbiobb.common import create_mutations_file, MUTATION_DICT
-from biobb_common.generic.biobb_object import BiobbObject
+
 from biobb_common.configuration import settings
+from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
+
+from biobb_pmx.pmxbiobb.common import MUTATION_DICT, create_mutations_file
 
 
 class Pmxmutate(BiobbObject):
@@ -65,8 +68,14 @@ class Pmxmutate(BiobbObject):
 
     """
 
-    def __init__(self, input_structure_path: str, output_structure_path: str, input_b_structure_path: Optional[str] = None,
-                 properties: Optional[dict] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        input_structure_path: str,
+        output_structure_path: str,
+        input_b_structure_path: Optional[str] = None,
+        properties: Optional[dict] = None,
+        **kwargs,
+    ) -> None:
         properties = properties or {}
 
         # Call parent class constructor
@@ -75,25 +84,35 @@ class Pmxmutate(BiobbObject):
 
         # Input/Output files
         self.io_dict = {
-            "in": {"input_structure_path": input_structure_path, "input_b_structure_path": input_b_structure_path},
-            "out": {"output_structure_path": output_structure_path}
+            "in": {
+                "input_structure_path": input_structure_path,
+                "input_b_structure_path": input_b_structure_path,
+            },
+            "out": {"output_structure_path": output_structure_path},
         }
 
         # Properties specific for BB
-        self.force_field = properties.get('force_field', "amber99sb-star-ildn-mut")
-        self.resinfo = properties.get('resinfo', False)
-        self.mutation_list = properties.get('mutation_list', '2Ala')
-        self.input_mutations_file = properties.get('mutations_file')
+        self.force_field = properties.get("force_field", "amber99sb-star-ildn-mut")
+        self.resinfo = properties.get("resinfo", False)
+        self.mutation_list = properties.get("mutation_list", "2Ala")
+        self.input_mutations_file = properties.get("mutations_file")
 
         # Properties common in all PMX BB
-        self.gmx_lib = properties.get('gmx_lib', None)
-        if not self.gmx_lib and os.environ.get('CONDA_PREFIX'):
+        self.gmx_lib = properties.get("gmx_lib", None)
+        if not self.gmx_lib and os.environ.get("CONDA_PREFIX"):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
-                Path(os.environ.get('CONDA_PREFIX', '')).joinpath(f"lib/python{python_version}/site-packages/pmx/data/mutff/"))
-            if properties.get('container_path'):
-                self.gmx_lib = str(Path('/usr/local/').joinpath("lib/python3.8/site-packages/pmx/data/mutff/"))
-        self.binary_path = properties.get('binary_path', 'pmx')
+                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
+                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
+                )
+            )
+            if properties.get("container_path"):
+                self.gmx_lib = str(
+                    Path("/usr/local/").joinpath(
+                        "lib/python3.8/site-packages/pmx/data/mutff/"
+                    )
+                )
+        self.binary_path = properties.get("binary_path", "pmx")
 
         # Check the properties
         self.check_properties(properties)
@@ -113,36 +132,53 @@ class Pmxmutate(BiobbObject):
             if not Path(self.binary_path).is_file():
                 if not shutil.which(self.binary_path):
                     raise FileNotFoundError(
-                        'Executable %s not found. Check if it is installed in your system and correctly defined in the properties' % self.binary_path)
+                        "Executable %s not found. Check if it is installed in your system and correctly defined in the properties"
+                        % self.binary_path
+                    )
 
         # Generate mutations file
 
         mutations_dir = fu.create_unique_dir()
-        self.input_mutations_file = create_mutations_file(input_mutations_path=str(Path(mutations_dir).joinpath('mutations.txt')),
-                                                          mutation_list=self.mutation_list,
-                                                          mutation_dict=MUTATION_DICT)
+        self.input_mutations_file = create_mutations_file(
+            input_mutations_path=str(Path(mutations_dir).joinpath("mutations.txt")),
+            mutation_list=self.mutation_list,
+            mutation_dict=MUTATION_DICT,
+        )
 
         # Copy extra files to container: mutations file
         if self.container_path:
-            fu.log('Container execution enabled', self.out_log)
+            fu.log("Container execution enabled", self.out_log)
 
-            shutil.copy2(self.input_mutations_file, self.stage_io_dict.get("unique_dir", ""))
-            self.input_mutations_file = str(Path(self.container_volume_path).joinpath(Path(self.input_mutations_file).name))
+            shutil.copy2(
+                self.input_mutations_file, self.stage_io_dict.get("unique_dir", "")
+            )
+            self.input_mutations_file = str(
+                Path(self.container_volume_path).joinpath(
+                    Path(self.input_mutations_file).name
+                )
+            )
 
-        self.cmd = [self.binary_path, 'mutate',
-                    '-f', self.stage_io_dict["in"]["input_structure_path"],
-                    '-o', self.stage_io_dict["out"]["output_structure_path"],
-                    '-ff', self.force_field,
-                    '--script', self.input_mutations_file]
+        self.cmd = [
+            self.binary_path,
+            "mutate",
+            "-f",
+            self.stage_io_dict["in"]["input_structure_path"],
+            "-o",
+            self.stage_io_dict["out"]["output_structure_path"],
+            "-ff",
+            self.force_field,
+            "--script",
+            self.input_mutations_file,
+        ]
 
         if self.stage_io_dict["in"].get("input_b_structure_path"):
-            self.cmd.append('-fB')
+            self.cmd.append("-fB")
             self.cmd.append(self.stage_io_dict["in"]["input_b_structure_path"])
         if self.resinfo:
-            self.cmd.append('-resinfo')
+            self.cmd.append("-resinfo")
 
         if self.gmx_lib:
-            self.env_vars_dict['GMXLIB'] = self.gmx_lib
+            self.env_vars_dict["GMXLIB"] = self.gmx_lib
 
         # Run Biobb block
         self.run_biobb()
@@ -157,40 +193,66 @@ class Pmxmutate(BiobbObject):
         return self.return_code
 
 
-def pmxmutate(input_structure_path: str, output_structure_path: str,
-              input_b_structure_path: Optional[str] = None, properties: Optional[dict] = None,
-              **kwargs) -> int:
+def pmxmutate(
+    input_structure_path: str,
+    output_structure_path: str,
+    input_b_structure_path: Optional[str] = None,
+    properties: Optional[dict] = None,
+    **kwargs,
+) -> int:
     """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` class and
     execute the :meth:`launch() <pmx.pmxmutate.Pmxmutate.launch> method."""
 
-    return Pmxmutate(input_structure_path=input_structure_path,
-                     output_structure_path=output_structure_path,
-                     input_b_structure_path=input_b_structure_path,
-                     properties=properties, **kwargs).launch()
+    return Pmxmutate(
+        input_structure_path=input_structure_path,
+        output_structure_path=output_structure_path,
+        input_b_structure_path=input_b_structure_path,
+        properties=properties,
+        **kwargs,
+    ).launch()
 
 
 def main():
     """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(description="Run PMX mutate module",
-                                     formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999))
-    parser.add_argument('-c', '--config', required=False, help="This file can be a YAML file, JSON file or JSON string")
+    parser = argparse.ArgumentParser(
+        description="Run PMX mutate module",
+        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999),
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        required=False,
+        help="This file can be a YAML file, JSON file or JSON string",
+    )
 
     # Specific args of each building block
-    required_args = parser.add_argument_group('required arguments')
-    required_args.add_argument('--input_structure_path', required=True, help="Path to the input structure file")
-    required_args.add_argument('--output_structure_path', required=True, help="Path to the output structure file")
-    parser.add_argument('--input_b_structure_path', required=False, help="Path to the mutated input structure file")
+    required_args = parser.add_argument_group("required arguments")
+    required_args.add_argument(
+        "--input_structure_path", required=True, help="Path to the input structure file"
+    )
+    required_args.add_argument(
+        "--output_structure_path",
+        required=True,
+        help="Path to the output structure file",
+    )
+    parser.add_argument(
+        "--input_b_structure_path",
+        required=False,
+        help="Path to the mutated input structure file",
+    )
 
     args = parser.parse_args()
     config = args.config if args.config else None
     properties = settings.ConfReader(config=config).get_prop_dic()
 
     # Specific call of each building block
-    pmxmutate(input_structure_path=args.input_structure_path,
-              output_structure_path=args.output_structure_path,
-              input_b_structure_path=args.input_b_structure_path,
-              properties=properties)
+    pmxmutate(
+        input_structure_path=args.input_structure_path,
+        output_structure_path=args.output_structure_path,
+        input_b_structure_path=args.input_b_structure_path,
+        properties=properties,
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
