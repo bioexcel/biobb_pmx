@@ -242,8 +242,8 @@ class Pmxgentop(BiobbObject):
             out_log=self.out_log,
         )
 
-        self.tmp_files.extend([self.stage_io_dict.get("unique_dir", ""), top_dir])
-        # self.remove_tmp_files()
+        self.tmp_files.extend([self.stage_io_dict.get("unique_dir", ""), top_dir, unique_dir_output_file])
+        self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)
         return self.return_code
@@ -264,6 +264,8 @@ def pmxgentop(
         properties=properties,
         **kwargs,
     ).launch()
+
+    pmxgentop.__doc__ = Pmxgentop.__doc__
 
 
 def main():
