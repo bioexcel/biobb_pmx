@@ -178,7 +178,7 @@ class Pmxcreate_top(BiobbObject):
 
         os.chdir(self.tmp_folder)
         fu.log("Compressing topology to: %s" % top_final, self.out_log, self.global_log)
-        fu.zip_top(zip_file=top_final, top_file="topology.top", out_log=self.out_log)
+        fu.zip_top(zip_file=top_final, top_file="topology.top", out_log=self.out_log, remove_original_files=self.remove_tmp)
         os.chdir(current_cwd)
 
         fu.log("Exit code 0\n", self.out_log)

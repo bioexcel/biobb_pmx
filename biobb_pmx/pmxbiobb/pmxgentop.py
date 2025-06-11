@@ -241,6 +241,7 @@ class Pmxgentop(BiobbObject):
             zip_file=self.io_dict["out"]["output_top_zip_path"],
             top_file=str(Path(unique_dir_output_file)),
             out_log=self.out_log,
+            remove_original_files=self.remove_tmp
         )
 
         self.tmp_files.extend([
