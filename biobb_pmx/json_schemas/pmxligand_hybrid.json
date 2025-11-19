@@ -32,7 +32,7 @@
             "type": "string",
             "description": "Path to the input ligand structure file 1",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/lig1.pdb",
             "enum": [
                 ".*\\.pdb$"
             ],
@@ -48,7 +48,7 @@
             "type": "string",
             "description": "Path to the input ligand structure file 2",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/lig2.pdb",
             "enum": [
                 ".*\\.pdb$"
             ],
@@ -64,7 +64,7 @@
             "type": "string",
             "description": "Path to the input ligand topology file 1",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topoLig1.itp",
             "enum": [
                 ".*\\.itp$"
             ],
@@ -80,7 +80,7 @@
             "type": "string",
             "description": "Path to the input ligand topology file 2",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topoLig2.itp",
             "enum": [
                 ".*\\.itp$"
             ],
@@ -96,7 +96,7 @@
             "type": "string",
             "description": "Path to the input atom pair mapping",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_mapping_pairs.dat",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/myPairs1.dat",
             "enum": [
                 ".*\\.dat$",
                 ".*\\.txt$"
@@ -118,7 +118,7 @@
             "type": "string",
             "description": "Path to the index of atoms to consider for the ligand structure 1",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atoms_to_consider.ndx",
+            "sample": null,
             "enum": [
                 ".*\\.ndx$"
             ],
@@ -134,7 +134,7 @@
             "type": "string",
             "description": "Path to the index of atoms to consider for the ligand structure 2",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atoms_to_consider.ndx",
+            "sample": null,
             "enum": [
                 ".*\\.ndx$"
             ],
@@ -150,7 +150,7 @@
             "type": "string",
             "description": "Path to the log file",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atom_mapping.log",
+            "sample": null,
             "enum": [
                 ".*\\.log$",
                 ".*\\.txt$",
@@ -178,7 +178,7 @@
             "type": "string",
             "description": "Path to the output hybrid structure based on the ligand 1",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridStructure1.pdb",
             "enum": [
                 ".*\\.pdb$"
             ],
@@ -194,7 +194,7 @@
             "type": "string",
             "description": "Path to the output hybrid structure based on the ligand 2",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridStructure2.pdb",
             "enum": [
                 ".*\\.pdb$"
             ],
@@ -210,7 +210,7 @@
             "type": "string",
             "description": "Path to the output hybrid topology",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ligand_hybrid.itp",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridTopology.itp",
             "enum": [
                 ".*\\.itp$"
             ],
@@ -226,7 +226,7 @@
             "type": "string",
             "description": "Path to the atom types for the output hybrid topology",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ligand_hybrid_atomtypes.itp",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridAtomTypes.itp",
             "enum": [
                 ".*\\.itp$"
             ],

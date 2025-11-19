@@ -22,9 +22,9 @@ class Pmxcreate_top(BiobbObject):
     | Create a complete ligand topology file from two input topology files.
 
     Args:
-        input_topology1_path (str): Path to the input topology file 1. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp>`_. Accepted formats: itp (edam:format_3883).
-        input_topology2_path (str): Path to the input topology file 2. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp>`_. Accepted formats: itp (edam:format_3883).
-        output_topology_path (str): Path to the complete ligand topology file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand_top.zip>`_. Accepted formats: zip (edam:format_3987).
+        input_topology1_path (str): Path to the input topology file 1. File type: input. `Sample file https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topo1.itp>`_. Accepted formats: itp (edam:format_3883).
+        input_topology2_path (str): Path to the input topology file 2. File type: input. `Sample file https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topo2.itp`_. Accepted formats: itp (edam:format_3883).
+        output_topology_path (str): Path to the complete ligand topology file. File type: output. `Sample file https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridTopo.zip`_. Accepted formats: zip (edam:format_3987).
 
         properties (dic):
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut.ff") Force-field to be included in the generated topology.

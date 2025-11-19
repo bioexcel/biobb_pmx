@@ -21,18 +21,18 @@ class Pmxatom_mapping(BiobbObject):
     | Perform atom mapping between two ligand structures.
 
     Args:
-        input_structure1_path (str): Path to the input ligand structure file 1. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb>`_. Accepted formats: pdb (edam:format_1476).
-        input_structure2_path (str): Path to the input ligand structure file 2. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb>`_. Accepted formats: pdb (edam:format_1476).
-        output_pairs1_path (str): Path to the output pairs for the ligand structure 1. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_mapping_pairs.dat>`_. Accepted formats: dat (edam:format_1637), txt (edam:format_2330).
-        output_pairs2_path (str): Path to the output pairs for the ligand structure 2. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_mapping_pairs.dat>`_. Accepted formats: dat (edam:format_1637), txt (edam:format_2330).
-        output_log_path (str): Path to the log file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atom_mapping.log>`_. Accepted formats: log (edam:format_2330), txt (edam:format_2330), out (edam:format_2330).
-        output_structure1_path (str) (Optional): Path to the superimposed structure for the ligand structure 1. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb>`_. Accepted formats: pdb (edam:format_1476).
-        output_structure2_path (str) (Optional): Path to the superimposed structure for the ligand structure 2. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb>`_. Accepted formats: pdb (edam:format_1476).
-        output_morph1_path (str) (Optional): Path to the morphable atoms for the ligand structure 1. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb>`_. Accepted formats: pdb (edam:format_1476).
-        output_morph2_path (str) (Optional): Path to the morphable atoms for the ligand structure 2. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb>`_. Accepted formats: pdb (edam:format_1476).
-        output_scaffold1_path (str) (Optional): Path to the index of atoms to consider for the ligand structure 1. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atoms_to_consider.ndx>`_. Accepted formats: ndx (edam:format_2033).
-        output_scaffold2_path (str) (Optional): Path to the index of atoms to consider for the ligand structure 2. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atoms_to_consider.ndx>`_. Accepted formats: ndx (edam:format_2033).
-        output_score_path (str) (Optional): Path to the morphing score. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/morph_score.dat>`_. Accepted formats: dat (edam:format_1637), txt (edam:format_2330).
+        input_structure1_path (str): Path to the input ligand structure file 1. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/lig1.pdb>`_. Accepted formats: pdb (edam:format_1476).
+        input_structure2_path (str): Path to the input ligand structure file 2. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/lig2.pdb>`_. Accepted formats: pdb (edam:format_1476).
+        output_pairs1_path (str): Path to the output pairs for the ligand structure 1. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_pairs1.dat>`_. Accepted formats: dat (edam:format_1637), txt (edam:format_2330).
+        output_pairs2_path (str): Path to the output pairs for the ligand structure 2. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_pairs2.dat>`_. Accepted formats: dat (edam:format_1637), txt (edam:format_2330).
+        output_log_path (str): Path to the log file. File type: output. Accepted formats: log (edam:format_2330), txt (edam:format_2330), out (edam:format_2330).
+        output_structure1_path (str) (Optional): Path to the superimposed structure for the ligand structure 1. File type: output. Accepted formats: pdb (edam:format_1476).
+        output_structure2_path (str) (Optional): Path to the superimposed structure for the ligand structure 2. File type: output. Accepted formats: pdb (edam:format_1476).
+        output_morph1_path (str) (Optional): Path to the morphable atoms for the ligand structure 1. File type: output. Accepted formats: pdb (edam:format_1476).
+        output_morph2_path (str) (Optional): Path to the morphable atoms for the ligand structure 2. File type: output. Accepted formats: pdb (edam:format_1476).
+        output_scaffold1_path (str) (Optional): Path to the index of atoms to consider for the ligand structure 1. File type: output. Accepted formats: ndx (edam:format_2033).
+        output_scaffold2_path (str) (Optional): Path to the index of atoms to consider for the ligand structure 2. File type: output. Accepted formats: ndx (edam:format_2033).
+        output_score_path (str) (Optional): Path to the morphing score. File type: output. Accepted formats: dat (edam:format_1637), txt (edam:format_2330).
 
         properties (dic):
             * **noalignment** (*bool*) - (False) Should the alignment method be disabled.

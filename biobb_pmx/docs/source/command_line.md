@@ -186,18 +186,18 @@ pmxatom_mapping -h
 Syntax: input_argument (datatype) : Definition
 
 Config input / output arguments for this building block:
-* **input_structure1_path** (*string*): Path to the input ligand structure file 1. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb). Accepted formats: PDB
-* **input_structure2_path** (*string*): Path to the input ligand structure file 2. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb). Accepted formats: PDB
-* **output_pairs1_path** (*string*): Path to the output pairs for the ligand structure 1. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_mapping_pairs.dat). Accepted formats: DAT, TXT
-* **output_pairs2_path** (*string*): Path to the output pairs for the ligand structure 2. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_mapping_pairs.dat). Accepted formats: DAT, TXT
-* **output_log_path** (*string*): Path to the log file. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atom_mapping.log). Accepted formats: LOG, TXT, OUT
-* **output_structure1_path** (*string*): Path to the superimposed structure for the ligand structure 1. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb). Accepted formats: PDB
-* **output_structure2_path** (*string*): Path to the superimposed structure for the ligand structure 2. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb). Accepted formats: PDB
-* **output_morph1_path** (*string*): Path to the morphable atoms for the ligand structure 1. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb). Accepted formats: PDB
-* **output_morph2_path** (*string*): Path to the morphable atoms for the ligand structure 2. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb). Accepted formats: PDB
-* **output_scaffold1_path** (*string*): Path to the index of atoms to consider for the ligand structure 1. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atoms_to_consider.ndx). Accepted formats: NDX
-* **output_scaffold2_path** (*string*): Path to the index of atoms to consider for the ligand structure 2. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atoms_to_consider.ndx). Accepted formats: NDX
-* **output_score_path** (*string*): Path to the morphing score. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/morph_score.dat). Accepted formats: DAT, TXT
+* **input_structure1_path** (*string*): Path to the input ligand structure file 1. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/lig1.pdb). Accepted formats: PDB
+* **input_structure2_path** (*string*): Path to the input ligand structure file 2. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/lig2.pdb). Accepted formats: PDB
+* **output_pairs1_path** (*string*): Path to the output pairs for the ligand structure 1. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_pairs1.dat). Accepted formats: DAT, TXT
+* **output_pairs2_path** (*string*): Path to the output pairs for the ligand structure 2. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_pairs2.dat). Accepted formats: DAT, TXT
+* **output_log_path** (*string*): Path to the log file. File type: output. [Sample file](None). Accepted formats: LOG, TXT, OUT
+* **output_structure1_path** (*string*): Path to the superimposed structure for the ligand structure 1. File type: output. [Sample file](None). Accepted formats: PDB
+* **output_structure2_path** (*string*): Path to the superimposed structure for the ligand structure 2. File type: output. [Sample file](None). Accepted formats: PDB
+* **output_morph1_path** (*string*): Path to the morphable atoms for the ligand structure 1. File type: output. [Sample file](None). Accepted formats: PDB
+* **output_morph2_path** (*string*): Path to the morphable atoms for the ligand structure 2. File type: output. [Sample file](None). Accepted formats: PDB
+* **output_scaffold1_path** (*string*): Path to the index of atoms to consider for the ligand structure 1. File type: output. [Sample file](None). Accepted formats: NDX
+* **output_scaffold2_path** (*string*): Path to the index of atoms to consider for the ligand structure 2. File type: output. [Sample file](None). Accepted formats: NDX
+* **output_score_path** (*string*): Path to the morphing score. File type: output. [Sample file](None). Accepted formats: DAT, TXT
 ### Config
 Syntax: input_parameter (datatype) - (default_value) Definition
 
@@ -276,9 +276,9 @@ pmxcreate_top -h
 Syntax: input_argument (datatype) : Definition
 
 Config input / output arguments for this building block:
-* **input_topology1_path** (*string*): Path to the input topology file 1. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp). Accepted formats: ITP
-* **input_topology2_path** (*string*): Path to the input topology file 2. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp). Accepted formats: ITP
-* **output_topology_path** (*string*): Path to the complete ligand topology file. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand_top.zip). Accepted formats: ZIP
+* **input_topology1_path** (*string*): Path to the input topology file 1. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topo1.itp). Accepted formats: ITP
+* **input_topology2_path** (*string*): Path to the input topology file 2. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topo2.itp). Accepted formats: ITP
+* **output_topology_path** (*string*): Path to the complete ligand topology file. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridTopo.zip). Accepted formats: ZIP
 ### Config
 Syntax: input_parameter (datatype) - (default_value) Definition
 
@@ -485,18 +485,18 @@ pmxligand_hybrid -h
 Syntax: input_argument (datatype) : Definition
 
 Config input / output arguments for this building block:
-* **input_structure1_path** (*string*): Path to the input ligand structure file 1. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb). Accepted formats: PDB
-* **input_structure2_path** (*string*): Path to the input ligand structure file 2. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb). Accepted formats: PDB
-* **input_topology1_path** (*string*): Path to the input ligand topology file 1. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp). Accepted formats: ITP
-* **input_topology2_path** (*string*): Path to the input ligand topology file 2. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp). Accepted formats: ITP
-* **input_pairs_path** (*string*): Path to the input atom pair mapping. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_mapping_pairs.dat). Accepted formats: DAT, TXT
-* **input_scaffold1_path** (*string*): Path to the index of atoms to consider for the ligand structure 1. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atoms_to_consider.ndx). Accepted formats: NDX
-* **input_scaffold2_path** (*string*): Path to the index of atoms to consider for the ligand structure 2. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atoms_to_consider.ndx). Accepted formats: NDX
-* **output_log_path** (*string*): Path to the log file. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atom_mapping.log). Accepted formats: LOG, TXT, OUT
-* **output_structure1_path** (*string*): Path to the output hybrid structure based on the ligand 1. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb). Accepted formats: PDB
-* **output_structure2_path** (*string*): Path to the output hybrid structure based on the ligand 2. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb). Accepted formats: PDB
-* **output_topology_path** (*string*): Path to the output hybrid topology. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ligand_hybrid.itp). Accepted formats: ITP
-* **output_atomtypes_path** (*string*): Path to the atom types for the output hybrid topology. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ligand_hybrid_atomtypes.itp). Accepted formats: ITP
+* **input_structure1_path** (*string*): Path to the input ligand structure file 1. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/lig1.pdb). Accepted formats: PDB
+* **input_structure2_path** (*string*): Path to the input ligand structure file 2. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/lig2.pdb). Accepted formats: PDB
+* **input_topology1_path** (*string*): Path to the input ligand topology file 1. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topoLig1.itp). Accepted formats: ITP
+* **input_topology2_path** (*string*): Path to the input ligand topology file 2. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topoLig2.itp). Accepted formats: ITP
+* **input_pairs_path** (*string*): Path to the input atom pair mapping. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/myPairs1.dat). Accepted formats: DAT, TXT
+* **input_scaffold1_path** (*string*): Path to the index of atoms to consider for the ligand structure 1. File type: input. [Sample file](None). Accepted formats: NDX
+* **input_scaffold2_path** (*string*): Path to the index of atoms to consider for the ligand structure 2. File type: input. [Sample file](None). Accepted formats: NDX
+* **output_log_path** (*string*): Path to the log file. File type: output. [Sample file](None). Accepted formats: LOG, TXT, OUT
+* **output_structure1_path** (*string*): Path to the output hybrid structure based on the ligand 1. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridStructure1.pdb). Accepted formats: PDB
+* **output_structure2_path** (*string*): Path to the output hybrid structure based on the ligand 2. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridStructure2.pdb). Accepted formats: PDB
+* **output_topology_path** (*string*): Path to the output hybrid topology. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridTopology.itp). Accepted formats: ITP
+* **output_atomtypes_path** (*string*): Path to the atom types for the output hybrid topology. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridAtomTypes.itp). Accepted formats: ITP
 ### Config
 Syntax: input_parameter (datatype) - (default_value) Definition
 
@@ -569,8 +569,8 @@ pmxmerge_ff -h
 Syntax: input_argument (datatype) : Definition
 
 Config input / output arguments for this building block:
-* **input_topology_path** (*string*): Path to the input ligand topologies as a zip file containing a list of itp files. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand_itps.zip). Accepted formats: ZIP
-* **output_topology_path** (*string*): Path to the merged ligand topology file. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp). Accepted formats: ITP
+* **input_topology_path** (*string*): Path to the input ligand topologies as a zip file containing a list of itp files. File type: input. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/itps_to_merge.zip). Accepted formats: ZIP
+* **output_topology_path** (*string*): Path to the merged ligand topology file. File type: output. [Sample file](https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_mergedTopology.itp). Accepted formats: ITP
 ### Config
 Syntax: input_parameter (datatype) - (default_value) Definition
 

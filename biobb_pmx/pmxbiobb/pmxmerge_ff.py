@@ -23,8 +23,8 @@ class Pmxmerge_ff(BiobbObject):
     | Merge ligand topology files.
 
     Args:
-        input_topology_path (str): Path to the input ligand topologies as a zip file containing a list of itp files. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand_itps.zip>`_. Accepted formats: zip (edam:format_3987).
-        output_topology_path (str): Path to the merged ligand topology file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp>`_. Accepted formats: itp (edam:format_3883).
+        input_topology_path (str): Path to the input ligand topologies as a zip file containing a list of itp files. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/itps_to_merge.zip>`_. Accepted formats: zip (edam:format_3987).
+        output_topology_path (str): Path to the merged ligand topology file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_mergedTopology.itp>`_. Accepted formats: itp (edam:format_3883).
 
         properties (dic):
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.

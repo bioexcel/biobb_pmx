@@ -28,7 +28,7 @@
             "type": "string",
             "description": "Path to the input ligand structure file 1",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/lig1.pdb",
             "enum": [
                 ".*\\.pdb$"
             ],
@@ -44,7 +44,7 @@
             "type": "string",
             "description": "Path to the input ligand structure file 2",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.pdb",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/lig2.pdb",
             "enum": [
                 ".*\\.pdb$"
             ],
@@ -60,7 +60,7 @@
             "type": "string",
             "description": "Path to the output pairs for the ligand structure 1",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_mapping_pairs.dat",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_pairs1.dat",
             "enum": [
                 ".*\\.dat$",
                 ".*\\.txt$"
@@ -82,7 +82,7 @@
             "type": "string",
             "description": "Path to the output pairs for the ligand structure 2",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_mapping_pairs.dat",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_pairs2.dat",
             "enum": [
                 ".*\\.dat$",
                 ".*\\.txt$"
@@ -104,7 +104,7 @@
             "type": "string",
             "description": "Path to the log file",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atom_mapping.log",
+            "sample": null,
             "enum": [
                 ".*\\.log$",
                 ".*\\.txt$",
@@ -132,7 +132,7 @@
             "type": "string",
             "description": "Path to the superimposed structure for the ligand structure 1",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb",
+            "sample": null,
             "enum": [
                 ".*\\.pdb$"
             ],
@@ -148,7 +148,7 @@
             "type": "string",
             "description": "Path to the superimposed structure for the ligand structure 2",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb",
+            "sample": null,
             "enum": [
                 ".*\\.pdb$"
             ],
@@ -164,7 +164,7 @@
             "type": "string",
             "description": "Path to the morphable atoms for the ligand structure 1",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb",
+            "sample": null,
             "enum": [
                 ".*\\.pdb$"
             ],
@@ -180,7 +180,7 @@
             "type": "string",
             "description": "Path to the morphable atoms for the ligand structure 2",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/superimposed_ligand.pdb",
+            "sample": null,
             "enum": [
                 ".*\\.pdb$"
             ],
@@ -196,7 +196,7 @@
             "type": "string",
             "description": "Path to the index of atoms to consider for the ligand structure 1",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atoms_to_consider.ndx",
+            "sample": null,
             "enum": [
                 ".*\\.ndx$"
             ],
@@ -212,7 +212,7 @@
             "type": "string",
             "description": "Path to the index of atoms to consider for the ligand structure 2",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/atoms_to_consider.ndx",
+            "sample": null,
             "enum": [
                 ".*\\.ndx$"
             ],
@@ -228,7 +228,7 @@
             "type": "string",
             "description": "Path to the morphing score",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/morph_score.dat",
+            "sample": null,
             "enum": [
                 ".*\\.dat$",
                 ".*\\.txt$"

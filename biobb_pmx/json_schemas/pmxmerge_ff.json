@@ -25,7 +25,7 @@
             "type": "string",
             "description": "Path to the input ligand topologies as a zip file containing a list of itp files",
             "filetype": "input",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand_itps.zip",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/itps_to_merge.zip",
             "enum": [
                 ".*\\.zip$"
             ],
@@ -41,7 +41,7 @@
             "type": "string",
             "description": "Path to the merged ligand topology file",
             "filetype": "output",
-            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/ligand.itp",
+            "sample": "https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_mergedTopology.itp",
             "enum": [
                 ".*\\.itp$"
             ],
