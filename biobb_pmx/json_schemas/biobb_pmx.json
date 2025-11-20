@@ -23,7 +23,7 @@
             "desc": "Wrapper class for the PMX gentop module.",
             "exec": "pmxgentop",
             "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxgentop",
-            "rest": true
+            "rest": false
         },
         {
             "block": "Pmxanalyse",
@@ -55,7 +55,7 @@
             "desc": "Wrapper class for the PMX hybrid ligand module.",
             "exec": "pmxligand_hybrid",
             "docs": "https://biobb-pmx.readthedocs.io/en/latest/pmx.html#module-pmx.pmxligand_hybrid",
-            "rest": true
+            "rest": false
         },
         {
             "block": "Pmxmerge_ff",
