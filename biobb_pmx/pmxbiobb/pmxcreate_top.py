@@ -189,7 +189,6 @@ class Pmxcreate_top(BiobbObject):
         # Copy files to host
         self.copy_to_host()
 
-        # self.tmp_files.append(self.stage_io_dict.get("unique_dir", ""))
         self.tmp_files.extend([self.tmp_folder])
         self.remove_tmp_files()
 

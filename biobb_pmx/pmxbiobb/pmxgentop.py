@@ -245,7 +245,6 @@ class Pmxgentop(BiobbObject):
         )
 
         self.tmp_files.extend([
-            # self.stage_io_dict.get("unique_dir", ""),
             top_dir,
             u_dir
         ])

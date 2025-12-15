@@ -243,7 +243,6 @@ class Pmxanalyse(BiobbObject):
         self.copy_to_host()
 
         self.tmp_files.extend(
-            # [self.stage_io_dict.get("unique_dir", ""), list_a_dir, list_b_dir]
             [list_a_dir, list_b_dir]
         )
         self.remove_tmp_files()
