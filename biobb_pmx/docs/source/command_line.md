@@ -156,32 +156,34 @@ pmxatom_mapping -h
       -h, --help            show this help message and exit
       -c CONFIG, --config CONFIG
                             This file can be a YAML file, JSON file or JSON string
-      --output_structure1_path OUTPUT_STRUCTURE1_PATH
-                            Path to the superimposed structure for the ligand structure 1
-      --output_structure2_path OUTPUT_STRUCTURE2_PATH
-                            Path to the superimposed structure for the ligand structure 2
-      --output_morph1_path OUTPUT_MORPH1_PATH
-                            Path to the morphable atoms for the ligand structure 1
-      --output_morph2_path OUTPUT_MORPH2_PATH
-                            Path to the morphable atoms for the ligand structure 2
-      --output_scaffold1_path OUTPUT_SCAFFOLD1_PATH
-                            Path to the index of atoms to consider for the ligand structure 1
-      --output_scaffold2_path OUTPUT_SCAFFOLD2_PATH
-                            Path to the index of atoms to consider for the ligand structure 2
-      --output_score_path OUTPUT_SCORE_PATH
-                            Path to the morphing score. File type: output
     
     required arguments:
       --input_structure1_path INPUT_STRUCTURE1_PATH
-                            Path to the input ligand structure file 1
+                            Path to the input ligand structure file 1. Accepted formats: pdb.
       --input_structure2_path INPUT_STRUCTURE2_PATH
-                            Path to the input ligand structure file 2
+                            Path to the input ligand structure file 2. Accepted formats: pdb.
       --output_pairs1_path OUTPUT_PAIRS1_PATH
-                            Path to the output pairs for the ligand structure 1
+                            Path to the output pairs for the ligand structure 1. Accepted formats: dat, txt.
       --output_pairs2_path OUTPUT_PAIRS2_PATH
-                            Path to the output pairs for the ligand structure 2
+                            Path to the output pairs for the ligand structure 2. Accepted formats: dat, txt.
       --output_log_path OUTPUT_LOG_PATH
-                            Path to the log file
+                            Path to the log file. Accepted formats: log, txt, out.
+    
+    optional arguments:
+      --output_structure1_path OUTPUT_STRUCTURE1_PATH
+                            Path to the superimposed structure for the ligand structure 1. Accepted formats: pdb.
+      --output_structure2_path OUTPUT_STRUCTURE2_PATH
+                            Path to the superimposed structure for the ligand structure 2. Accepted formats: pdb.
+      --output_morph1_path OUTPUT_MORPH1_PATH
+                            Path to the morphable atoms for the ligand structure 1. Accepted formats: pdb.
+      --output_morph2_path OUTPUT_MORPH2_PATH
+                            Path to the morphable atoms for the ligand structure 2. Accepted formats: pdb.
+      --output_scaffold1_path OUTPUT_SCAFFOLD1_PATH
+                            Path to the index of atoms to consider for the ligand structure 1. Accepted formats: ndx.
+      --output_scaffold2_path OUTPUT_SCAFFOLD2_PATH
+                            Path to the index of atoms to consider for the ligand structure 2. Accepted formats: ndx.
+      --output_score_path OUTPUT_SCORE_PATH
+                            Path to the morphing score. Accepted formats: dat, txt.
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -232,7 +234,7 @@ properties:
 ```
 #### Command line
 ```python
-pmxatom_mapping --config config_pmxatom_mapping.yml --input_structure1_path ligand.pdb --input_structure2_path ligand.pdb --output_pairs1_path ref_mapping_pairs.dat --output_pairs2_path ref_mapping_pairs.dat --output_log_path atom_mapping.log --output_structure1_path superimposed_ligand.pdb --output_structure2_path superimposed_ligand.pdb --output_morph1_path superimposed_ligand.pdb --output_morph2_path superimposed_ligand.pdb --output_scaffold1_path atoms_to_consider.ndx --output_scaffold2_path atoms_to_consider.ndx --output_score_path morph_score.dat
+pmxatom_mapping --config config_pmxatom_mapping.yml --input_structure1_path lig1.pdb --input_structure2_path lig2.pdb --output_pairs1_path ref_pairs1.dat --output_pairs2_path ref_pairs2.dat --output_log_path output.log --output_structure1_path output.pdb --output_structure2_path output.pdb --output_morph1_path output.pdb --output_morph2_path output.pdb --output_scaffold1_path output.ndx --output_scaffold2_path output.ndx --output_score_path output.dat
 ```
 ### JSON
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxatom_mapping.json)
@@ -246,7 +248,7 @@ pmxatom_mapping --config config_pmxatom_mapping.yml --input_structure1_path liga
 ```
 #### Command line
 ```python
-pmxatom_mapping --config config_pmxatom_mapping.json --input_structure1_path ligand.pdb --input_structure2_path ligand.pdb --output_pairs1_path ref_mapping_pairs.dat --output_pairs2_path ref_mapping_pairs.dat --output_log_path atom_mapping.log --output_structure1_path superimposed_ligand.pdb --output_structure2_path superimposed_ligand.pdb --output_morph1_path superimposed_ligand.pdb --output_morph2_path superimposed_ligand.pdb --output_scaffold1_path atoms_to_consider.ndx --output_scaffold2_path atoms_to_consider.ndx --output_score_path morph_score.dat
+pmxatom_mapping --config config_pmxatom_mapping.json --input_structure1_path lig1.pdb --input_structure2_path lig2.pdb --output_pairs1_path ref_pairs1.dat --output_pairs2_path ref_pairs2.dat --output_log_path output.log --output_structure1_path output.pdb --output_structure2_path output.pdb --output_morph1_path output.pdb --output_morph2_path output.pdb --output_scaffold1_path output.ndx --output_scaffold2_path output.ndx --output_score_path output.dat
 ```
 
 ## Pmxcreate_top
@@ -256,7 +258,7 @@ Command:
 ```python
 pmxcreate_top -h
 ```
-    usage: pmxcreate_top [-h] [-c CONFIG] --input_topology1_path INPUT_TOPOLOGY1_PATH --input_topology2_path INPUT_TOPOLOGY2_PATH --output_topology_path OUTPUT_TOPOLOGY_PATH
+    usage: pmxcreate_top [-h] [-c CONFIG] --input_topology1_path INPUT_TOPOLOGY1_PATH --input_topology2_path INPUT_TOPOLOGY2_PATH -o OUTPUT_TOPOLOGY_PATH
     
     Run PMX create_top module
     
@@ -267,11 +269,11 @@ pmxcreate_top -h
     
     required arguments:
       --input_topology1_path INPUT_TOPOLOGY1_PATH
-                            Path to the input topology file 1
+                            Path to the input topology file 1. Accepted formats: itp.
       --input_topology2_path INPUT_TOPOLOGY2_PATH
-                            Path to the input topology file 2
-      --output_topology_path OUTPUT_TOPOLOGY_PATH
-                            Path to the complete ligand topology file
+                            Path to the input topology file 2. Accepted formats: itp.
+      -o OUTPUT_TOPOLOGY_PATH, --output_topology_path OUTPUT_TOPOLOGY_PATH
+                            Path to the complete ligand topology file. Accepted formats: zip.
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -310,7 +312,7 @@ properties:
 ```
 #### Command line
 ```python
-pmxcreate_top --config config_pmxcreate_top.yml --input_topology1_path ligand.itp --input_topology2_path ligand.itp --output_topology_path ligand_top.zip
+pmxcreate_top --config config_pmxcreate_top.yml --input_topology1_path topo1.itp --input_topology2_path topo2.itp --output_topology_path ref_hybridTopo.zip
 ```
 ### JSON
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxcreate_top.json)
@@ -331,7 +333,7 @@ pmxcreate_top --config config_pmxcreate_top.yml --input_topology1_path ligand.it
 ```
 #### Command line
 ```python
-pmxcreate_top --config config_pmxcreate_top.json --input_topology1_path ligand.itp --input_topology2_path ligand.itp --output_topology_path ligand_top.zip
+pmxcreate_top --config config_pmxcreate_top.json --input_topology1_path topo1.itp --input_topology2_path topo2.itp --output_topology_path ref_hybridTopo.zip
 ```
 
 ## Pmxgentop
@@ -341,7 +343,7 @@ Command:
 ```python
 pmxgentop -h
 ```
-    usage: pmxgentop [-h] [-c CONFIG] --input_top_zip_path INPUT_TOP_ZIP_PATH --output_top_zip_path OUTPUT_TOP_ZIP_PATH
+    usage: pmxgentop [-h] [-c CONFIG] -i INPUT_TOP_ZIP_PATH -o OUTPUT_TOP_ZIP_PATH
     
     Wrapper class for the PMX gentop module
     
@@ -351,10 +353,10 @@ pmxgentop -h
                             This file can be a YAML file, JSON file or JSON string
     
     required arguments:
-      --input_top_zip_path INPUT_TOP_ZIP_PATH
-                            Path to the input topology zip file
-      --output_top_zip_path OUTPUT_TOP_ZIP_PATH
-                            Path to the output topology zip file
+      -i INPUT_TOP_ZIP_PATH, --input_top_zip_path INPUT_TOP_ZIP_PATH
+                            Path the input GROMACS topology TOP and ITP files in zip format. Accepted formats: zip.
+      -o OUTPUT_TOP_ZIP_PATH, --output_top_zip_path OUTPUT_TOP_ZIP_PATH
+                            Path the output TOP topology in zip format. Accepted formats: zip.
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -447,7 +449,7 @@ Command:
 ```python
 pmxligand_hybrid -h
 ```
-    usage: pmxligand_hybrid [-h] [-c CONFIG] --input_structure1_path INPUT_STRUCTURE1_PATH --input_structure2_path INPUT_STRUCTURE2_PATH --input_topology1_path INPUT_TOPOLOGY1_PATH --input_topology2_path INPUT_TOPOLOGY2_PATH --output_structure1_path OUTPUT_STRUCTURE1_PATH --output_structure2_path OUTPUT_STRUCTURE2_PATH --output_topology1_path OUTPUT_TOPOLOGY1_PATH --output_topology2_path OUTPUT_TOPOLOGY2_PATH --output_log_path OUTPUT_LOG_PATH [--input_scaffold1_path INPUT_SCAFFOLD1_PATH] [--input_scaffold2_path INPUT_SCAFFOLD2_PATH] [--input_pairs_path INPUT_PAIRS_PATH]
+    usage: pmxligand_hybrid [-h] [-c CONFIG] --input_structure1_path INPUT_STRUCTURE1_PATH --input_structure2_path INPUT_STRUCTURE2_PATH --input_topology1_path INPUT_TOPOLOGY1_PATH --input_topology2_path INPUT_TOPOLOGY2_PATH [--input_pairs_path INPUT_PAIRS_PATH] [--input_scaffold1_path INPUT_SCAFFOLD1_PATH] [--input_scaffold2_path INPUT_SCAFFOLD2_PATH] --output_log_path OUTPUT_LOG_PATH --output_structure1_path OUTPUT_STRUCTURE1_PATH --output_structure2_path OUTPUT_STRUCTURE2_PATH --output_topology_path OUTPUT_TOPOLOGY_PATH --output_atomtypes_path OUTPUT_ATOMTYPES_PATH
     
     Run PMX ligand hybrid module
     
@@ -455,32 +457,34 @@ pmxligand_hybrid -h
       -h, --help            show this help message and exit
       -c CONFIG, --config CONFIG
                             This file can be a YAML file, JSON file or JSON string
-      --input_scaffold1_path INPUT_SCAFFOLD1_PATH
-                            Path to the index of atoms to consider for the ligand structure 1
-      --input_scaffold2_path INPUT_SCAFFOLD2_PATH
-                            Path to the index of atoms to consider for the ligand structure 2
-      --input_pairs_path INPUT_PAIRS_PATH
-                            Path to the input atom pair mapping.
     
     required arguments:
       --input_structure1_path INPUT_STRUCTURE1_PATH
-                            Path to the input ligand structure file 1
+                            Path to the input ligand structure file 1. Accepted formats: pdb.
       --input_structure2_path INPUT_STRUCTURE2_PATH
-                            Path to the input ligand structure file 2
+                            Path to the input ligand structure file 2. Accepted formats: pdb.
       --input_topology1_path INPUT_TOPOLOGY1_PATH
-                            Path to the input ligand topology file 1
+                            Path to the input ligand topology file 1. Accepted formats: itp.
       --input_topology2_path INPUT_TOPOLOGY2_PATH
-                            Path to the input ligand topology file 2
-      --output_structure1_path OUTPUT_STRUCTURE1_PATH
-                            Path to the output ligand structure file 1
-      --output_structure2_path OUTPUT_STRUCTURE2_PATH
-                            Path to the output ligand structure file 2
-      --output_topology1_path OUTPUT_TOPOLOGY1_PATH
-                            Path to the output ligand topology file 1
-      --output_topology2_path OUTPUT_TOPOLOGY2_PATH
-                            Path to the output ligand topology file 2
+                            Path to the input ligand topology file 2. Accepted formats: itp.
       --output_log_path OUTPUT_LOG_PATH
-                            Path to the log file
+                            Path to the log file. Accepted formats: log, txt, out.
+      --output_structure1_path OUTPUT_STRUCTURE1_PATH
+                            Path to the output hybrid structure based on the ligand 1. Accepted formats: pdb.
+      --output_structure2_path OUTPUT_STRUCTURE2_PATH
+                            Path to the output hybrid structure based on the ligand 2. Accepted formats: pdb.
+      --output_topology_path OUTPUT_TOPOLOGY_PATH
+                            Path to the output hybrid topology. Accepted formats: itp.
+      --output_atomtypes_path OUTPUT_ATOMTYPES_PATH
+                            Path to the atom types for the output hybrid topology. Accepted formats: itp.
+    
+    optional arguments:
+      --input_pairs_path INPUT_PAIRS_PATH
+                            Path to the input atom pair mapping. Accepted formats: dat, txt.
+      --input_scaffold1_path INPUT_SCAFFOLD1_PATH
+                            Path to the index of atoms to consider for the ligand structure 1. Accepted formats: ndx.
+      --input_scaffold2_path INPUT_SCAFFOLD2_PATH
+                            Path to the index of atoms to consider for the ligand structure 2. Accepted formats: ndx.
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -527,7 +531,7 @@ properties:
 ```
 #### Command line
 ```python
-pmxligand_hybrid --config config_pmxligand_hybrid.yml --input_structure1_path ligand.pdb --input_structure2_path ligand.pdb --input_topology1_path ligand.itp --input_topology2_path ligand.itp --input_pairs_path ref_mapping_pairs.dat --input_scaffold1_path atoms_to_consider.ndx --input_scaffold2_path atoms_to_consider.ndx --output_log_path atom_mapping.log --output_structure1_path superimposed_ligand.pdb --output_structure2_path superimposed_ligand.pdb --output_topology_path ligand_hybrid.itp --output_atomtypes_path ligand_hybrid_atomtypes.itp
+pmxligand_hybrid --config config_pmxligand_hybrid.yml --input_structure1_path lig1.pdb --input_structure2_path lig2.pdb --input_topology1_path topoLig1.itp --input_topology2_path topoLig2.itp --input_pairs_path myPairs1.dat --input_scaffold1_path input.ndx --input_scaffold2_path input.ndx --output_log_path output.log --output_structure1_path ref_hybridStructure1.pdb --output_structure2_path ref_hybridStructure2.pdb --output_topology_path ref_hybridTopology.itp --output_atomtypes_path ref_hybridAtomTypes.itp
 ```
 ### JSON
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxligand_hybrid.json)
@@ -541,7 +545,7 @@ pmxligand_hybrid --config config_pmxligand_hybrid.yml --input_structure1_path li
 ```
 #### Command line
 ```python
-pmxligand_hybrid --config config_pmxligand_hybrid.json --input_structure1_path ligand.pdb --input_structure2_path ligand.pdb --input_topology1_path ligand.itp --input_topology2_path ligand.itp --input_pairs_path ref_mapping_pairs.dat --input_scaffold1_path atoms_to_consider.ndx --input_scaffold2_path atoms_to_consider.ndx --output_log_path atom_mapping.log --output_structure1_path superimposed_ligand.pdb --output_structure2_path superimposed_ligand.pdb --output_topology_path ligand_hybrid.itp --output_atomtypes_path ligand_hybrid_atomtypes.itp
+pmxligand_hybrid --config config_pmxligand_hybrid.json --input_structure1_path lig1.pdb --input_structure2_path lig2.pdb --input_topology1_path topoLig1.itp --input_topology2_path topoLig2.itp --input_pairs_path myPairs1.dat --input_scaffold1_path input.ndx --input_scaffold2_path input.ndx --output_log_path output.log --output_structure1_path ref_hybridStructure1.pdb --output_structure2_path ref_hybridStructure2.pdb --output_topology_path ref_hybridTopology.itp --output_atomtypes_path ref_hybridAtomTypes.itp
 ```
 
 ## Pmxmerge_ff
@@ -551,7 +555,7 @@ Command:
 ```python
 pmxmerge_ff -h
 ```
-    usage: pmxmerge_ff [-h] [-c CONFIG] --input_topology_path INPUT_TOPOLOGY_PATH --output_topology_path OUTPUT_TOPOLOGY_PATH
+    usage: pmxmerge_ff [-h] [-c CONFIG] -i INPUT_TOPOLOGY_PATH -o OUTPUT_TOPOLOGY_PATH
     
     Run PMX merge_ff module
     
@@ -561,10 +565,10 @@ pmxmerge_ff -h
                             This file can be a YAML file, JSON file or JSON string
     
     required arguments:
-      --input_topology_path INPUT_TOPOLOGY_PATH
-                            Path to the input ligand topologies as a zip file containing a list of itp files.
-      --output_topology_path OUTPUT_TOPOLOGY_PATH
-                            Path to the merged ligand topology file
+      -i INPUT_TOPOLOGY_PATH, --input_topology_path INPUT_TOPOLOGY_PATH
+                            Path to the input ligand topologies as a zip file containing a list of itp files. Accepted formats: zip.
+      -o OUTPUT_TOPOLOGY_PATH, --output_topology_path OUTPUT_TOPOLOGY_PATH
+                            Path to the merged ligand topology file. Accepted formats: itp.
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 
@@ -593,7 +597,7 @@ properties:
 ```
 #### Command line
 ```python
-pmxmerge_ff --config config_pmxmerge_ff.yml --input_topology_path ligand_itps.zip --output_topology_path ligand.itp
+pmxmerge_ff --config config_pmxmerge_ff.yml --input_topology_path itps_to_merge.zip --output_topology_path ref_mergedTopology.itp
 ```
 ### JSON
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmerge_ff.json)
@@ -606,7 +610,7 @@ pmxmerge_ff --config config_pmxmerge_ff.yml --input_topology_path ligand_itps.zi
 ```
 #### Command line
 ```python
-pmxmerge_ff --config config_pmxmerge_ff.json --input_topology_path ligand_itps.zip --output_topology_path ligand.itp
+pmxmerge_ff --config config_pmxmerge_ff.json --input_topology_path itps_to_merge.zip --output_topology_path ref_mergedTopology.itp
 ```
 
 ## Pmxmutate
@@ -616,7 +620,7 @@ Command:
 ```python
 pmxmutate -h
 ```
-    usage: pmxmutate [-h] [-c CONFIG] --input_structure_path INPUT_STRUCTURE_PATH --output_structure_path OUTPUT_STRUCTURE_PATH [--input_b_structure_path INPUT_B_STRUCTURE_PATH]
+    usage: pmxmutate [-h] [-c CONFIG] --input_structure_path INPUT_STRUCTURE_PATH -o OUTPUT_STRUCTURE_PATH [--input_b_structure_path INPUT_B_STRUCTURE_PATH]
     
     Run PMX mutate module
     
@@ -624,14 +628,16 @@ pmxmutate -h
       -h, --help            show this help message and exit
       -c CONFIG, --config CONFIG
                             This file can be a YAML file, JSON file or JSON string
-      --input_b_structure_path INPUT_B_STRUCTURE_PATH
-                            Path to the mutated input structure file
     
     required arguments:
       --input_structure_path INPUT_STRUCTURE_PATH
-                            Path to the input structure file
-      --output_structure_path OUTPUT_STRUCTURE_PATH
-                            Path to the output structure file
+                            Path to the input structure file. Accepted formats: pdb, gro.
+      -o OUTPUT_STRUCTURE_PATH, --output_structure_path OUTPUT_STRUCTURE_PATH
+                            Path to the output structure file. Accepted formats: pdb, gro.
+    
+    optional arguments:
+      --input_b_structure_path INPUT_B_STRUCTURE_PATH
+                            Path to the mutated input structure file. Accepted formats: pdb, gro.
 ### I / O Arguments
 Syntax: input_argument (datatype) : Definition
 

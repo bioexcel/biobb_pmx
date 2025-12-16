@@ -2,14 +2,12 @@
 
 """Module containing the PMX gentop class and the command line interface."""
 
-import argparse
 import os
 import shutil
 import sys
 from pathlib import Path
 from typing import Optional
 
-from biobb_common.configuration import settings
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
@@ -260,56 +258,13 @@ def pmxgentop(
     properties: Optional[dict] = None,
     **kwargs,
 ) -> int:
-    """Execute the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` class and
+    """Create the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` class and
     execute the :meth:`launch() <pmx.pmxgentop.Pmxgentop.launch> method."""
-
-    return Pmxgentop(
-        input_top_zip_path=input_top_zip_path,
-        output_top_zip_path=output_top_zip_path,
-        properties=properties,
-        **kwargs,
-    ).launch()
-
-    pmxgentop.__doc__ = Pmxgentop.__doc__
+    return Pmxgentop(**dict(locals())).launch()
 
 
-def main():
-    """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(
-        description="Wrapper class for the PMX gentop module",
-        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999),
-    )
-    parser.add_argument(
-        "-c",
-        "--config",
-        required=False,
-        help="This file can be a YAML file, JSON file or JSON string",
-    )
-
-    # Specific args of each building block
-    required_args = parser.add_argument_group("required arguments")
-    required_args.add_argument(
-        "--input_top_zip_path",
-        required=True,
-        help="Path to the input topology zip file",
-    )
-    required_args.add_argument(
-        "--output_top_zip_path",
-        required=True,
-        help="Path to the output topology zip file",
-    )
-
-    args = parser.parse_args()
-    config = args.config if args.config else None
-    properties = settings.ConfReader(config=config).get_prop_dic()
-
-    # Specific call of each building block
-    pmxgentop(
-        input_top_zip_path=args.input_top_zip_path,
-        output_top_zip_path=args.output_top_zip_path,
-        properties=properties,
-    )
-
+pmxgentop.__doc__ = Pmxgentop.__doc__
+main = Pmxgentop.get_main(pmxgentop, "Wrapper class for the PMX gentop module")
 
 if __name__ == "__main__":
     main()

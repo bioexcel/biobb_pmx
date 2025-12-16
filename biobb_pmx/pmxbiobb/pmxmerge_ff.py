@@ -2,14 +2,12 @@
 
 """Module containing the PMX merge_ff class and the command line interface."""
 
-import argparse
 import glob
 import os
 import sys
 from pathlib import Path
 from typing import Optional
 
-from biobb_common.configuration import settings
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
@@ -155,56 +153,13 @@ def pmxmerge_ff(
     properties: Optional[dict] = None,
     **kwargs,
 ) -> int:
-    """Execute the :class:`Pmxmerge_ff <pmx.pmxmerge_ff.Pmxmerge_ff>` class and
+    """Create the :class:`Pmxmerge_ff <pmx.pmxmerge_ff.Pmxmerge_ff>` class and
     execute the :meth:`launch() <pmx.pmxmerge_ff.Pmxmerge_ff.launch> method."""
-
-    return Pmxmerge_ff(
-        input_topology_path=input_topology_path,
-        output_topology_path=output_topology_path,
-        properties=properties,
-        **kwargs,
-    ).launch()
-
-    pmxmerge_ff.__doc__ = Pmxmerge_ff.__doc__
+    return Pmxmerge_ff(**dict(locals())).launch()
 
 
-def main():
-    """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(
-        description="Run PMX merge_ff module",
-        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999),
-    )
-    parser.add_argument(
-        "-c",
-        "--config",
-        required=False,
-        help="This file can be a YAML file, JSON file or JSON string",
-    )
-
-    # Specific args of each building block
-    required_args = parser.add_argument_group("required arguments")
-    required_args.add_argument(
-        "--input_topology_path",
-        required=True,
-        help="Path to the input ligand topologies as a zip file containing a list of itp files.",
-    )
-    required_args.add_argument(
-        "--output_topology_path",
-        required=True,
-        help="Path to the merged ligand topology file",
-    )
-
-    args = parser.parse_args()
-    config = args.config if args.config else None
-    properties = settings.ConfReader(config=config).get_prop_dic()
-
-    # Specific call of each building block
-    pmxmerge_ff(
-        input_topology_path=args.input_topology_path,
-        output_topology_path=args.output_topology_path,
-        properties=properties,
-    )
-
+pmxmerge_ff.__doc__ = Pmxmerge_ff.__doc__
+main = Pmxmerge_ff.get_main(pmxmerge_ff, "Run PMX merge_ff module")
 
 if __name__ == "__main__":
     main()

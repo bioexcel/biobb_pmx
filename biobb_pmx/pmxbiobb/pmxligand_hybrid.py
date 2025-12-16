@@ -2,14 +2,12 @@
 
 """Module containing the PMX ligand_hybrid class and the command line interface."""
 
-import argparse
 import os
 import shutil
 import sys
 from pathlib import Path
 from typing import Optional
 
-from biobb_common.configuration import settings
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.tools.file_utils import launchlogger
 
@@ -265,123 +263,13 @@ def pmxligand_hybrid(
     properties: Optional[dict] = None,
     **kwargs,
 ) -> int:
-    """Execute the :class:`Pmxligand_hybrid <pmx.pmxmutate.Pmxligand_hybrid>` class and
+    """Create the :class:`Pmxligand_hybrid <pmx.pmxmutate.Pmxligand_hybrid>` class and
     execute the :meth:`launch() <pmx.pmxligand_hybrid.Pmxligand_hybrid.launch> method."""
-
-    return Pmxligand_hybrid(
-        input_structure1_path=input_structure1_path,
-        input_structure2_path=input_structure2_path,
-        input_topology1_path=input_topology1_path,
-        input_topology2_path=input_topology2_path,
-        output_log_path=output_log_path,
-        output_structure1_path=output_structure1_path,
-        output_structure2_path=output_structure2_path,
-        output_topology_path=output_topology_path,
-        output_atomtypes_path=output_atomtypes_path,
-        input_scaffold1_path=input_scaffold1_path,
-        input_scaffold2_path=input_scaffold2_path,
-        input_pairs_path=input_pairs_path,
-        properties=properties,
-    ).launch()
-
-    pmxligand_hybrid.__doc__ = Pmxligand_hybrid.__doc__
+    return Pmxligand_hybrid(**dict(locals())).launch()
 
 
-def main():
-    """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(
-        description="Run PMX ligand hybrid module",
-        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999),
-    )
-    parser.add_argument(
-        "-c",
-        "--config",
-        required=False,
-        help="This file can be a YAML file, JSON file or JSON string",
-    )
-
-    # Specific args of each building block
-    required_args = parser.add_argument_group("required arguments")
-    required_args.add_argument(
-        "--input_structure1_path",
-        required=True,
-        help="Path to the input ligand structure file 1",
-    )
-    required_args.add_argument(
-        "--input_structure2_path",
-        required=True,
-        help="Path to the input ligand structure file 2",
-    )
-    required_args.add_argument(
-        "--input_topology1_path",
-        required=True,
-        help="Path to the input ligand topology file 1",
-    )
-    required_args.add_argument(
-        "--input_topology2_path",
-        required=True,
-        help="Path to the input ligand topology file 2",
-    )
-    required_args.add_argument(
-        "--output_structure1_path",
-        required=True,
-        help="Path to the output ligand structure file 1",
-    )
-    required_args.add_argument(
-        "--output_structure2_path",
-        required=True,
-        help="Path to the output ligand structure file 2",
-    )
-    required_args.add_argument(
-        "--output_topology1_path",
-        required=True,
-        help="Path to the output ligand topology file 1",
-    )
-    required_args.add_argument(
-        "--output_topology2_path",
-        required=True,
-        help="Path to the output ligand topology file 2",
-    )
-    required_args.add_argument(
-        "--output_log_path", required=True, help="Path to the log file"
-    )
-    parser.add_argument(
-        "--input_scaffold1_path",
-        required=False,
-        help="Path to the index of atoms to consider for the ligand structure 1",
-    )
-    parser.add_argument(
-        "--input_scaffold2_path",
-        required=False,
-        help="Path to the index of atoms to consider for the ligand structure 2",
-    )
-    parser.add_argument(
-        "--input_pairs_path",
-        required=False,
-        help="Path to the input atom pair mapping.",
-    )
-
-    args = parser.parse_args()
-    config = args.config if args.config else None
-    properties = settings.ConfReader(config=config).get_prop_dic()
-
-    # Specific call of each building block
-    pmxligand_hybrid(
-        input_structure1_path=args.input_structure1_path,
-        input_structure2_path=args.input_structure2_path,
-        input_topology1_path=args.input_topology1_path,
-        input_topology2_path=args.input_topology2_path,
-        output_log_path=args.output_log_path,
-        output_structure1_path=args.output_structure1_path,
-        output_structure2_path=args.output_structure2_path,
-        output_topology_path=args.output_topology_path,
-        output_atomtypes_path=args.output_atomtypes_path,
-        input_scaffold1_path=args.input_scaffold1_path,
-        input_scaffold2_path=args.input_scaffold2_path,
-        input_pairs_path=args.input_pairs_path,
-        properties=properties,
-    )
-
+pmxligand_hybrid.__doc__ = Pmxligand_hybrid.__doc__
+main = Pmxligand_hybrid.get_main(pmxligand_hybrid, "Run PMX ligand hybrid module")
 
 if __name__ == "__main__":
     main()

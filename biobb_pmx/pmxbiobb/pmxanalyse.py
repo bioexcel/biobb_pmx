@@ -2,12 +2,10 @@
 
 """Module containing the PMX analyse class and the command line interface."""
 
-import argparse
 import shutil
 from pathlib import Path
 from typing import Optional
 
-from biobb_common.configuration import settings
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
@@ -259,69 +257,13 @@ def pmxanalyse(
     properties: Optional[dict] = None,
     **kwargs,
 ) -> int:
-    """Execute the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` class and
+    """Create the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` class and
     execute the :meth:`launch() <pmx.pmxanalyse.Pmxanalyse.launch> method."""
-
-    return Pmxanalyse(
-        input_a_xvg_zip_path=input_a_xvg_zip_path,
-        input_b_xvg_zip_path=input_b_xvg_zip_path,
-        output_result_path=output_result_path,
-        output_work_plot_path=output_work_plot_path,
-        properties=properties,
-    ).launch()
-
-    pmxanalyse.__doc__ = Pmxanalyse.__doc__
+    return Pmxanalyse(**dict(locals())).launch()
 
 
-def main():
-    """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(
-        description="Wrapper class for the PMX analyse module.",
-        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999),
-    )
-    parser.add_argument(
-        "-c",
-        "--config",
-        required=False,
-        help="This file can be a YAML file, JSON file or JSON string",
-    )
-
-    # Specific args of each building block
-    required_args = parser.add_argument_group("required arguments")
-    required_args.add_argument(
-        "--input_a_xvg_zip_path",
-        required=True,
-        help="Path the zip file containing the dgdl.xvg files of the A state. Accepted formats: zip.",
-    )
-    required_args.add_argument(
-        "--input_b_xvg_zip_path",
-        required=True,
-        help="Path the zip file containing the dgdl.xvg files of the B state. Accepted formats: zip.",
-    )
-    required_args.add_argument(
-        "--output_result_path",
-        required=True,
-        help="Path to the TXT results file. Accepted formats: txt.",
-    )
-    required_args.add_argument(
-        "--output_work_plot_path",
-        required=True,
-        help="Path to the PNG plot results file. Accepted formats: png.",
-    )
-
-    args = parser.parse_args()
-    config = args.config if args.config else None
-    properties = settings.ConfReader(config=config).get_prop_dic()
-
-    # Specific call of each building block
-    pmxanalyse(
-        input_a_xvg_zip_path=args.input_a_xvg_zip_path,
-        input_b_xvg_zip_path=args.input_b_xvg_zip_path,
-        output_result_path=args.output_result_path,
-        output_work_plot_path=args.output_work_plot_path,
-        properties=properties,
-    )
-
+pmxanalyse.__doc__ = Pmxanalyse.__doc__
+main = Pmxanalyse.get_main(pmxanalyse, "Wrapper class for the PMX analyse module.")
 
 if __name__ == "__main__":
     main()

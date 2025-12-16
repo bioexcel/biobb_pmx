@@ -2,14 +2,12 @@
 
 """Module containing the PMX mutate class and the command line interface."""
 
-import argparse
 import os
 import shutil
 import sys
 from pathlib import Path
 from typing import Optional
 
-from biobb_common.configuration import settings
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
@@ -200,61 +198,13 @@ def pmxmutate(
     properties: Optional[dict] = None,
     **kwargs,
 ) -> int:
-    """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` class and
+    """Create the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` class and
     execute the :meth:`launch() <pmx.pmxmutate.Pmxmutate.launch> method."""
-
-    return Pmxmutate(
-        input_structure_path=input_structure_path,
-        output_structure_path=output_structure_path,
-        input_b_structure_path=input_b_structure_path,
-        properties=properties,
-        **kwargs,
-    ).launch()
-
-    pmxmutate.__doc__ = Pmxmutate.__doc__
+    return Pmxmutate(**dict(locals())).launch()
 
 
-def main():
-    """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(
-        description="Run PMX mutate module",
-        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999),
-    )
-    parser.add_argument(
-        "-c",
-        "--config",
-        required=False,
-        help="This file can be a YAML file, JSON file or JSON string",
-    )
-
-    # Specific args of each building block
-    required_args = parser.add_argument_group("required arguments")
-    required_args.add_argument(
-        "--input_structure_path", required=True, help="Path to the input structure file"
-    )
-    required_args.add_argument(
-        "--output_structure_path",
-        required=True,
-        help="Path to the output structure file",
-    )
-    parser.add_argument(
-        "--input_b_structure_path",
-        required=False,
-        help="Path to the mutated input structure file",
-    )
-
-    args = parser.parse_args()
-    config = args.config if args.config else None
-    properties = settings.ConfReader(config=config).get_prop_dic()
-
-    # Specific call of each building block
-    pmxmutate(
-        input_structure_path=args.input_structure_path,
-        output_structure_path=args.output_structure_path,
-        input_b_structure_path=args.input_b_structure_path,
-        properties=properties,
-    )
-
+pmxmutate.__doc__ = Pmxmutate.__doc__
+main = Pmxmutate.get_main(pmxmutate, "Run PMX mutate module")
 
 if __name__ == "__main__":
     main()

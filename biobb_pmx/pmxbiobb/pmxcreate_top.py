@@ -2,14 +2,12 @@
 
 """Module containing the PMX create_top class and the command line interface."""
 
-import argparse
 import os
 import shutil
 import sys
 from pathlib import Path, PurePath
 from typing import Optional
 
-from biobb_common.configuration import settings
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.tools import file_utils as fu
 from biobb_common.tools.file_utils import launchlogger
@@ -22,9 +20,9 @@ class Pmxcreate_top(BiobbObject):
     | Create a complete ligand topology file from two input topology files.
 
     Args:
-        input_topology1_path (str): Path to the input topology file 1. File type: input. `Sample file https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topo1.itp>`_. Accepted formats: itp (edam:format_3883).
-        input_topology2_path (str): Path to the input topology file 2. File type: input. `Sample file https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topo2.itp`_. Accepted formats: itp (edam:format_3883).
-        output_topology_path (str): Path to the complete ligand topology file. File type: output. `Sample file https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridTopo.zip`_. Accepted formats: zip (edam:format_3987).
+        input_topology1_path (str): Path to the input topology file 1. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topo1.itp>`_. Accepted formats: itp (edam:format_3883).
+        input_topology2_path (str): Path to the input topology file 2. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topo2.itp>`_. Accepted formats: itp (edam:format_3883).
+        output_topology_path (str): Path to the complete ligand topology file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridTopo.zip>`_. Accepted formats: zip (edam:format_3987).
 
         properties (dic):
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut.ff") Force-field to be included in the generated topology.
@@ -203,63 +201,13 @@ def pmxcreate_top(
     properties: Optional[dict] = None,
     **kwargs,
 ) -> int:
-    """Execute the :class:`Pmxcreate_top <pmx.pmxcreate_top.Pmxcreate_top>` class and
+    """Create the :class:`Pmxcreate_top <pmx.pmxcreate_top.Pmxcreate_top>` class and
     execute the :meth:`launch() <pmx.pmxmcreate_top.Pmxmcreate_top.launch> method."""
-
-    return Pmxcreate_top(
-        input_topology1_path=input_topology1_path,
-        input_topology2_path=input_topology2_path,
-        output_topology_path=output_topology_path,
-        properties=properties,
-        **kwargs,
-    ).launch()
-
-    pmxcreate_top.__doc__ = Pmxcreate_top.__doc__
+    return Pmxcreate_top(**dict(locals())).launch()
 
 
-def main():
-    """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(
-        description="Run PMX create_top module",
-        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999),
-    )
-    parser.add_argument(
-        "-c",
-        "--config",
-        required=False,
-        help="This file can be a YAML file, JSON file or JSON string",
-    )
-
-    # Specific args of each building block
-    required_args = parser.add_argument_group("required arguments")
-    required_args.add_argument(
-        "--input_topology1_path",
-        required=True,
-        help="Path to the input topology file 1",
-    )
-    required_args.add_argument(
-        "--input_topology2_path",
-        required=True,
-        help="Path to the input topology file 2",
-    )
-    required_args.add_argument(
-        "--output_topology_path",
-        required=True,
-        help="Path to the complete ligand topology file",
-    )
-
-    args = parser.parse_args()
-    config = args.config if args.config else None
-    properties = settings.ConfReader(config=config).get_prop_dic()
-
-    # Specific call of each building block
-    pmxcreate_top(
-        input_topology1_path=args.input_topology1_path,
-        input_topology2_path=args.input_topology2_path,
-        output_topology_path=args.output_topology_path,
-        properties=properties,
-    )
-
+pmxcreate_top.__doc__ = Pmxcreate_top.__doc__
+main = Pmxcreate_top.get_main(pmxcreate_top, "Run PMX create_top module")
 
 if __name__ == "__main__":
     main()

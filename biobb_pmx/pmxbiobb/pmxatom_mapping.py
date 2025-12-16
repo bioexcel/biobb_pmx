@@ -2,14 +2,12 @@
 
 """Module containing the PMX atom_mapping class and the command line interface."""
 
-import argparse
 import os
 import shutil
 import sys
 from pathlib import Path
 from typing import Optional
 
-from biobb_common.configuration import settings
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.tools.file_utils import launchlogger
 
@@ -288,124 +286,13 @@ def pmxatom_mapping(
     properties: Optional[dict] = None,
     **kwargs,
 ) -> int:
-    """Execute the :class:`Pmxatom_mapping <pmx.pmxmutate.Pmxatom_mapping>` class and
+    """Create the :class:`Pmxatom_mapping <pmx.pmxmutate.Pmxatom_mapping>` class and
     execute the :meth:`launch() <pmx.pmxatom_mapping.Pmxatom_mapping.launch> method."""
-
-    return Pmxatom_mapping(
-        input_structure1_path=input_structure1_path,
-        input_structure2_path=input_structure2_path,
-        output_pairs1_path=output_pairs1_path,
-        output_pairs2_path=output_pairs2_path,
-        output_log_path=output_log_path,
-        output_structure1_path=output_structure1_path,
-        output_structure2_path=output_structure2_path,
-        output_morph1_path=output_morph1_path,
-        output_morph2_path=output_morph2_path,
-        output_scaffold1_path=output_scaffold1_path,
-        output_scaffold2_path=output_scaffold2_path,
-        output_score_path=output_score_path,
-        properties=properties,
-        **kwargs,
-    ).launch()
-
-    pmxatom_mapping.__doc__ = Pmxatom_mapping.__doc__
+    return Pmxatom_mapping(**dict(locals())).launch()
 
 
-def main():
-    """Command line execution of this building block. Please check the command line documentation."""
-    parser = argparse.ArgumentParser(
-        description="Run PMX atom mapping module",
-        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, width=99999),
-    )
-    parser.add_argument(
-        "-c",
-        "--config",
-        required=False,
-        help="This file can be a YAML file, JSON file or JSON string",
-    )
-
-    # Specific args of each building block
-    required_args = parser.add_argument_group("required arguments")
-    required_args.add_argument(
-        "--input_structure1_path",
-        required=True,
-        help="Path to the input ligand structure file 1",
-    )
-    required_args.add_argument(
-        "--input_structure2_path",
-        required=True,
-        help="Path to the input ligand structure file 2",
-    )
-    required_args.add_argument(
-        "--output_pairs1_path",
-        required=True,
-        help="Path to the output pairs for the ligand structure 1",
-    )
-    required_args.add_argument(
-        "--output_pairs2_path",
-        required=True,
-        help="Path to the output pairs for the ligand structure 2",
-    )
-    required_args.add_argument(
-        "--output_log_path", required=True, help="Path to the log file"
-    )
-    parser.add_argument(
-        "--output_structure1_path",
-        required=False,
-        help="Path to the superimposed structure for the ligand structure 1",
-    )
-    parser.add_argument(
-        "--output_structure2_path",
-        required=False,
-        help="Path to the superimposed structure for the ligand structure 2",
-    )
-    parser.add_argument(
-        "--output_morph1_path",
-        required=False,
-        help="Path to the morphable atoms for the ligand structure 1",
-    )
-    parser.add_argument(
-        "--output_morph2_path",
-        required=False,
-        help="Path to the morphable atoms for the ligand structure 2",
-    )
-    parser.add_argument(
-        "--output_scaffold1_path",
-        required=False,
-        help="Path to the index of atoms to consider for the ligand structure 1",
-    )
-    parser.add_argument(
-        "--output_scaffold2_path",
-        required=False,
-        help="Path to the index of atoms to consider for the ligand structure 2",
-    )
-    parser.add_argument(
-        "--output_score_path",
-        required=False,
-        help="Path to the morphing score. File type: output",
-    )
-
-    args = parser.parse_args()
-    config = args.config if args.config else None
-    properties = settings.ConfReader(config=config).get_prop_dic()
-
-    # Specific call of each building block
-    pmxatom_mapping(
-        input_structure1_path=args.input_structure1_path,
-        input_structure2_path=args.input_structure2_path,
-        output_pairs1_path=args.output_pairs1_path,
-        output_pairs2_path=args.output_pairs2_path,
-        output_log_path=args.output_log_path,
-        output_structure1_path=args.output_structure1_path,
-        output_structure2_path=args.output_structure2_path,
-        output_morph1_path=args.output_morph1_path,
-        output_morph2_path=args.output_morph2_path,
-        output_scaffold1_path=args.output_scaffold1_path,
-        output_scaffold2_path=args.output_scaffold2_path,
-        output_score_path=args.output_score_path,
-        properties=properties,
-    )
-
+pmxatom_mapping.__doc__ = Pmxatom_mapping.__doc__
+main = Pmxatom_mapping.get_main(pmxatom_mapping, "Run PMX atom mapping module")
 
 if __name__ == "__main__":
     main()
