@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_d938f4eecb54a579_pmxcreate_top_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.0">coverage.py v7.13.0</a>,
-            created at 2025-12-16 14:46 +0000
+            created at 2025-12-19 09:13 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -233,10 +233,10 @@
     <p class="pln"><span class="n"><a id="t151" href="#t151">151</a></span><span class="t">        <span class="com"># Properties common in all PMX BB</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t152" href="#t152">152</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">gmx_lib</span> <span class="op">=</span> <span class="nam">properties</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"gmx_lib"</span><span class="op">,</span> <span class="key">None</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t153" href="#t153">153</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">self</span><span class="op">.</span><span class="nam">gmx_lib</span> <span class="key">and</span> <span class="nam">os</span><span class="op">.</span><span class="nam">environ</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"CONDA_PREFIX"</span><span class="op">,</span> <span class="str">""</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t154" href="#t154">154</a></span><span class="t">            <span class="nam">python_version</span> <span class="op">=</span> <span class="str">f"{sys.version_info.major}.{sys.version_info.minor}"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t154" href="#t154">154</a></span><span class="t">            <span class="nam">python_version</span> <span class="op">=</span> <span class="fst">f"</span><span class="op">{</span><span class="nam">sys</span><span class="op">.</span><span class="nam">version_info</span><span class="op">.</span><span class="nam">major</span><span class="op">}</span><span class="fst">.</span><span class="op">{</span><span class="nam">sys</span><span class="op">.</span><span class="nam">version_info</span><span class="op">.</span><span class="nam">minor</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t155" href="#t155">155</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">gmx_lib</span> <span class="op">=</span> <span class="nam">str</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t156" href="#t156">156</a></span><span class="t">                <span class="nam">Path</span><span class="op">(</span><span class="nam">os</span><span class="op">.</span><span class="nam">environ</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"CONDA_PREFIX"</span><span class="op">,</span> <span class="str">""</span><span class="op">)</span><span class="op">)</span><span class="op">.</span><span class="nam">joinpath</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t157" href="#t157">157</a></span><span class="t">                    <span class="str">f"lib/python{python_version}/site-packages/pmx/data/mutff/"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t157" href="#t157">157</a></span><span class="t">                    <span class="fst">f"</span><span class="fst">lib/python</span><span class="op">{</span><span class="nam">python_version</span><span class="op">}</span><span class="fst">/site-packages/pmx/data/mutff/</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t158" href="#t158">158</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t159" href="#t159">159</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t160" href="#t160">160</a></span><span class="t">            <span class="key">if</span> <span class="nam">properties</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"container_path"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -387,7 +387,7 @@
             <a class="nav" href="z_d938f4eecb54a579_pmxcreate_top_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.0">coverage.py v7.13.0</a>,
-            created at 2025-12-16 14:46 +0000
+            created at 2025-12-19 09:13 +0000
         </p>
     </div>
 </footer>
