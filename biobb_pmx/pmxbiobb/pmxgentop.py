@@ -242,10 +242,7 @@ class Pmxgentop(BiobbObject):
             remove_original_files=self.remove_tmp
         )
 
-        self.tmp_files.extend([
-            top_dir,
-            u_dir
-        ])
+        self.tmp_files.extend([top_dir, u_dir])
         self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)

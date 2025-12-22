@@ -184,7 +184,7 @@ class Pmxmutate(BiobbObject):
         # Copy files to host
         self.copy_to_host()
 
-        self.tmp_files.extend([mutations_dir])
+        self.tmp_files.append(mutations_dir)
         self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)

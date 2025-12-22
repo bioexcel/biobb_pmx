@@ -110,15 +110,15 @@ class Pmxmerge_ff(BiobbObject):
         self.stage_files()
 
         # Creating temporary folder
-        self.tmp_folder = fu.create_unique_dir()
-        fu.log("Creating %s temporary folder" % self.tmp_folder, self.out_log)
+        tmp_folder = fu.create_unique_dir()
+        fu.log("Creating %s temporary folder" % tmp_folder, self.out_log)
 
         fu.unzip_list(
             self.stage_io_dict["in"]["input_topology_path"],
-            self.tmp_folder,
+            tmp_folder,
             out_log=self.out_log,
         )
-        files = glob.glob(self.tmp_folder + "/*.itp")
+        files = glob.glob(tmp_folder + "/*.itp")
         ffsIn_list = []
         for itp in files:
             ffsIn_list.append(itp)
@@ -140,7 +140,7 @@ class Pmxmerge_ff(BiobbObject):
         # Copy files to host
         self.copy_to_host()
 
-        self.tmp_files.extend([self.tmp_folder])
+        self.tmp_files.append(tmp_folder)
         self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)

@@ -124,24 +124,24 @@ class Pmxcreate_top(BiobbObject):
         fu.log("Running create_top from pmx package...\n", self.out_log)
 
         # Creating temporary folder
-        self.tmp_folder = fu.create_unique_dir()
-        fu.log("Creating %s temporary folder" % self.tmp_folder, self.out_log)
+        tmp_folder = fu.create_unique_dir()
+        fu.log("Creating %s temporary folder" % tmp_folder, self.out_log)
 
         itp = os.path.basename(
             os.path.normpath(self.stage_io_dict["in"]["input_topology1_path"])
         )
         fu.log("Creating %s itp file in temporary folder" % itp, self.out_log)
-        itp_local = str(PurePath(self.tmp_folder).joinpath(itp))
+        itp_local = str(PurePath(tmp_folder).joinpath(itp))
         shutil.copyfile(self.io_dict["in"]["input_topology1_path"], itp_local)
 
         itp2 = os.path.basename(
             os.path.normpath(self.stage_io_dict["in"]["input_topology2_path"])
         )
         fu.log("Creating %s itp file in temporary folder" % itp2, self.out_log)
-        itp2_local = str(PurePath(self.tmp_folder).joinpath(itp2))
+        itp2_local = str(PurePath(tmp_folder).joinpath(itp2))
         shutil.copyfile(self.io_dict["in"]["input_topology2_path"], itp2_local)
 
-        top_local = str(PurePath(self.tmp_folder).joinpath("topology.top"))
+        top_local = str(PurePath(tmp_folder).joinpath("topology.top"))
 
         # _create_top function, taken from the pmx AZ tutorial:
         # https://github.com/deGrootLab/pmx/blob/develop/tutorials/AZtutorial.py
@@ -174,7 +174,7 @@ class Pmxcreate_top(BiobbObject):
             PurePath(current_cwd).joinpath(self.io_dict["out"]["output_topology_path"])
         )
 
-        os.chdir(self.tmp_folder)
+        os.chdir(tmp_folder)
         fu.log("Compressing topology to: %s" % top_final, self.out_log, self.global_log)
         fu.zip_top(zip_file=top_final, top_file="topology.top", out_log=self.out_log, remove_original_files=self.remove_tmp)
         os.chdir(current_cwd)
@@ -187,7 +187,7 @@ class Pmxcreate_top(BiobbObject):
         # Copy files to host
         self.copy_to_host()
 
-        self.tmp_files.extend([self.tmp_folder])
+        self.tmp_files.append(tmp_folder)
         self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)

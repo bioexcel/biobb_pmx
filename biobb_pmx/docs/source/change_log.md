@@ -1,5 +1,11 @@
 # Biobb PMX changelog
 
+## What's new in version [5.2.0](https://github.com/bioexcel/biobb_amber/releases/tag/v5.2.0)?
+
+### Changes
+
+* [UPDATE] Update to biobb_common 5.2.0
+
 ## What's new in version [5.1.0](https://github.com/bioexcel/biobb_pmx/releases/tag/v5.1.0)?
 
 ### Changes
