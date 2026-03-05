@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="biobb_pmx",
-    version="5.2.1",
+    version="5.2.2",
     author="Biobb developers",
     author_email="pau.andrio@bsc.es",
     description="Biobb_pmx is the Biobb module collection to perform PMX (http://pmx.mpibpc.mpg.de) executions.",
@@ -19,7 +19,7 @@ setuptools.setup(
     },
     packages=setuptools.find_packages(exclude=["docs"]),
     package_data={"biobb_pmx": ["py.typed"]},
-    install_requires=["biobb_common==5.2.1"],
+    install_requires=["biobb_common==5.2.2"],
     python_requires=">=3.10",
     entry_points={
         "console_scripts": [
