@@ -43,31 +43,31 @@ Config input / output arguments for this building block:
 Syntax: input_parameter (datatype) - (default_value) Definition
 
 Config parameters for this building block:
-* **method** (*string*): (CGI BAR JARZ) Choose one or more estimators to use. .
-* **temperature** (*number*): (298.15) Temperature in Kelvin..
-* **nboots** (*integer*): (0) Number of bootstrap samples to use for the bootstrap estimate of the standard errors..
-* **nblocks** (*integer*): (1) Number of blocks to divide the data into for an estimate of the standard error..
-* **integ_only** (*boolean*): (False) Whether to do integration only..
-* **reverseB** (*boolean*): (False) Whether to reverse the work values for the backward (B->A) transformation..
-* **skip** (*integer*): (1) Skip files..
-* **slice** (*string*): (None) Subset of trajectories to analyze. Provide list slice, e.g. "10 50" will result in selecting dhdl_files[10:50]..
-* **rand** (*integer*): (None) Take a random subset of trajectories. Default is None (do not take random subset)..
-* **index** (*string*): (None) Zero-based index of files to analyze (e.g. "0 10 20 50 60"). It keeps the dhdl.xvg files according to their position in the list, sorted according to the filenames..
-* **prec** (*integer*): (2) The decimal precision of the screen/file output..
-* **units** (*string*): (kJ) The units of the output. .
-* **no_ks** (*boolean*): (False) Whether to do a Kolmogorov-Smirnov test to check whether the Gaussian assumption for CGI holds..
-* **nbins** (*integer*): (20) Number of histograms bins for the plot..
-* **dpi** (*integer*): (300) Resolution of the plot..
-* **binary_path** (*string*): (pmx) Path to the PMX command line interface..
-* **remove_tmp** (*boolean*): (True) Remove temporal files..
-* **restart** (*boolean*): (False) Do not execute if output files exist..
-* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
-* **container_path** (*string*): (None) Path to the binary executable of your container..
-* **container_image** (*string*): (gromacs/gromacs:latest) Container Image identifier..
-* **container_volume_path** (*string*): (/data) Path to an internal directory in the container..
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container..
-* **container_user_id** (*string*): (None) User number id to be mapped inside the container..
-* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell..
+* **method** (*string*): (CGI BAR JARZ) Choose one or more estimators to use. 
+* **temperature** (*number*): (298.15) Temperature in Kelvin.
+* **nboots** (*integer*): (0) Number of bootstrap samples to use for the bootstrap estimate of the standard errors.
+* **nblocks** (*integer*): (1) Number of blocks to divide the data into for an estimate of the standard error.
+* **integ_only** (*boolean*): (False) Whether to do integration only.
+* **reverseB** (*boolean*): (False) Whether to reverse the work values for the backward (B->A) transformation.
+* **skip** (*integer*): (1) Skip files.
+* **slice** (*string*): (None) Subset of trajectories to analyze. Provide list slice, e.g. "10 50" will result in selecting dhdl_files[10:50].
+* **rand** (*integer*): (None) Take a random subset of trajectories. Default is None (do not take random subset).
+* **index** (*string*): (None) Zero-based index of files to analyze (e.g. "0 10 20 50 60"). It keeps the dhdl.xvg files according to their position in the list, sorted according to the filenames.
+* **prec** (*integer*): (2) The decimal precision of the screen/file output.
+* **units** (*string*): (kJ) The units of the output. 
+* **no_ks** (*boolean*): (False) Whether to do a Kolmogorov-Smirnov test to check whether the Gaussian assumption for CGI holds.
+* **nbins** (*integer*): (20) Number of histograms bins for the plot.
+* **dpi** (*integer*): (300) Resolution of the plot.
+* **binary_path** (*string*): (pmx) Path to the PMX command line interface.
+* **remove_tmp** (*boolean*): (True) Remove temporal files.
+* **restart** (*boolean*): (False) Do not execute if output files exist.
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory.
+* **container_path** (*string*): (None) Path to the binary executable of your container.
+* **container_image** (*string*): (gromacs/gromacs:latest) Container Image identifier.
+* **container_volume_path** (*string*): (/data) Path to an internal directory in the container.
+* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
+* **container_user_id** (*string*): (None) User number id to be mapped inside the container.
+* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxanalyse.yml)
 ```python
@@ -204,26 +204,26 @@ Config input / output arguments for this building block:
 Syntax: input_parameter (datatype) - (default_value) Definition
 
 Config parameters for this building block:
-* **noalignment** (*boolean*): (False) Should the alignment method be disabled..
-* **nomcs** (*boolean*): (False) Should the MCS method be disabled..
-* **noH2H** (*boolean*): (True) Should non-polar hydrogens be discarded from morphing into any other hydrogen..
-* **H2Hpolar** (*boolean*): (False) Should polar hydrogens be morphed into polar hydrogens..
-* **H2Heavy** (*boolean*): (False) Should hydrogen be morphed into a heavy atom..
-* **RingsOnly** (*boolean*): (False) Should rings only be used in the MCS search and alignemnt..
-* **dMCS** (*boolean*): (False) Should the distance criterium be also applied in the MCS based search..
-* **swap** (*boolean*): (False) Try swapping the molecule order which would be a cross-check and require double execution time..
-* **nochirality** (*boolean*): (True) Perform chirality check for MCS mapping..
-* **distance** (*number*): (0.05) Distance (nm) between atoms to consider them morphable for alignment approach..
-* **timeout** (*integer*): (10) Maximum time (s) for an MCS search..
-* **remove_tmp** (*boolean*): (True) Remove temporal files..
-* **restart** (*boolean*): (False) Do not execute if output files exist..
-* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
-* **container_path** (*string*): (None) Path to the binary executable of your container..
-* **container_image** (*string*): (None) Container Image identifier..
-* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container..
-* **container_user_id** (*string*): (None) User number id to be mapped inside the container..
-* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell..
+* **noalignment** (*boolean*): (False) Should the alignment method be disabled.
+* **nomcs** (*boolean*): (False) Should the MCS method be disabled.
+* **noH2H** (*boolean*): (True) Should non-polar hydrogens be discarded from morphing into any other hydrogen.
+* **H2Hpolar** (*boolean*): (False) Should polar hydrogens be morphed into polar hydrogens.
+* **H2Heavy** (*boolean*): (False) Should hydrogen be morphed into a heavy atom.
+* **RingsOnly** (*boolean*): (False) Should rings only be used in the MCS search and alignemnt.
+* **dMCS** (*boolean*): (False) Should the distance criterium be also applied in the MCS based search.
+* **swap** (*boolean*): (False) Try swapping the molecule order which would be a cross-check and require double execution time.
+* **nochirality** (*boolean*): (True) Perform chirality check for MCS mapping.
+* **distance** (*number*): (0.05) Distance (nm) between atoms to consider them morphable for alignment approach.
+* **timeout** (*integer*): (10) Maximum time (s) for an MCS search.
+* **remove_tmp** (*boolean*): (True) Remove temporal files.
+* **restart** (*boolean*): (False) Do not execute if output files exist.
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory.
+* **container_path** (*string*): (None) Path to the binary executable of your container.
+* **container_image** (*string*): (None) Container Image identifier.
+* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container.
+* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
+* **container_user_id** (*string*): (None) User number id to be mapped inside the container.
+* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxatom_mapping.yml)
 ```python
@@ -285,19 +285,19 @@ Config input / output arguments for this building block:
 Syntax: input_parameter (datatype) - (default_value) Definition
 
 Config parameters for this building block:
-* **force_field** (*string*): (amber99sb-star-ildn-mut.ff) Force-field to be included in the generated topology..
-* **water** (*string*): (tip3p) Water model to be included in the generated topology..
-* **system_name** (*string*): (Pmx topology) System name to be included in the generated topology..
-* **mols** (*array*): ([[Protein,1],[Ligand,1]]) Molecules to be included in the generated topology..
-* **remove_tmp** (*boolean*): (True) Remove temporal files..
-* **restart** (*boolean*): (False) Do not execute if output files exist..
-* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
-* **container_path** (*string*): (None) Path to the binary executable of your container..
-* **container_image** (*string*): (None) Container Image identifier..
-* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container..
-* **container_user_id** (*string*): (None) User number id to be mapped inside the container..
-* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell..
+* **force_field** (*string*): (amber99sb-star-ildn-mut.ff) Force-field to be included in the generated topology.
+* **water** (*string*): (tip3p) Water model to be included in the generated topology.
+* **system_name** (*string*): (Pmx topology) System name to be included in the generated topology.
+* **mols** (*array*): ([[Protein,1],[Ligand,1]]) Molecules to be included in the generated topology.
+* **remove_tmp** (*boolean*): (True) Remove temporal files.
+* **restart** (*boolean*): (False) Do not execute if output files exist.
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory.
+* **container_path** (*string*): (None) Path to the binary executable of your container.
+* **container_image** (*string*): (None) Container Image identifier.
+* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container.
+* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
+* **container_user_id** (*string*): (None) User number id to be mapped inside the container.
+* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxcreate_top.yml)
 ```python
@@ -367,20 +367,20 @@ Config input / output arguments for this building block:
 Syntax: input_parameter (datatype) - (default_value) Definition
 
 Config parameters for this building block:
-* **force_field** (*string*): (amber99sb-star-ildn-mut) Force field to use. If **input_top_zip_path** is a top file, it's not necessary to specify the forcefield, as it will be determined automatically. If **input_top_zip_path** is an itp file, then it's needed..
-* **split** (*boolean*): (False) Write separate topologies for the vdW and charge transformations..
-* **scale_mass** (*boolean*): (False) Scale the masses of morphing atoms so that dummies have a mass of 1..
-* **gmx_lib** (*string*): ($CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff/) Path to the GMXLIB folder in your computer..
-* **binary_path** (*string*): (pmx) Path to the PMX command line interface..
-* **remove_tmp** (*boolean*): (True) Remove temporal files..
-* **restart** (*boolean*): (False) Do not execute if output files exist..
-* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
-* **container_path** (*string*): (None) Path to the binary executable of your container..
-* **container_image** (*string*): (gromacs/gromacs:latest) Container Image identifier..
-* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container..
-* **container_user_id** (*string*): (None) User number id to be mapped inside the container..
-* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell..
+* **force_field** (*string*): (amber99sb-star-ildn-mut) Force field to use. If **input_top_zip_path** is a top file, it's not necessary to specify the forcefield, as it will be determined automatically. If **input_top_zip_path** is an itp file, then it's needed.
+* **split** (*boolean*): (False) Write separate topologies for the vdW and charge transformations.
+* **scale_mass** (*boolean*): (False) Scale the masses of morphing atoms so that dummies have a mass of 1.
+* **gmx_lib** (*string*): ($CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff/) Path to the GMXLIB folder in your computer.
+* **binary_path** (*string*): (pmx) Path to the PMX command line interface.
+* **remove_tmp** (*boolean*): (True) Remove temporal files.
+* **restart** (*boolean*): (False) Do not execute if output files exist.
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory.
+* **container_path** (*string*): (None) Path to the binary executable of your container.
+* **container_image** (*string*): (gromacs/gromacs:latest) Container Image identifier.
+* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container.
+* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
+* **container_user_id** (*string*): (None) User number id to be mapped inside the container.
+* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxgentop.yml)
 ```python
@@ -505,22 +505,22 @@ Config input / output arguments for this building block:
 Syntax: input_parameter (datatype) - (default_value) Definition
 
 Config parameters for this building block:
-* **fit** (*boolean*): (False) Fit ligand structure 1 onto ligand structure 2 (Only used if input_pairs_path is provided)..
-* **split** (*boolean*): (False) Split the topology into separate transitions..
-* **scDUMm** (*number*): (1.0) Scale dummy masses using the counterpart atoms..
-* **scDUMa** (*number*): (1.0) Scale bonded dummy angle parameters..
-* **scDUMd** (*number*): (1.0) Scale bonded dummy dihedral parameters..
-* **deAng** (*boolean*): (False) Decouple angles composed of 1 dummy and 2 non-dummies..
-* **distance** (*number*): (0.05) Distance (nm) between atoms to consider them morphable for alignment approach (Only used if input_pairs_path is not provided)..
-* **remove_tmp** (*boolean*): (True) Remove temporal files..
-* **restart** (*boolean*): (False) Do not execute if output files exist..
-* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
-* **container_path** (*string*): (None) Path to the binary executable of your container..
-* **container_image** (*string*): (None) Container Image identifier..
-* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container..
-* **container_user_id** (*string*): (None) User number id to be mapped inside the container..
-* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell..
+* **fit** (*boolean*): (False) Fit ligand structure 1 onto ligand structure 2 (Only used if input_pairs_path is provided).
+* **split** (*boolean*): (False) Split the topology into separate transitions.
+* **scDUMm** (*number*): (1.0) Scale dummy masses using the counterpart atoms.
+* **scDUMa** (*number*): (1.0) Scale bonded dummy angle parameters.
+* **scDUMd** (*number*): (1.0) Scale bonded dummy dihedral parameters.
+* **deAng** (*boolean*): (False) Decouple angles composed of 1 dummy and 2 non-dummies.
+* **distance** (*number*): (0.05) Distance (nm) between atoms to consider them morphable for alignment approach (Only used if input_pairs_path is not provided).
+* **remove_tmp** (*boolean*): (True) Remove temporal files.
+* **restart** (*boolean*): (False) Do not execute if output files exist.
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory.
+* **container_path** (*string*): (None) Path to the binary executable of your container.
+* **container_image** (*string*): (None) Container Image identifier.
+* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container.
+* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
+* **container_user_id** (*string*): (None) User number id to be mapped inside the container.
+* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxligand_hybrid.yml)
 ```python
@@ -579,15 +579,15 @@ Config input / output arguments for this building block:
 Syntax: input_parameter (datatype) - (default_value) Definition
 
 Config parameters for this building block:
-* **remove_tmp** (*boolean*): (True) Remove temporal files..
-* **restart** (*boolean*): (False) Do not execute if output files exist..
-* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
-* **container_path** (*string*): (None) Path to the binary executable of your container..
-* **container_image** (*string*): (None) Container Image identifier..
-* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container..
-* **container_user_id** (*string*): (None) User number id to be mapped inside the container..
-* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell..
+* **remove_tmp** (*boolean*): (True) Remove temporal files.
+* **restart** (*boolean*): (False) Do not execute if output files exist.
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory.
+* **container_path** (*string*): (None) Path to the binary executable of your container.
+* **container_image** (*string*): (None) Container Image identifier.
+* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container.
+* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
+* **container_user_id** (*string*): (None) User number id to be mapped inside the container.
+* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmerge_ff.yml)
 ```python
@@ -649,20 +649,20 @@ Config input / output arguments for this building block:
 Syntax: input_parameter (datatype) - (default_value) Definition
 
 Config parameters for this building block:
-* **mutation_list** (*string*): (2Ala) Mutation list in the format "Chain:Resnum MUT_AA_Code" or "Chain:Resnum MUT_NA_Code"  (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:15CYS". Possible MUT_AA_Code: 'ALA', 'ARG', 'ASN', 'ASP', 'ASPH', 'ASPP', 'ASH', 'CYS', 'CYS2', 'CYN', 'CYX', 'CYM', 'CYSH', 'GLU', 'GLUH', 'GLUP', 'GLH', 'GLN', 'GLY', 'HIS', 'HIE', 'HISE', 'HSE', 'HIP', 'HSP', 'HISH', 'HID', 'HSD', 'ILE', 'LEU', 'LYS', 'LYSH', 'LYP', 'LYN', 'LSN', 'MET', 'PHE', 'PRO', 'SER', 'SP1', 'SP2', 'THR', 'TRP', 'TYR', 'VAL'. Possible MUT_NA_Codes: 'A', 'T', 'C', 'G', 'U'..
-* **force_field** (*string*): (amber99sb-star-ildn-mut) Forcefield to use..
-* **resinfo** (*boolean*): (False) Show the list of 3-letter -> 1-letter residues..
-* **gmx_lib** (*string*): ($CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff/) Path to the GMXLIB folder in your computer..
-* **binary_path** (*string*): (pmx) Path to the PMX command line interface..
-* **remove_tmp** (*boolean*): (True) Remove temporal files..
-* **restart** (*boolean*): (False) Do not execute if output files exist..
-* **sandbox_path** (*string*): (./) Parent path to the sandbox directory..
-* **container_path** (*string*): (None) Path to the binary executable of your container..
-* **container_image** (*string*): (None) Container Image identifier..
-* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container..
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container..
-* **container_user_id** (*string*): (None) User number id to be mapped inside the container..
-* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell..
+* **mutation_list** (*string*): (2Ala) Mutation list in the format "Chain:Resnum MUT_AA_Code" or "Chain:Resnum MUT_NA_Code"  (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:15CYS". Possible MUT_AA_Code: 'ALA', 'ARG', 'ASN', 'ASP', 'ASPH', 'ASPP', 'ASH', 'CYS', 'CYS2', 'CYN', 'CYX', 'CYM', 'CYSH', 'GLU', 'GLUH', 'GLUP', 'GLH', 'GLN', 'GLY', 'HIS', 'HIE', 'HISE', 'HSE', 'HIP', 'HSP', 'HISH', 'HID', 'HSD', 'ILE', 'LEU', 'LYS', 'LYSH', 'LYP', 'LYN', 'LSN', 'MET', 'PHE', 'PRO', 'SER', 'SP1', 'SP2', 'THR', 'TRP', 'TYR', 'VAL'. Possible MUT_NA_Codes: 'A', 'T', 'C', 'G', 'U'.
+* **force_field** (*string*): (amber99sb-star-ildn-mut) Forcefield to use.
+* **resinfo** (*boolean*): (False) Show the list of 3-letter -> 1-letter residues.
+* **gmx_lib** (*string*): ($CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff/) Path to the GMXLIB folder in your computer.
+* **binary_path** (*string*): (pmx) Path to the PMX command line interface.
+* **remove_tmp** (*boolean*): (True) Remove temporal files.
+* **restart** (*boolean*): (False) Do not execute if output files exist.
+* **sandbox_path** (*string*): (./) Parent path to the sandbox directory.
+* **container_path** (*string*): (None) Path to the binary executable of your container.
+* **container_image** (*string*): (None) Container Image identifier.
+* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container.
+* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
+* **container_user_id** (*string*): (None) User number id to be mapped inside the container.
+* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate.yml)
 ```python
