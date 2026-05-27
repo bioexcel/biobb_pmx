@@ -5,7 +5,7 @@
 import os
 import shutil
 import sys
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject
@@ -31,7 +31,6 @@ class Pmxatom_mapping(BiobbObject):
         output_scaffold1_path (str) (Optional): Path to the index of atoms to consider for the ligand structure 1. File type: output. Accepted formats: ndx (edam:format_2033).
         output_scaffold2_path (str) (Optional): Path to the index of atoms to consider for the ligand structure 2. File type: output. Accepted formats: ndx (edam:format_2033).
         output_score_path (str) (Optional): Path to the morphing score. File type: output. Accepted formats: dat (edam:format_1637), txt (edam:format_2330).
-
         properties (dic):
             * **noalignment** (*bool*) - (False) Should the alignment method be disabled.
             * **nomcs** (*bool*) - (False) Should the MCS method be disabled.
@@ -44,6 +43,7 @@ class Pmxatom_mapping(BiobbObject):
             * **nochirality** (*bool*) - (True) Perform chirality check for MCS mapping.
             * **distance** (*float*) - (0.05) Distance (nm) between atoms to consider them morphable for alignment approach.
             * **timeout** (*int*) - (10) Maximum time (s) for an MCS search.
+            * **binary_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
             * **sandbox_path** (*str*) - ("./") [WF property] Parent path to the sandbox directory.
@@ -178,6 +178,11 @@ class Pmxatom_mapping(BiobbObject):
             return 0
         self.stage_files()
 
+        if self.container_path:
+            working_dir = self.container_volume_path if self.container_volume_path else "/data"
+        else:
+            working_dir = self.stage_io_dict.get("unique_dir", "")
+
         # Check if executable exists
         if not self.container_path:
             if not Path(self.binary_path).is_file():
@@ -188,47 +193,50 @@ class Pmxatom_mapping(BiobbObject):
                     )
 
         self.cmd = [
+            "cd",
+            working_dir,
+            ";",
             self.binary_path,
             "atomMapping",
             "-i1",
-            self.stage_io_dict["in"]["input_structure1_path"],
+            PurePath(self.stage_io_dict["in"]["input_structure1_path"]).name,
             "-i2",
-            self.stage_io_dict["in"]["input_structure2_path"],
+            PurePath(self.stage_io_dict["in"]["input_structure2_path"]).name,
             "-o1",
-            self.stage_io_dict["out"]["output_pairs1_path"],
+            PurePath(self.stage_io_dict["out"]["output_pairs1_path"]).name,
             "-o2",
-            self.stage_io_dict["out"]["output_pairs2_path"],
+            PurePath(self.stage_io_dict["out"]["output_pairs2_path"]).name,
             "-log",
-            self.stage_io_dict["out"]["output_log_path"],
+            PurePath(self.stage_io_dict["out"]["output_log_path"]).name,
         ]
 
         if self.stage_io_dict["out"].get("output_structure1_path"):
             self.cmd.append("-opdb1")
-            self.cmd.append(self.stage_io_dict["out"]["output_structure1_path"])
+            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_structure1_path"]).name)
 
         if self.stage_io_dict["out"].get("output_structure2_path"):
             self.cmd.append("-opdb2")
-            self.cmd.append(self.stage_io_dict["out"]["output_structure2_path"])
+            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_structure2_path"]).name)
 
         if self.stage_io_dict["out"].get("output_morph1_path"):
             self.cmd.append("-opdbm1")
-            self.cmd.append(self.stage_io_dict["out"]["output_morph1_path"])
+            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_morph1_path"]).name)
 
         if self.stage_io_dict["out"].get("output_morph2_path"):
             self.cmd.append("-opdbm2")
-            self.cmd.append(self.stage_io_dict["out"]["output_morph2_path"])
+            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_morph2_path"]).name)
 
         if self.stage_io_dict["out"].get("output_scaffold1_path"):
             self.cmd.append("-n1")
-            self.cmd.append(self.stage_io_dict["out"]["output_scaffold1_path"])
+            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_scaffold1_path"]).name)
 
         if self.stage_io_dict["out"].get("output_scaffold2_path"):
             self.cmd.append("-n2")
-            self.cmd.append(self.stage_io_dict["out"]["output_scaffold2_path"])
+            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_scaffold2_path"]).name)
 
         if self.stage_io_dict["out"].get("output_score_path"):
             self.cmd.append("-score")
-            self.cmd.append(self.stage_io_dict["out"]["output_score_path"])
+            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_score_path"]).name)
 
         if self.noalignment:
             self.cmd.append("--no-alignment")

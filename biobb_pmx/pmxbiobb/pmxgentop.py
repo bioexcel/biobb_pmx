@@ -114,6 +114,11 @@ class Pmxgentop(BiobbObject):
             return 0
         self.stage_files()
 
+        if self.container_path:
+            working_dir = self.container_volume_path if self.container_volume_path else "/data"
+        else:
+            working_dir = self.stage_io_dict.get("unique_dir", "")
+
         # Check if executable exists
         if not self.container_path:
             if not Path(self.binary_path).is_file():
@@ -124,57 +129,36 @@ class Pmxgentop(BiobbObject):
                     )
 
         # Unzip topology to topology_out
-        top_file = fu.unzip_top(zip_file=self.input_top_zip_path, out_log=self.out_log)
+        top_file = str(
+            Path(
+                fu.unzip_top(zip_file=self.input_top_zip_path, out_log=self.out_log)
+            ).resolve()
+        )
         top_dir = str(Path(top_file).parent)
 
-        # Copy extra files to container: topology folder
-        if self.container_path:
-            fu.log("Container execution enabled", self.out_log)
-            fu.log(f"Unique dir: {self.stage_io_dict['unique_dir']}", self.out_log)
-            fu.log(
-                f"{self.stage_io_dict['unique_dir']} files: {os.listdir(self.stage_io_dict['unique_dir'])}",
-                self.out_log,
-            )
-            fu.log(
-                f"Copy all files of the unzipped original topology to unique dir: {self.out_log}"
-            )
-            shutil.copytree(
-                top_dir,
-                str(
-                    Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
-                        Path(top_dir).name
-                    )
-                ),
-            )
-            top_file = str(
-                Path(self.container_volume_path).joinpath(
-                    Path(top_dir).name, Path(top_file).name
-                )
-            )
+        # Copy extra files to sandbox: topology folder
+        top_dir_in_sandbox = Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
+            Path(top_dir).name
+        )
+        shutil.copytree(top_dir, str(top_dir_in_sandbox))
+        top_file = str(Path(Path(top_dir).name).joinpath(Path(top_file).name))
 
         output_file_name = fu.create_name(
             prefix=self.prefix, step=self.step, name=str(Path(top_file).name)
         )
-        u_dir = fu.create_unique_dir()
         unique_dir_output_file = str(
-            Path(u_dir).joinpath(output_file_name)
+            Path(self.stage_io_dict.get("unique_dir", "")).joinpath(output_file_name)
         )
         fu.log(f"unique_dir_output_file: {unique_dir_output_file}", self.out_log)
 
-        if self.container_path:
-            fu.log("Change references for container:", self.out_log)
-            unique_dir_output_file = str(
-                Path(self.container_volume_path).joinpath(Path(output_file_name))
-            )
-            fu.log(
-                f"    unique_dir_output_file: {unique_dir_output_file}", self.out_log
-            )
-
         self.cmd = [
+            "cd",
+            working_dir,
+            ";",
             self.binary_path,
             "gentop",
             "-o",
-            str(Path(unique_dir_output_file)),
+            str(Path(output_file_name)),
             "-ff",
             self.force_field,
             "-p",
@@ -194,13 +178,6 @@ class Pmxgentop(BiobbObject):
 
         # Copy files to host
         self.copy_to_host()
-
-        if self.container_path:
-            unique_dir_output_file = str(
-                Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
-                    Path(unique_dir_output_file).name
-                )
-            )
 
         # Remove paths from top file
         with open(Path(unique_dir_output_file)) as top_fh:
@@ -242,7 +219,7 @@ class Pmxgentop(BiobbObject):
             remove_original_files=self.remove_tmp
         )
 
-        self.tmp_files.extend([top_dir, u_dir])
+        self.tmp_files.extend([top_dir])
         self.remove_tmp_files()
 
         self.check_arguments(output_files_created=True, raise_exception=False)

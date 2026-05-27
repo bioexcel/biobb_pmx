@@ -3,7 +3,7 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_pmx.pmxbiobb.pmxatom_mapping import pmxatom_mapping
 
 
-class TestPmxatom_mapping:
+class TestPmxatomMapping:
     def setup_class(self):
         fx.test_setup(self, 'pmxatom_mapping')
 

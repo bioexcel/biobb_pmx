@@ -14,23 +14,25 @@ pmxmutate_docker:
   paths:
     input_structure_path: file:test_data_dir/pmx/frameA0.pdb
     output_structure_path: output_structure.pdb
-    ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure_docker.pdb
+    ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure.pdb
   properties:
-    mutation_list: 2Ala, 3Val
+    mutation_list: 10Ala
     force_field: amber99sb-star-ildn-mut
+    gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
     container_path: docker
-    container_image: quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0
+    container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
 
 pmxmutate_singularity:
   paths:
-    input_structure_path: file:test_data_dir/pmx/frame99.pdb
+    input_structure_path: file:test_data_dir/pmx/frameA0.pdb
     output_structure_path: output_structure.pdb
     ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure.pdb
   properties:
-    mutation_list: 2Ala, 3Val
+    mutation_list: 10Ala
     force_field: amber99sb-star-ildn-mut
+    gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
     container_path: singularity
-    container_image: shub://bioexcel/pmx_docker
+    container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
 
 pmxgentop:
   paths:
@@ -47,8 +49,9 @@ pmxgentop_docker:
     ref_output_top_zip_path: file:test_reference_dir/pmx/ref_output_topology_container.zip
   properties:
     force_field: amber99sb-star-ildn-mut
+    gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
     container_path: docker
-    container_image: quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0
+    container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
 
 pmxgentop_singularity:
   paths:
@@ -58,8 +61,9 @@ pmxgentop_singularity:
     ref_output_top_zip_path: file:test_reference_dir/pmx/ref_mut_gmx_hybrid_top.zip
   properties:
     force_field: amber99sb-star-ildn-mut
+    gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
     container_path: docker
-    container_image: shub://bioexcel/pmx_docker
+    container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
 
 pmxanalyse:
   paths:
@@ -86,7 +90,7 @@ pmxanalyse_docker:
     temperature: 298.15
     dpi: 600
     container_path: docker
-    container_image: quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0
+    container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
 
 pmxanalyse_singularity:
   paths:
@@ -99,8 +103,8 @@ pmxanalyse_singularity:
     method: CGI BAR JARZ
     temperature: 298.15
     dpi: 600
-    container_path: docker
-    container_image: shub://bioexcel/pmx_docker
+    container_path: singularity
+    container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
 
 pmxatom_mapping:
   paths:
@@ -114,6 +118,36 @@ pmxatom_mapping:
   properties:
     noalignment : False
     distance: 0.05
+
+pmxatom_mapping_docker:
+  paths:
+    input_structure1_path: file:test_data_dir/pmx/lig1.pdb
+    input_structure2_path: file:test_data_dir/pmx/lig2.pdb
+    output_pairs1_path: pairs1.dat
+    output_pairs2_path: pairs2.dat
+    output_log_path: atom_mapping.log
+    ref_output_pairs1_path: file:test_reference_dir/pmx/ref_pairs1.dat
+    ref_output_pairs2_path: file:test_reference_dir/pmx/ref_pairs2.dat
+  properties:
+    noalignment : False
+    distance: 0.05
+    container_path: docker
+    container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
+
+pmxatom_mapping_singularity:
+  paths:
+    input_structure1_path: file:test_data_dir/pmx/lig1.pdb
+    input_structure2_path: file:test_data_dir/pmx/lig2.pdb
+    output_pairs1_path: pairs1.dat
+    output_pairs2_path: pairs2.dat
+    output_log_path: atom_mapping.log
+    ref_output_pairs1_path: file:test_reference_dir/pmx/ref_pairs1.dat
+    ref_output_pairs2_path: file:test_reference_dir/pmx/ref_pairs2.dat
+  properties:
+    noalignment : False
+    distance: 0.05
+    container_path: singularity
+    container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
 
 pmxcreate_top:
   paths:
@@ -146,6 +180,50 @@ pmxligand_hybrid:
   properties:
     fit: True
     distance: 0.05
+
+pmxligand_hybrid_docker:
+  paths:
+    input_structure1_path: file:test_data_dir/pmx/lig1.pdb
+    input_structure2_path: file:test_data_dir/pmx/lig2.pdb
+    input_topology1_path: file:test_data_dir/pmx/topoLig1.itp
+    input_topology2_path: file:test_data_dir/pmx/topoLig2.itp
+    input_pairs_path: file:test_data_dir/pmx/myPairs1.dat
+    output_log_path: ligand_hybrid.log
+    output_structure1_path: hybridStruct1.pdb
+    output_structure2_path: hybridStruct2.pdb
+    output_topology_path: hybridTopo.itp
+    output_atomtypes_path: hybridAtomTypes.itp
+    ref_output_structure1_path: file:test_reference_dir/pmx/ref_hybridStructure1.pdb
+    ref_output_structure2_path: file:test_reference_dir/pmx/ref_hybridStructure2.pdb
+    ref_output_topology_path: file:test_reference_dir/pmx/ref_hybridTopology.itp
+    ref_output_atomtypes_path: file:test_reference_dir/pmx/ref_hybridAtomTypes.itp
+  properties:
+    fit: True
+    distance: 0.05
+    container_path: docker
+    container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
+
+pmxligand_hybrid_singularity:
+  paths:
+    input_structure1_path: file:test_data_dir/pmx/lig1.pdb
+    input_structure2_path: file:test_data_dir/pmx/lig2.pdb
+    input_topology1_path: file:test_data_dir/pmx/topoLig1.itp
+    input_topology2_path: file:test_data_dir/pmx/topoLig2.itp
+    input_pairs_path: file:test_data_dir/pmx/myPairs1.dat
+    output_log_path: ligand_hybrid.log
+    output_structure1_path: hybridStruct1.pdb
+    output_structure2_path: hybridStruct2.pdb
+    output_topology_path: hybridTopo.itp
+    output_atomtypes_path: hybridAtomTypes.itp
+    ref_output_structure1_path: file:test_reference_dir/pmx/ref_hybridStructure1.pdb
+    ref_output_structure2_path: file:test_reference_dir/pmx/ref_hybridStructure2.pdb
+    ref_output_topology_path: file:test_reference_dir/pmx/ref_hybridTopology.itp
+    ref_output_atomtypes_path: file:test_reference_dir/pmx/ref_hybridAtomTypes.itp
+  properties:
+    fit: True
+    distance: 0.05
+    container_path: singularity
+    container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
 
 pmxmerge_ff:
   paths:

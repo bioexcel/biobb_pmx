@@ -289,6 +289,12 @@
                     "wf_prop": true,
                     "description": "Remove temporal files."
                 },
+                "binary_path": {
+                    "type": "string",
+                    "default": "pmx",
+                    "wf_prop": false,
+                    "description": "Path to the PMX command line interface."
+                },
                 "restart": {
                     "type": "boolean",
                     "default": false,

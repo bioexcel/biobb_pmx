@@ -73,42 +73,6 @@
                     "default": "./",
                     "wf_prop": true,
                     "description": "Parent path to the sandbox directory."
-                },
-                "container_path": {
-                    "type": "string",
-                    "default": null,
-                    "wf_prop": false,
-                    "description": "Path to the binary executable of your container."
-                },
-                "container_image": {
-                    "type": "string",
-                    "default": null,
-                    "wf_prop": false,
-                    "description": "Container Image identifier."
-                },
-                "container_volume_path": {
-                    "type": "string",
-                    "default": "/inout",
-                    "wf_prop": false,
-                    "description": "Path to an internal directory in the container."
-                },
-                "container_working_dir": {
-                    "type": "string",
-                    "default": null,
-                    "wf_prop": false,
-                    "description": "Path to the internal CWD in the container."
-                },
-                "container_user_id": {
-                    "type": "string",
-                    "default": null,
-                    "wf_prop": false,
-                    "description": "User number id to be mapped inside the container."
-                },
-                "container_shell_path": {
-                    "type": "string",
-                    "default": "/bin/bash",
-                    "wf_prop": false,
-                    "description": "Path to the binary executable of the container shell."
                 }
             }
         }

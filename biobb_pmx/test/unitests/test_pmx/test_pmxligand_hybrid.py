@@ -3,7 +3,7 @@ from biobb_common.tools import test_fixtures as fx
 from biobb_pmx.pmxbiobb.pmxligand_hybrid import pmxligand_hybrid
 
 
-class TestPmxligand_hybrid:
+class TestPmxligandHybrid:
     def setup_class(self):
         fx.test_setup(self, 'pmxligand_hybrid')
 

@@ -5,7 +5,7 @@
 import os
 import shutil
 import sys
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject
@@ -125,6 +125,11 @@ class Pmxmutate(BiobbObject):
             return 0
         self.stage_files()
 
+        if self.container_path:
+            working_dir = self.container_volume_path if self.container_volume_path else "/data"
+        else:
+            working_dir = self.stage_io_dict.get("unique_dir", "")
+
         # Check if executable exists
         if not self.container_path:
             if not Path(self.binary_path).is_file():
@@ -143,35 +148,28 @@ class Pmxmutate(BiobbObject):
             mutation_dict=MUTATION_DICT,
         )
 
-        # Copy extra files to container: mutations file
-        if self.container_path:
-            fu.log("Container execution enabled", self.out_log)
-
-            shutil.copy2(
-                self.input_mutations_file, self.stage_io_dict.get("unique_dir", "")
-            )
-            self.input_mutations_file = str(
-                Path(self.container_volume_path).joinpath(
-                    Path(self.input_mutations_file).name
-                )
-            )
+        # Copy extra files to sandbox: mutations file
+        shutil.copy2(self.input_mutations_file, self.stage_io_dict.get("unique_dir", ""))
 
         self.cmd = [
+            "cd",
+            working_dir,
+            ";",
             self.binary_path,
             "mutate",
             "-f",
-            self.stage_io_dict["in"]["input_structure_path"],
+            PurePath(self.stage_io_dict["in"]["input_structure_path"]).name,
             "-o",
-            self.stage_io_dict["out"]["output_structure_path"],
+            PurePath(self.stage_io_dict["out"]["output_structure_path"]).name,
             "-ff",
             self.force_field,
             "--script",
-            self.input_mutations_file,
+            PurePath(self.input_mutations_file).name,
         ]
 
         if self.stage_io_dict["in"].get("input_b_structure_path"):
             self.cmd.append("-fB")
-            self.cmd.append(self.stage_io_dict["in"]["input_b_structure_path"])
+            self.cmd.append(PurePath(self.stage_io_dict["in"]["input_b_structure_path"]).name)
         if self.resinfo:
             self.cmd.append("-resinfo")
 

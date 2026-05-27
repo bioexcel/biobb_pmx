@@ -23,7 +23,6 @@ class Pmxcreate_top(BiobbObject):
         input_topology1_path (str): Path to the input topology file 1. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topo1.itp>`_. Accepted formats: itp (edam:format_3883).
         input_topology2_path (str): Path to the input topology file 2. File type: input. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/data/pmx/topo2.itp>`_. Accepted formats: itp (edam:format_3883).
         output_topology_path (str): Path to the complete ligand topology file. File type: output. `Sample file <https://github.com/bioexcel/biobb_pmx/raw/master/biobb_pmx/test/reference/pmx/ref_hybridTopo.zip>`_. Accepted formats: zip (edam:format_3987).
-
         properties (dic):
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut.ff") Force-field to be included in the generated topology.
             * **water** (*str*) - ("tip3p") Water model to be included in the generated topology.
@@ -32,12 +31,6 @@ class Pmxcreate_top(BiobbObject):
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
             * **sandbox_path** (*str*) - ("./") [WF property] Parent path to the sandbox directory.
-            * **container_path** (*str*) - (None)  Path to the binary executable of your container.
-            * **container_image** (*str*) - (None) Container Image identifier.
-            * **container_volume_path** (*str*) - ("/inout") Path to an internal directory in the container.
-            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
-            * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
-            * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
 
     Examples:
         This is a use example of how to use the building block from Python::
@@ -106,7 +99,6 @@ class Pmxcreate_top(BiobbObject):
                         "lib/python3.7/site-packages/pmx/data/mutff/"
                     )
                 )
-        self.binary_path = properties.get("binary_path", "pmx")
 
         # Check the properties
         self.check_properties(properties)

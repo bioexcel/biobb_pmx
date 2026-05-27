@@ -3,7 +3,7 @@
 """Module containing the PMX analyse class and the command line interface."""
 
 import shutil
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject
@@ -135,6 +135,11 @@ class Pmxanalyse(BiobbObject):
             return 0
         self.stage_files()
 
+        if self.container_path:
+            working_dir = self.container_volume_path if self.container_volume_path else "/data"
+        else:
+            working_dir = self.stage_io_dict.get("unique_dir", "")
+
         # Check if executable is exists
         if not self.container_path:
             if not Path(self.binary_path).is_file():
@@ -158,28 +163,25 @@ class Pmxanalyse(BiobbObject):
                 fu.unzip_list(self.input_b_xvg_zip_path, list_b_dir, self.out_log),
             )
         )
+
+        # Copy extra files to sandbox: two directories containing the xvg files
+        list_a_dir_in_sandbox = Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
+            Path(list_a_dir).name
+        )
+        list_b_dir_in_sandbox = Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
+            Path(list_b_dir).name
+        )
+        shutil.copytree(list_a_dir, list_a_dir_in_sandbox)
+        shutil.copytree(list_b_dir, list_b_dir_in_sandbox)
+
+        # Keep the full relative paths returned by unzip_list (including frame*/ subfolders).
         string_a = " ".join(list_a)
         string_b = " ".join(list_b)
 
-        # Copy extra files to container: two directories containing the xvg files
-        if self.container_path:
-            shutil.copytree(
-                list_a_dir,
-                Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
-                    Path(list_a_dir).name
-                ),
-            )
-            shutil.copytree(
-                list_b_dir,
-                Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
-                    Path(list_b_dir).name
-                ),
-            )
-            container_volume = " " + self.container_volume_path + "/"
-            string_a = self.container_volume_path + "/" + container_volume.join(list_a)
-            string_b = self.container_volume_path + "/" + container_volume.join(list_b)
-
         self.cmd = [
+            "cd",
+            working_dir,
+            ";",
             self.binary_path,
             "analyse",
             "-fA",
@@ -187,9 +189,9 @@ class Pmxanalyse(BiobbObject):
             "-fB",
             string_b,
             "-o",
-            self.stage_io_dict["out"]["output_result_path"],
+            PurePath(self.stage_io_dict["out"]["output_result_path"]).name,
             "-w",
-            self.stage_io_dict["out"]["output_work_plot_path"],
+            PurePath(self.stage_io_dict["out"]["output_work_plot_path"]).name,
         ]
 
         if self.method:

@@ -19,7 +19,7 @@ setuptools.setup(
     },
     packages=setuptools.find_packages(exclude=["docs"]),
     package_data={"biobb_pmx": ["py.typed"]},
-    install_requires=["biobb_common==5.2.2"],
+    install_requires=["biobb_common==5.2.2", "pmx-biobb==5.2.2"],
     python_requires=">=3.10",
     entry_points={
         "console_scripts": [
