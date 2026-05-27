@@ -52,6 +52,7 @@ pmxgentop_docker:
     gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
     container_path: docker
     container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
+    container_user_id: "1001"
 
 pmxgentop_singularity:
   paths:
@@ -64,6 +65,7 @@ pmxgentop_singularity:
     gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
     container_path: docker
     container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
+    container_user_id: "1001"
 
 pmxanalyse:
   paths:

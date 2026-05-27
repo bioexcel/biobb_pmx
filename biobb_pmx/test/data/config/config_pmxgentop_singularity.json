@@ -1,7 +1,7 @@
 {
   "properties": {
     "force_field": "amber99sb-star-ildn-mut",
-    "container_path": "docker",
+    "container_path": "singularity",
     "container_image": "shub://bioexcel/pmx_docker"
   }
 }
