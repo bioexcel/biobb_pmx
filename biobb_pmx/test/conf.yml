@@ -59,7 +59,7 @@ pmxgentop_singularity:
     input_top_zip_path: file:test_data_dir/pmx/mut_gmx.top.zip
     output_top_zip_path: output_topology.zip
     output_log_path: gentop.log
-    ref_output_top_zip_path: file:test_reference_dir/pmx/ref_mut_gmx_hybrid_top.zip
+    ref_output_top_zip_path: file:test_reference_dir/pmx/ref_output_topology_container.zip
   properties:
     force_field: amber99sb-star-ildn-mut
     gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
