@@ -63,9 +63,8 @@ pmxgentop_singularity:
   properties:
     force_field: amber99sb-star-ildn-mut
     gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
-    container_path: docker
+    container_path: singularity
     container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
-    container_user_id: "1001"
 
 pmxanalyse:
   paths:
