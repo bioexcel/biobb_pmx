@@ -112,6 +112,12 @@ jobs:
           VERSION=$(grep 'biobb_common' .github/env.yaml | sed 's/.*biobb_common *//')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Get pmx_biobb version from env.yaml
+        id: pmx_biobb_version
+        run: |
+          VERSION=$(grep 'pmx_biobb' .github/env.yaml | sed 's/.*pmx_biobb *//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: setup-micromamba
         uses: mamba-org/setup-micromamba@v2.0.0
         with:
@@ -131,7 +137,7 @@ jobs:
             pytest-html
             biobb_common${{ steps.biobb_common_version.outputs.version }}
             scipy
-            pmx_biobb==5.2.2
+            pmx_biobb${{ steps.pmx_biobb_version.outputs.version }}
 
       - name: List installed package versions
         shell: bash -l {0}
