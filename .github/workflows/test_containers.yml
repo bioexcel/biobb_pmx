@@ -136,8 +136,10 @@ jobs:
             pytest-cov
             pytest-html
             biobb_common${{ steps.biobb_common_version.outputs.version }}
-            scipy
-            pmx_biobb${{ steps.pmx_biobb_version.outputs.version }}
+
+      - name: Install pmx and scipy from pip
+        shell: bash -l {0}
+        run: pip install pmx_biobb==5.2.2 scipy
 
       - name: List installed package versions
         shell: bash -l {0}

@@ -91,6 +91,10 @@ jobs:
             flake8
             pip
 
+      - name: Install pmx and scipy from pip
+        shell: bash -l {0}
+        run: pip install pmx_biobb==5.2.2 scipy
+
       - name: List installed package versions
         shell: bash -l {0}
         run: micromamba list
