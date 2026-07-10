@@ -283,17 +283,17 @@
                     "wf_prop": false,
                     "description": "Distance (nm) between atoms to consider them morphable for alignment approach (Only used if input_pairs_path is not provided)."
                 },
-                "remove_tmp": {
-                    "type": "boolean",
-                    "default": true,
-                    "wf_prop": true,
-                    "description": "Remove temporal files."
-                },
                 "binary_path": {
                     "type": "string",
                     "default": "pmx",
                     "wf_prop": false,
                     "description": "Path to the PMX command line interface."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
                 },
                 "restart": {
                     "type": "boolean",

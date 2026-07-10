@@ -80,7 +80,7 @@ properties:
 #### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxanalyse_docker.yml)
 ```python
 properties:
-  container_image: quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0
+  container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
   container_path: docker
   dpi: 600
   method: CGI BAR JARZ
@@ -90,8 +90,8 @@ properties:
 #### [Singularity config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxanalyse_singularity.yml)
 ```python
 properties:
-  container_image: shub://bioexcel/pmx_docker
-  container_path: docker
+  container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
+  container_path: singularity
   dpi: 600
   method: CGI BAR JARZ
   temperature: 298.15
@@ -120,7 +120,7 @@ pmxanalyse --config config_pmxanalyse.yml --input_a_xvg_zip_path xvg_A.zip --inp
     "temperature": 298.15,
     "dpi": 600,
     "container_path": "docker",
-    "container_image": "quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0"
+    "container_image": "quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0"
   }
 }
 ```
@@ -131,8 +131,8 @@ pmxanalyse --config config_pmxanalyse.yml --input_a_xvg_zip_path xvg_A.zip --inp
     "method": "CGI BAR JARZ",
     "temperature": 298.15,
     "dpi": 600,
-    "container_path": "docker",
-    "container_image": "shub://bioexcel/pmx_docker"
+    "container_path": "singularity",
+    "container_image": "https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0"
   }
 }
 ```
@@ -215,6 +215,7 @@ Config parameters for this building block:
 * **nochirality** (*boolean*): (True) Perform chirality check for MCS mapping.
 * **distance** (*number*): (0.05) Distance (nm) between atoms to consider them morphable for alignment approach.
 * **timeout** (*integer*): (10) Maximum time (s) for an MCS search.
+* **binary_path** (*string*): (pmx) Path to the PMX command line interface.
 * **remove_tmp** (*boolean*): (True) Remove temporal files.
 * **restart** (*boolean*): (False) Do not execute if output files exist.
 * **sandbox_path** (*string*): (./) Parent path to the sandbox directory.
@@ -232,6 +233,24 @@ properties:
   noalignment: false
 
 ```
+#### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxatom_mapping_docker.yml)
+```python
+properties:
+  container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
+  container_path: docker
+  distance: 0.05
+  noalignment: false
+
+```
+#### [Singularity config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxatom_mapping_singularity.yml)
+```python
+properties:
+  container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
+  container_path: singularity
+  distance: 0.05
+  noalignment: false
+
+```
 #### Command line
 ```python
 pmxatom_mapping --config config_pmxatom_mapping.yml --input_structure1_path lig1.pdb --input_structure2_path lig2.pdb --output_pairs1_path ref_pairs1.dat --output_pairs2_path ref_pairs2.dat --output_log_path output.log --output_structure1_path output.pdb --output_structure2_path output.pdb --output_morph1_path output.pdb --output_morph2_path output.pdb --output_scaffold1_path output.ndx --output_scaffold2_path output.ndx --output_score_path output.dat
@@ -243,6 +262,28 @@ pmxatom_mapping --config config_pmxatom_mapping.yml --input_structure1_path lig1
   "properties": {
     "noalignment": false,
     "distance": 0.05
+  }
+}
+```
+#### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxatom_mapping_docker.json)
+```python
+{
+  "properties": {
+    "noalignment": false,
+    "distance": 0.05,
+    "container_path": "docker",
+    "container_image": "quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0"
+  }
+}
+```
+#### [Singularity config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxatom_mapping_singularity.json)
+```python
+{
+  "properties": {
+    "noalignment": false,
+    "distance": 0.05,
+    "container_path": "singularity",
+    "container_image": "https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0"
   }
 }
 ```
@@ -292,12 +333,6 @@ Config parameters for this building block:
 * **remove_tmp** (*boolean*): (True) Remove temporal files.
 * **restart** (*boolean*): (False) Do not execute if output files exist.
 * **sandbox_path** (*string*): (./) Parent path to the sandbox directory.
-* **container_path** (*string*): (None) Path to the binary executable of your container.
-* **container_image** (*string*): (None) Container Image identifier.
-* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container.
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
-* **container_user_id** (*string*): (None) User number id to be mapped inside the container.
-* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxcreate_top.yml)
 ```python
@@ -391,22 +426,25 @@ properties:
 #### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxgentop_docker.yml)
 ```python
 properties:
-  container_image: quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0
+  container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
   container_path: docker
+  container_user_id: '1001'
   force_field: amber99sb-star-ildn-mut
+  gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
 
 ```
 #### [Singularity config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxgentop_singularity.yml)
 ```python
 properties:
-  container_image: shub://bioexcel/pmx_docker
-  container_path: docker
+  container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
+  container_path: singularity
   force_field: amber99sb-star-ildn-mut
+  gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
 
 ```
 #### Command line
 ```python
-pmxgentop --config config_pmxgentop.yml --input_top_zip_path topology.zip --output_top_zip_path ref_output_topology.zip
+pmxgentop --config config_pmxgentop.yml --input_top_zip_path mut_gmx.top.zip --output_top_zip_path ref_output_topology.zip
 ```
 ### JSON
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxgentop.json)
@@ -422,8 +460,10 @@ pmxgentop --config config_pmxgentop.yml --input_top_zip_path topology.zip --outp
 {
   "properties": {
     "force_field": "amber99sb-star-ildn-mut",
+    "gmx_lib": "/usr/local/lib/python3.12/site-packages/pmx/data/mutff",
     "container_path": "docker",
-    "container_image": "quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0"
+    "container_image": "quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0",
+    "container_user_id": "1001"
   }
 }
 ```
@@ -432,14 +472,15 @@ pmxgentop --config config_pmxgentop.yml --input_top_zip_path topology.zip --outp
 {
   "properties": {
     "force_field": "amber99sb-star-ildn-mut",
-    "container_path": "docker",
-    "container_image": "shub://bioexcel/pmx_docker"
+    "gmx_lib": "/usr/local/lib/python3.12/site-packages/pmx/data/mutff",
+    "container_path": "singularity",
+    "container_image": "https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0"
   }
 }
 ```
 #### Command line
 ```python
-pmxgentop --config config_pmxgentop.json --input_top_zip_path topology.zip --output_top_zip_path ref_output_topology.zip
+pmxgentop --config config_pmxgentop.json --input_top_zip_path mut_gmx.top.zip --output_top_zip_path ref_output_topology.zip
 ```
 
 ## Pmxligand_hybrid
@@ -512,6 +553,7 @@ Config parameters for this building block:
 * **scDUMd** (*number*): (1.0) Scale bonded dummy dihedral parameters.
 * **deAng** (*boolean*): (False) Decouple angles composed of 1 dummy and 2 non-dummies.
 * **distance** (*number*): (0.05) Distance (nm) between atoms to consider them morphable for alignment approach (Only used if input_pairs_path is not provided).
+* **binary_path** (*string*): (pmx) Path to the PMX command line interface.
 * **remove_tmp** (*boolean*): (True) Remove temporal files.
 * **restart** (*boolean*): (False) Do not execute if output files exist.
 * **sandbox_path** (*string*): (./) Parent path to the sandbox directory.
@@ -529,6 +571,24 @@ properties:
   fit: true
 
 ```
+#### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxligand_hybrid_docker.yml)
+```python
+properties:
+  container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
+  container_path: docker
+  distance: 0.05
+  fit: true
+
+```
+#### [Singularity config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxligand_hybrid_singularity.yml)
+```python
+properties:
+  container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
+  container_path: singularity
+  distance: 0.05
+  fit: true
+
+```
 #### Command line
 ```python
 pmxligand_hybrid --config config_pmxligand_hybrid.yml --input_structure1_path lig1.pdb --input_structure2_path lig2.pdb --input_topology1_path topoLig1.itp --input_topology2_path topoLig2.itp --input_pairs_path myPairs1.dat --input_scaffold1_path input.ndx --input_scaffold2_path input.ndx --output_log_path output.log --output_structure1_path ref_hybridStructure1.pdb --output_structure2_path ref_hybridStructure2.pdb --output_topology_path ref_hybridTopology.itp --output_atomtypes_path ref_hybridAtomTypes.itp
@@ -540,6 +600,28 @@ pmxligand_hybrid --config config_pmxligand_hybrid.yml --input_structure1_path li
   "properties": {
     "fit": true,
     "distance": 0.05
+  }
+}
+```
+#### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxligand_hybrid_docker.json)
+```python
+{
+  "properties": {
+    "fit": true,
+    "distance": 0.05,
+    "container_path": "docker",
+    "container_image": "quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0"
+  }
+}
+```
+#### [Singularity config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxligand_hybrid_singularity.json)
+```python
+{
+  "properties": {
+    "fit": true,
+    "distance": 0.05,
+    "container_path": "singularity",
+    "container_image": "https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0"
   }
 }
 ```
@@ -582,12 +664,6 @@ Config parameters for this building block:
 * **remove_tmp** (*boolean*): (True) Remove temporal files.
 * **restart** (*boolean*): (False) Do not execute if output files exist.
 * **sandbox_path** (*string*): (./) Parent path to the sandbox directory.
-* **container_path** (*string*): (None) Path to the binary executable of your container.
-* **container_image** (*string*): (None) Container Image identifier.
-* **container_volume_path** (*string*): (/inout) Path to an internal directory in the container.
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
-* **container_user_id** (*string*): (None) User number id to be mapped inside the container.
-* **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
 #### [Common config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmerge_ff.yml)
 ```python
@@ -674,19 +750,21 @@ properties:
 #### [Docker config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_docker.yml)
 ```python
 properties:
-  container_image: quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0
+  container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
   container_path: docker
   force_field: amber99sb-star-ildn-mut
-  mutation_list: 2Ala, 3Val
+  gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
+  mutation_list: 10Ala
 
 ```
 #### [Singularity config file](https://github.com/bioexcel/biobb_pmx/blob/master/biobb_pmx/test/data/config/config_pmxmutate_singularity.yml)
 ```python
 properties:
-  container_image: shub://bioexcel/pmx_docker
+  container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
   container_path: singularity
   force_field: amber99sb-star-ildn-mut
-  mutation_list: 2Ala, 3Val
+  gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
+  mutation_list: 10Ala
 
 ```
 #### Command line
@@ -707,10 +785,11 @@ pmxmutate --config config_pmxmutate.yml --input_structure_path frame99.pdb --out
 ```python
 {
   "properties": {
-    "mutation_list": "2Ala, 3Val",
+    "mutation_list": "10Ala",
     "force_field": "amber99sb-star-ildn-mut",
+    "gmx_lib": "/usr/local/lib/python3.12/site-packages/pmx/data/mutff",
     "container_path": "docker",
-    "container_image": "quay.io/biocontainers/pmx_biobb:4.1.3--py38ha14b6f2_0"
+    "container_image": "quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0"
   }
 }
 ```
@@ -718,10 +797,11 @@ pmxmutate --config config_pmxmutate.yml --input_structure_path frame99.pdb --out
 ```python
 {
   "properties": {
-    "mutation_list": "2Ala, 3Val",
+    "mutation_list": "10Ala",
     "force_field": "amber99sb-star-ildn-mut",
+    "gmx_lib": "/usr/local/lib/python3.12/site-packages/pmx/data/mutff",
     "container_path": "singularity",
-    "container_image": "shub://bioexcel/pmx_docker"
+    "container_image": "https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0"
   }
 }
 ```

@@ -315,17 +315,17 @@
                     "wf_prop": false,
                     "description": "Maximum time (s) for an MCS search."
                 },
-                "remove_tmp": {
-                    "type": "boolean",
-                    "default": true,
-                    "wf_prop": true,
-                    "description": "Remove temporal files."
-                },
                 "binary_path": {
                     "type": "string",
                     "default": "pmx",
                     "wf_prop": false,
                     "description": "Path to the PMX command line interface."
+                },
+                "remove_tmp": {
+                    "type": "boolean",
+                    "default": true,
+                    "wf_prop": true,
+                    "description": "Remove temporal files."
                 },
                 "restart": {
                     "type": "boolean",

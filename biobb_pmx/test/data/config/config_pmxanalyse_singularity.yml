@@ -1,6 +1,6 @@
 properties:
-  container_image: shub://bioexcel/pmx_docker
-  container_path: docker
+  container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
+  container_path: singularity
   dpi: 600
   method: CGI BAR JARZ
   temperature: 298.15

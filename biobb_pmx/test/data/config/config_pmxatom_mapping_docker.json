@@ -1,0 +1,8 @@
+{
+  "properties": {
+    "noalignment": false,
+    "distance": 0.05,
+    "container_path": "docker",
+    "container_image": "quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0"
+  }
+}

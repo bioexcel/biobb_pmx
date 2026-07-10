@@ -1,0 +1,5 @@
+properties:
+  container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
+  container_path: docker
+  distance: 0.05
+  fit: true

@@ -1,5 +1,6 @@
 properties:
-  container_image: shub://bioexcel/pmx_docker
+  container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
   container_path: singularity
   force_field: amber99sb-star-ildn-mut
-  mutation_list: 2Ala, 3Val
+  gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
+  mutation_list: 10Ala

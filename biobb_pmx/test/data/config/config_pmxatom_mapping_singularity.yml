@@ -1,0 +1,5 @@
+properties:
+  container_image: https://depot.galaxyproject.org/singularity/biobb_pmx:5.2.2--pyhdfd78af_0
+  container_path: singularity
+  distance: 0.05
+  noalignment: false
