@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## What's new in version [5.3.1](https://github.com/bioexcel/biobb_pmx/releases/tag/v5.3.1)?
+
 ### Changes
 
 * [FIX] Constrain numpy <2.4: pmxanalyse (pmx-biobb 5.2.2 BAR estimator) fails with numpy 2.4 (`TypeError: only 0-dimensional arrays can be converted to Python scalars`)
