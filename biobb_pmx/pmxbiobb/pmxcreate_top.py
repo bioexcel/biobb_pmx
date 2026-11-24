@@ -10,7 +10,6 @@ from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject
 from biobb_common.tools import file_utils as fu
-from biobb_common.tools.file_utils import launchlogger
 
 
 class Pmxcreate_top(BiobbObject):
@@ -100,19 +99,8 @@ class Pmxcreate_top(BiobbObject):
                     )
                 )
 
-        # Check the properties
-        self.check_properties(properties)
-        self.check_arguments()
-
-    @launchlogger
-    def launch(self) -> int:
+    def run(self) -> int:
         """Execute the :class:`Pmxcreate_top <pmx.pmxcreate_top.Pmxcreate_top>` pmx.pmxcreate_top.Pmxcreate_top object."""
-        #        os.chdir("/Users/hospital/BioBB/Notebooks_dev/biobb_wf_pmx_tutorial_ligands/biobb_wf_pmx_tutorial/notebooks")
-        # Setup Biobb
-        if self.check_restart():
-            return 0
-        self.stage_files()
-
         fu.log("Running create_top from pmx package...\n", self.out_log)
 
         # Creating temporary folder
