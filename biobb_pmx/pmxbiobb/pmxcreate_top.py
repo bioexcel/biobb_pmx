@@ -62,29 +62,10 @@ class Pmxcreate_top(BiobbObject):
         properties: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        properties = properties or {}
-
-        # Call parent class constructor
-        super().__init__(properties)
-        self.locals_var_dict = locals().copy()
-
-        # Input/Output files
-        self.io_dict = {
-            "in": {
-                "input_topology1_path": input_topology1_path,
-                "input_topology2_path": input_topology2_path,
-            },
-            "out": {"output_topology_path": output_topology_path},
-        }
-
-        # Properties specific for BB
-        self.force_field = properties.get("force_field", "amber99sb-star-ildn-mut.ff")
-        self.water = properties.get("water", "tip3p")
-        self.system_name = properties.get("system_name", "Pmx topology")
-        self.mols = properties.get("mols", [["Protein", 1], ["Ligand", 1]])
+        super().__init__(**locals())
 
         # Properties common in all PMX BB
-        self.gmx_lib = properties.get("gmx_lib", None)
+        self.gmx_lib = self.properties.get("gmx_lib", None)
         if not self.gmx_lib and os.environ.get("CONDA_PREFIX", ""):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
@@ -92,7 +73,7 @@ class Pmxcreate_top(BiobbObject):
                     f"lib/python{python_version}/site-packages/pmx/data/mutff/"
                 )
             )
-            if properties.get("container_path"):
+            if self.container_path:
                 self.gmx_lib = str(
                     Path("/usr/local/").joinpath(
                         "lib/python3.7/site-packages/pmx/data/mutff/"

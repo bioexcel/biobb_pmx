@@ -83,43 +83,11 @@ class Pmxanalyse(BiobbObject):
         properties: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        properties = properties or {}
+        super().__init__(**locals())
 
-        # Call parent class constructor
-        super().__init__(properties)
-        self.locals_var_dict = locals().copy()
-
-        # Input/Output files
-        self.io_dict = {
-            "in": {},
-            "out": {
-                "output_result_path": output_result_path,
-                "output_work_plot_path": output_work_plot_path,
-            },
-        }
         # Should not be copied inside container
-        self.input_a_xvg_zip_path = input_a_xvg_zip_path
-        self.input_b_xvg_zip_path = input_b_xvg_zip_path
-
-        # Properties specific for BB
-        self.method = properties.get("method", "CGI BAR JARZ")
-        self.temperature = properties.get("temperature", 298.15)
-        self.nboots = properties.get("nboots", 0)
-        self.nblocks = properties.get("nblocks", 1)
-        self.integ_only = properties.get("integ_only", False)
-        self.reverseB = properties.get("reverseB", False)
-        self.skip = properties.get("skip", 1)
-        self.slice = properties.get("slice", None)
-        self.rand = properties.get("rand", None)
-        self.index = properties.get("index", None)
-        self.prec = properties.get("prec", 2)
-        self.units = properties.get("units", "kJ")
-        self.no_ks = properties.get("no_ks", False)
-        self.nbins = properties.get("nbins", 20)
-        self.dpi = properties.get("dpi", 300)
-
-        # Properties common in all PMX BB
-        self.binary_path = properties.get("binary_path", "pmx")
+        self.input_a_xvg_zip_path = self.io_dict["in"].pop("input_a_xvg_zip_path")
+        self.input_b_xvg_zip_path = self.io_dict["in"].pop("input_b_xvg_zip_path")
 
     def run(self) -> None:
         """Execute the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` pmx.pmxanalyse.Pmxanalyse object."""

@@ -34,11 +34,11 @@ class Pmxligand_hybrid(BiobbObject):
         properties (dic):
             * **fit** (*bool*) - (False) Fit ligand structure 1 onto ligand structure 2 (Only used if input_pairs_path is provided).
             * **split** (*bool*) - (False) Split the topology into separate transitions.
-            * **scDUMm** (*float*) - (1.0) Scale dummy masses using the counterpart atoms.
-            * **scDUMa** (*float*) - (1.0) Scale bonded dummy angle parameters.
-            * **scDUMd** (*float*) - (1.0) Scale bonded dummy dihedral parameters.
+            * **scDUMm** (*float*) - (None) Scale dummy masses using the counterpart atoms. If not set, the tool uses its own default.
+            * **scDUMa** (*float*) - (None) Scale bonded dummy angle parameters. If not set, the tool uses its own default.
+            * **scDUMd** (*float*) - (None) Scale bonded dummy dihedral parameters. If not set, the tool uses its own default.
             * **deAng** (*bool*) - (False) Decouple angles composed of 1 dummy and 2 non-dummies.
-            * **distance** (*float*) - (0.05) Distance (nm) between atoms to consider them morphable for alignment approach (Only used if input_pairs_path is not provided).
+            * **distance** (*float*) - (None) Distance (nm) between atoms to consider them morphable for alignment approach (Only used if input_pairs_path is not provided). If not set, the tool uses its own default.
             * **binary_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -98,51 +98,10 @@ class Pmxligand_hybrid(BiobbObject):
         properties: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        properties = properties or {}
-
-        # Call parent class constructor
-        super().__init__(properties)
-        self.locals_var_dict = locals().copy()
-
-        # Input/Output files
-        self.io_dict = {
-            "in": {
-                "input_structure1_path": input_structure1_path,
-                "input_structure2_path": input_structure2_path,
-                "input_topology1_path": input_topology1_path,
-                "input_topology2_path": input_topology2_path,
-                "input_scaffold1_path": input_scaffold1_path,
-                "input_scaffold2_path": input_scaffold2_path,
-                "input_pairs_path": input_pairs_path,
-            },
-            "out": {
-                "output_structure1_path": output_structure1_path,
-                "output_structure2_path": output_structure2_path,
-                "output_topology_path": output_topology_path,
-                "output_atomtypes_path": output_atomtypes_path,
-                "output_log_path": output_log_path,
-            },
-        }
-
-        # Properties specific for BB
-        # self.fit = properties.get('fit', False)
-        # self.split = properties.get('split', False)
-        # self.scDUMm = properties.get('scDUMm', 1.0)
-        # self.scDUMa = properties.get('scDUMa', 1.0)
-        # self.scDUMd = properties.get('scDUMd', 1.0)
-        # self.deAng = properties.get('deAng', False)
-        # self.distance = properties.get('distance', 0.05)
-
-        self.fit = properties.get("fit")
-        self.split = properties.get("split")
-        self.scDUMm = properties.get("scDUMm")
-        self.scDUMa = properties.get("scDUMa")
-        self.scDUMd = properties.get("scDUMd")
-        self.deAng = properties.get("deAng")
-        self.distance = properties.get("distance")
+        super().__init__(**locals())
 
         # Properties common in all PMX BB
-        self.gmx_lib = properties.get("gmx_lib", None)
+        self.gmx_lib = self.properties.get("gmx_lib", None)
         if not self.gmx_lib and os.environ.get("CONDA_PREFIX", ""):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
@@ -150,13 +109,12 @@ class Pmxligand_hybrid(BiobbObject):
                     f"lib/python{python_version}/site-packages/pmx/data/mutff/"
                 )
             )
-            if properties.get("container_path"):
+            if self.container_path:
                 self.gmx_lib = str(
                     Path("/usr/local/").joinpath(
                         "lib/python3.7/site-packages/pmx/data/mutff/"
                     )
                 )
-        self.binary_path = properties.get("binary_path", "pmx")
 
     def run(self) -> None:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""

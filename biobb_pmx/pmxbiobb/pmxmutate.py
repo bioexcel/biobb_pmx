@@ -27,7 +27,7 @@ class Pmxmutate(BiobbObject):
             * **mutation_list** (*str*) - ("2Ala") Mutation list in the format "Chain:Resnum MUT_AA_Code" or "Chain:Resnum MUT_NA_Code"  (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:15CYS". Possible MUT_AA_Code: 'ALA', 'ARG', 'ASN', 'ASP', 'ASPH', 'ASPP', 'ASH', 'CYS', 'CYS2', 'CYN', 'CYX', 'CYM', 'CYSH', 'GLU', 'GLUH', 'GLUP', 'GLH', 'GLN', 'GLY', 'HIS', 'HIE', 'HISE', 'HSE', 'HIP', 'HSP', 'HISH', 'HID', 'HSD', 'ILE', 'LEU', 'LYS', 'LYSH', 'LYP', 'LYN', 'LSN', 'MET', 'PHE', 'PRO', 'SER', 'SP1', 'SP2', 'THR', 'TRP', 'TYR', 'VAL'. Possible MUT_NA_Codes: 'A', 'T', 'C', 'G', 'U'.
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield to use.
             * **resinfo** (*bool*) - (False) Show the list of 3-letter -> 1-letter residues.
-            * **gmx_lib** (*str*) - ("$CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff/") Path to the GMXLIB folder in your computer.
+            * **gmx_lib** (*str*) - (None) Path to the GMXLIB folder in your computer. If not set, the mutff folder of the pmx package of the conda environment.
             * **binary_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -72,29 +72,12 @@ class Pmxmutate(BiobbObject):
         properties: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        properties = properties or {}
-
-        # Call parent class constructor
-        super().__init__(properties)
-        self.locals_var_dict = locals().copy()
-
-        # Input/Output files
-        self.io_dict = {
-            "in": {
-                "input_structure_path": input_structure_path,
-                "input_b_structure_path": input_b_structure_path,
-            },
-            "out": {"output_structure_path": output_structure_path},
-        }
+        super().__init__(**locals())
 
         # Properties specific for BB
-        self.force_field = properties.get("force_field", "amber99sb-star-ildn-mut")
-        self.resinfo = properties.get("resinfo", False)
-        self.mutation_list = properties.get("mutation_list", "2Ala")
-        self.input_mutations_file = properties.get("mutations_file")
+        self.input_mutations_file = self.properties.get("mutations_file")
 
         # Properties common in all PMX BB
-        self.gmx_lib = properties.get("gmx_lib", None)
         if not self.gmx_lib and os.environ.get("CONDA_PREFIX"):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
@@ -102,13 +85,12 @@ class Pmxmutate(BiobbObject):
                     f"lib/python{python_version}/site-packages/pmx/data/mutff/"
                 )
             )
-            if properties.get("container_path"):
+            if self.container_path:
                 self.gmx_lib = str(
                     Path("/usr/local/").joinpath(
                         "lib/python3.8/site-packages/pmx/data/mutff/"
                     )
                 )
-        self.binary_path = properties.get("binary_path", "pmx")
 
     def run(self) -> None:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""

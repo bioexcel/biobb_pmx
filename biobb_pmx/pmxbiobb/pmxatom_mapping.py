@@ -33,14 +33,14 @@ class Pmxatom_mapping(BiobbObject):
         properties (dic):
             * **noalignment** (*bool*) - (False) Should the alignment method be disabled.
             * **nomcs** (*bool*) - (False) Should the MCS method be disabled.
-            * **noH2H** (*bool*) - (True) Should non-polar hydrogens be discarded from morphing into any other hydrogen.
+            * **noH2H** (*bool*) - (False) Should non-polar hydrogens be discarded from morphing into any other hydrogen.
             * **H2Hpolar** (*bool*) - (False) Should polar hydrogens be morphed into polar hydrogens.
             * **H2Heavy** (*bool*) - (False) Should hydrogen be morphed into a heavy atom.
             * **RingsOnly** (*bool*) - (False) Should rings only be used in the MCS search and alignemnt.
             * **dMCS** (*bool*) - (False) Should the distance criterium be also applied in the MCS based search.
             * **swap** (*bool*) - (False) Try swapping the molecule order which would be a cross-check and require double execution time.
-            * **nochirality** (*bool*) - (True) Perform chirality check for MCS mapping.
-            * **distance** (*float*) - (0.05) Distance (nm) between atoms to consider them morphable for alignment approach.
+            * **nochirality** (*bool*) - (False) Perform chirality check for MCS mapping.
+            * **distance** (*float*) - (None) Distance (nm) between atoms to consider them morphable for alignment approach. If not set, the tool uses its own default.
             * **timeout** (*int*) - (10) Maximum time (s) for an MCS search.
             * **binary_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
@@ -96,61 +96,14 @@ class Pmxatom_mapping(BiobbObject):
         properties: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        properties = properties or {}
+        super().__init__(**locals())
 
-        # Call parent class constructor
-        super().__init__(properties)
-        self.locals_var_dict = locals().copy()
-
-        # Input/Output files
-        self.io_dict = {
-            "in": {
-                "input_structure1_path": input_structure1_path,
-                "input_structure2_path": input_structure2_path,
-            },
-            "out": {
-                "output_pairs1_path": output_pairs1_path,
-                "output_pairs2_path": output_pairs2_path,
-                "output_log_path": output_log_path,
-                "output_structure1_path": output_structure1_path,
-                "output_structure2_path": output_structure2_path,
-                "output_morph1_path": output_morph1_path,
-                "output_morph2_path": output_morph2_path,
-                "output_scaffold1_path": output_scaffold1_path,
-                "output_scaffold2_path": output_scaffold2_path,
-                "output_score_path": output_score_path,
-            },
-        }
-
-        # Properties specific for BB
-        # self.noalignment = properties.get('noalignment', False)
-        # self.nomcs = properties.get('nomcs', False)
-        # self.noH2H = properties.get('noH2H', True)
-        # self.H2Hpolar = properties.get('H2Hpolar', False)
-        # self.H2Heavy = properties.get('H2Heavy', False)
-        # self.RingsOnly = properties.get('RingsOnly', False)
-        # self.dMCS = properties.get('dMCS', False)
-        # self.swap = properties.get('swap', False)
-        # self.nochirality = properties.get('nochirality', True)
-        # self.distance = properties.get('distance', 0.05)
-        # self.timeout = properties.get('timeout', 10)
-
-        self.noalignment = properties.get("noalignment")
-        self.nomcs = properties.get("nomcs")
-        self.noH2H = properties.get("noH2H")
-        self.H2Hpolar = properties.get("H2Hpolar")
-        self.H2Heavy = properties.get("H2Heavy")
-        self.RingsOnly = properties.get("RingsOnly")
-        self.dMCS = properties.get("dMCS")
-        self.swap = properties.get("swap")
-        self.nochirality = properties.get("nochirality")
-        self.distance = properties.get("distance")
         # The timeout property is the time of the MCS search, not the timeout of the command (BiobbObject)
-        self.mcs_timeout = properties.get("timeout")
+        self.mcs_timeout = self.properties.get("timeout")
         self.timeout = None
 
         # Properties common in all PMX BB
-        self.gmx_lib = properties.get("gmx_lib", None)
+        self.gmx_lib = self.properties.get("gmx_lib", None)
         if not self.gmx_lib and os.environ.get("CONDA_PREFIX", ""):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
@@ -158,13 +111,12 @@ class Pmxatom_mapping(BiobbObject):
                     f"lib/python{python_version}/site-packages/pmx/data/mutff/"
                 )
             )
-            if properties.get("container_path"):
+            if self.container_path:
                 self.gmx_lib = str(
                     Path("/usr/local/").joinpath(
                         "lib/python3.7/site-packages/pmx/data/mutff/"
                     )
                 )
-        self.binary_path = properties.get("binary_path", "pmx")
 
     def run(self) -> None:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""

@@ -263,7 +263,7 @@
                 },
                 "noH2H": {
                     "type": "boolean",
-                    "default": true,
+                    "default": false,
                     "wf_prop": false,
                     "description": "Should non-polar hydrogens be discarded from morphing into any other hydrogen."
                 },
@@ -299,15 +299,15 @@
                 },
                 "nochirality": {
                     "type": "boolean",
-                    "default": true,
+                    "default": false,
                     "wf_prop": false,
                     "description": "Perform chirality check for MCS mapping."
                 },
                 "distance": {
                     "type": "number",
-                    "default": 0.05,
+                    "default": null,
                     "wf_prop": false,
-                    "description": "Distance (nm) between atoms to consider them morphable for alignment approach."
+                    "description": "Distance (nm) between atoms to consider them morphable for alignment approach. If not set, the tool uses its own default."
                 },
                 "timeout": {
                     "type": "integer",
