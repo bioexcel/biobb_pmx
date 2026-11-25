@@ -99,6 +99,9 @@ class Pmxcreate_top(BiobbObject):
                     )
                 )
 
+    def stage_files(self) -> None:
+        """The block does not use the sandbox: there are no files to stage."""
+
     def run(self) -> None:
         """Execute the :class:`Pmxcreate_top <pmx.pmxcreate_top.Pmxcreate_top>` pmx.pmxcreate_top.Pmxcreate_top object."""
         fu.log("Running create_top from pmx package...\n", self.out_log)
@@ -108,14 +111,14 @@ class Pmxcreate_top(BiobbObject):
         fu.log("Creating %s temporary folder" % tmp_folder, self.out_log)
 
         itp = os.path.basename(
-            os.path.normpath(self.stage_io_dict["in"]["input_topology1_path"])
+            os.path.normpath(self.io_dict["in"]["input_topology1_path"])
         )
         fu.log("Creating %s itp file in temporary folder" % itp, self.out_log)
         itp_local = str(PurePath(tmp_folder).joinpath(itp))
         shutil.copyfile(self.io_dict["in"]["input_topology1_path"], itp_local)
 
         itp2 = os.path.basename(
-            os.path.normpath(self.stage_io_dict["in"]["input_topology2_path"])
+            os.path.normpath(self.io_dict["in"]["input_topology2_path"])
         )
         fu.log("Creating %s itp file in temporary folder" % itp2, self.out_log)
         itp2_local = str(PurePath(tmp_folder).joinpath(itp2))

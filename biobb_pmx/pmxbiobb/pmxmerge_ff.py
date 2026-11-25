@@ -87,6 +87,9 @@ class Pmxmerge_ff(BiobbObject):
                     )
                 )
 
+    def stage_files(self) -> None:
+        """The block does not use the sandbox: there are no files to stage."""
+
     def run(self) -> None:
         """Execute the :class:`Pmxmerge_ff <pmx.pmxmerge_ff.Pmxmerge_ff>` pmx.pmxmerge_ff.Pmxmerge_ff object."""
 
@@ -95,7 +98,7 @@ class Pmxmerge_ff(BiobbObject):
         fu.log("Creating %s temporary folder" % tmp_folder, self.out_log)
 
         fu.unzip_list(
-            self.stage_io_dict["in"]["input_topology_path"],
+            self.io_dict["in"]["input_topology_path"],
             tmp_folder,
             out_log=self.out_log,
         )
@@ -106,9 +109,9 @@ class Pmxmerge_ff(BiobbObject):
 
         fu.log("Running merge_FF_files from pmx package...\n", self.out_log)
         ligand_alchemy._merge_FF_files(
-            self.stage_io_dict["out"]["output_topology_path"], ffsIn=ffsIn_list
+            self.io_dict["out"]["output_topology_path"], ffsIn=ffsIn_list
         )
-        # ffsIn=[self.stage_io_dict["in"]["input_topology1_path"],self.stage_io_dict["in"]["input_topology2_path"]] )
+        # ffsIn=[self.io_dict["in"]["input_topology1_path"],self.io_dict["in"]["input_topology2_path"]] )
 
         fu.log("Exit code 0\n", self.out_log)
 
