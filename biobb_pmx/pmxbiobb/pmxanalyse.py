@@ -121,7 +121,7 @@ class Pmxanalyse(BiobbObject):
         # Properties common in all PMX BB
         self.binary_path = properties.get("binary_path", "pmx")
 
-    def run(self) -> int:
+    def run(self) -> None:
         """Execute the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` pmx.pmxanalyse.Pmxanalyse object."""
 
         if self.container_path:
@@ -229,14 +229,7 @@ class Pmxanalyse(BiobbObject):
         # Run Biobb block
         self.run_biobb()
 
-        # Copy files to host
-        self.copy_to_host()
-
         self.tmp_files.extend([list_a_dir, list_b_dir])
-        self.remove_tmp_files()
-
-        self.check_arguments(output_files_created=True, raise_exception=False)
-        return self.return_code
 
 
 def pmxanalyse(

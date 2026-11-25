@@ -111,7 +111,7 @@ class Pmxmutate(BiobbObject):
                 )
         self.binary_path = properties.get("binary_path", "pmx")
 
-    def run(self) -> int:
+    def run(self) -> None:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
 
         if self.container_path:
@@ -168,14 +168,7 @@ class Pmxmutate(BiobbObject):
         # Run Biobb block
         self.run_biobb()
 
-        # Copy files to host
-        self.copy_to_host()
-
         self.tmp_files.append(mutations_dir)
-        self.remove_tmp_files()
-
-        self.check_arguments(output_files_created=True, raise_exception=False)
-        return self.return_code
 
 
 def pmxmutate(

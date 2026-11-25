@@ -99,7 +99,7 @@ class Pmxcreate_top(BiobbObject):
                     )
                 )
 
-    def run(self) -> int:
+    def run(self) -> None:
         """Execute the :class:`Pmxcreate_top <pmx.pmxcreate_top.Pmxcreate_top>` pmx.pmxcreate_top.Pmxcreate_top object."""
         fu.log("Running create_top from pmx package...\n", self.out_log)
 
@@ -164,14 +164,7 @@ class Pmxcreate_top(BiobbObject):
         # Run Biobb block
         # self.run_biobb()
 
-        # Copy files to host
-        self.copy_to_host()
-
         self.tmp_files.append(tmp_folder)
-        self.remove_tmp_files()
-
-        self.check_arguments(output_files_created=True, raise_exception=False)
-        return self.return_code
 
 
 def pmxcreate_top(

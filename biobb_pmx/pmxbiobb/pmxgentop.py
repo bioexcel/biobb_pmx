@@ -100,7 +100,7 @@ class Pmxgentop(BiobbObject):
                 )
         self.binary_path = properties.get("binary_path", "pmx")
 
-    def run(self) -> int:
+    def run(self) -> None:
         """Execute the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` pmx.pmxgentop.Pmxgentop object."""
 
         if self.container_path:
@@ -123,22 +123,22 @@ class Pmxgentop(BiobbObject):
                 fu.unzip_top(zip_file=self.input_top_zip_path, out_log=self.out_log)
             ).resolve()
         )
-        top_dir = str(Path(top_file).parent)
+        self.top_dir = str(Path(top_file).parent)
 
         # Copy extra files to sandbox: topology folder
         top_dir_in_sandbox = Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
-            Path(top_dir).name
+            Path(self.top_dir).name
         )
-        shutil.copytree(top_dir, str(top_dir_in_sandbox))
-        top_file = str(Path(Path(top_dir).name).joinpath(Path(top_file).name))
+        shutil.copytree(self.top_dir, str(top_dir_in_sandbox))
+        top_file = str(Path(Path(self.top_dir).name).joinpath(Path(top_file).name))
 
         output_file_name = fu.create_name(
             prefix=self.prefix, step=self.step, name=str(Path(top_file).name)
         )
-        unique_dir_output_file = str(
+        self.unique_dir_output_file = str(
             Path(self.stage_io_dict.get("unique_dir", "")).joinpath(output_file_name)
         )
-        fu.log(f"unique_dir_output_file: {unique_dir_output_file}", self.out_log)
+        fu.log(f"unique_dir_output_file: {self.unique_dir_output_file}", self.out_log)
 
         self.cmd = [
             "cd",
@@ -165,32 +165,33 @@ class Pmxgentop(BiobbObject):
         # Run Biobb block
         self.run_biobb()
 
-        # Copy files to host
-        self.copy_to_host()
+        self.tmp_files.extend([self.top_dir])
 
+    def process_outputs(self) -> None:
+        """Remove the sandbox paths from the output topology, add the itp files of the input topology that pmx did not change and zip it."""
         # Remove paths from top file
-        with open(Path(unique_dir_output_file)) as top_fh:
+        with open(Path(self.unique_dir_output_file)) as top_fh:
             top_lines = top_fh.readlines()
-        with open(Path(unique_dir_output_file), "w") as top_fh:
+        with open(Path(self.unique_dir_output_file), "w") as top_fh:
             for line in top_lines:
                 top_fh.write(
-                    line.replace(str(Path(unique_dir_output_file).parent) + "/", "")
+                    line.replace(str(Path(self.unique_dir_output_file).parent) + "/", "")
                 )
         # Copy the not modified itp files
-        for orig_itp_file in Path(top_dir).iterdir():
+        for orig_itp_file in Path(self.top_dir).iterdir():
             fu.log(
-                f"Check if {str(Path(unique_dir_output_file).parent.joinpath(Path(orig_itp_file).name))} exists",
+                f"Check if {str(Path(self.unique_dir_output_file).parent.joinpath(Path(orig_itp_file).name))} exists",
                 self.out_log,
                 self.global_log,
             )
             if (
-                not Path(unique_dir_output_file)
+                not Path(self.unique_dir_output_file)
                 .parent.joinpath(Path(orig_itp_file).name)
                 .exists()
             ):
-                shutil.copy(orig_itp_file, Path(unique_dir_output_file).parent)
+                shutil.copy(orig_itp_file, Path(self.unique_dir_output_file).parent)
                 fu.log(
-                    f"Copying {str(orig_itp_file)} to: {str(Path(unique_dir_output_file).parent)}",
+                    f"Copying {str(orig_itp_file)} to: {str(Path(self.unique_dir_output_file).parent)}",
                     self.out_log,
                     self.global_log,
                 )
@@ -203,16 +204,10 @@ class Pmxgentop(BiobbObject):
         )
         fu.zip_top(
             zip_file=self.io_dict["out"]["output_top_zip_path"],
-            top_file=str(Path(unique_dir_output_file)),
+            top_file=str(Path(self.unique_dir_output_file)),
             out_log=self.out_log,
             remove_original_files=self.remove_tmp
         )
-
-        self.tmp_files.extend([top_dir])
-        self.remove_tmp_files()
-
-        self.check_arguments(output_files_created=True, raise_exception=False)
-        return self.return_code
 
 
 def pmxgentop(

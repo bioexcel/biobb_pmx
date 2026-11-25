@@ -87,7 +87,7 @@ class Pmxmerge_ff(BiobbObject):
                     )
                 )
 
-    def run(self) -> int:
+    def run(self) -> None:
         """Execute the :class:`Pmxmerge_ff <pmx.pmxmerge_ff.Pmxmerge_ff>` pmx.pmxmerge_ff.Pmxmerge_ff object."""
 
         # Creating temporary folder
@@ -118,14 +118,7 @@ class Pmxmerge_ff(BiobbObject):
         # Run Biobb block
         # self.run_biobb()
 
-        # Copy files to host
-        self.copy_to_host()
-
         self.tmp_files.append(tmp_folder)
-        self.remove_tmp_files()
-
-        self.check_arguments(output_files_created=True, raise_exception=False)
-        return self.return_code
 
 
 def pmxmerge_ff(
