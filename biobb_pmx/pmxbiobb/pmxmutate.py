@@ -9,7 +9,6 @@ from pathlib import Path, PurePath
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject
-from biobb_common.tools import file_utils as fu
 
 from biobb_pmx.pmxbiobb.common import MUTATION_DICT, create_mutations_file
 
@@ -130,7 +129,7 @@ class Pmxmutate(BiobbObject):
 
         # Generate mutations file
 
-        mutations_dir = fu.create_unique_dir()
+        mutations_dir = self.create_tmp_dir()
         self.input_mutations_file = create_mutations_file(
             input_mutations_path=str(Path(mutations_dir).joinpath("mutations.txt")),
             mutation_list=self.mutation_list,
@@ -167,8 +166,6 @@ class Pmxmutate(BiobbObject):
 
         # Run Biobb block
         self.run_biobb()
-
-        self.tmp_files.append(mutations_dir)
 
 
 def pmxmutate(

@@ -138,8 +138,9 @@ class Pmxanalyse(BiobbObject):
                         % self.binary_path
                     )
 
-        list_a_dir = fu.create_unique_dir()
-        list_b_dir = fu.create_unique_dir()
+        # Two folders of the sandbox with the xvg files
+        list_a_dir = self.create_tmp_dir()
+        list_b_dir = self.create_tmp_dir()
         list_a = list(
             filter(
                 lambda f: Path(f).exists() and Path(f).stat().st_size > 10,
@@ -153,19 +154,9 @@ class Pmxanalyse(BiobbObject):
             )
         )
 
-        # Copy extra files to sandbox: two directories containing the xvg files
-        list_a_dir_in_sandbox = Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
-            Path(list_a_dir).name
-        )
-        list_b_dir_in_sandbox = Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
-            Path(list_b_dir).name
-        )
-        shutil.copytree(list_a_dir, list_a_dir_in_sandbox)
-        shutil.copytree(list_b_dir, list_b_dir_in_sandbox)
-
-        # Keep the full relative paths returned by unzip_list (including frame*/ subfolders).
-        string_a = " ".join(list_a)
-        string_b = " ".join(list_b)
+        # Paths of the xvg files for the command (including frame*/ subfolders)
+        string_a = " ".join(self.staged_path(path) for path in list_a)
+        string_b = " ".join(self.staged_path(path) for path in list_b)
 
         self.cmd = [
             "cd",
@@ -228,8 +219,6 @@ class Pmxanalyse(BiobbObject):
 
         # Run Biobb block
         self.run_biobb()
-
-        self.tmp_files.extend([list_a_dir, list_b_dir])
 
 
 def pmxanalyse(
