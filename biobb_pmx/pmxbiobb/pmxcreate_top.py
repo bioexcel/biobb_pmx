@@ -107,8 +107,7 @@ class Pmxcreate_top(BiobbObject):
         fu.log("Running create_top from pmx package...\n", self.out_log)
 
         # Creating temporary folder
-        tmp_folder = self.create_tmp_dir()
-        fu.log("Creating %s temporary folder" % tmp_folder, self.out_log)
+        tmp_folder = self.create_tmp_dir(log=True)
 
         itp = os.path.basename(
             os.path.normpath(self.io_dict["in"]["input_topology1_path"])

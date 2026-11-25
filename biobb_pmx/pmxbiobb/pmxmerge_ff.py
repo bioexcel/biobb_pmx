@@ -94,8 +94,7 @@ class Pmxmerge_ff(BiobbObject):
         """Execute the :class:`Pmxmerge_ff <pmx.pmxmerge_ff.Pmxmerge_ff>` pmx.pmxmerge_ff.Pmxmerge_ff object."""
 
         # Creating temporary folder
-        tmp_folder = self.create_tmp_dir()
-        fu.log("Creating %s temporary folder" % tmp_folder, self.out_log)
+        tmp_folder = self.create_tmp_dir(log=True)
 
         fu.unzip_list(
             self.io_dict["in"]["input_topology_path"],
