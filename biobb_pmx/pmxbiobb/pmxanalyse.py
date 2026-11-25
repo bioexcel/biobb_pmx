@@ -207,6 +207,7 @@ class Pmxanalyse(BiobbObject):
             self.cmd.append(self.slice)
         if self.rand:
             self.cmd.append("--rand")
+            self.cmd.append(str(self.rand))
         if self.index:
             self.cmd.append("--index")
             self.cmd.append(self.index)
