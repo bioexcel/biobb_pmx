@@ -145,7 +145,9 @@ class Pmxatom_mapping(BiobbObject):
         self.swap = properties.get("swap")
         self.nochirality = properties.get("nochirality")
         self.distance = properties.get("distance")
-        self.timeout = properties.get("timeout")
+        # The timeout property is the time of the MCS search, not the timeout of the command (BiobbObject)
+        self.mcs_timeout = properties.get("timeout")
+        self.timeout = None
 
         # Properties common in all PMX BB
         self.gmx_lib = properties.get("gmx_lib", None)
@@ -248,9 +250,9 @@ class Pmxatom_mapping(BiobbObject):
         if self.distance:
             self.cmd.append("--d")
             self.cmd.append(str(self.distance))
-        if self.timeout:
+        if self.mcs_timeout:
             self.cmd.append("--timeout")
-            self.cmd.append(str(self.timeout))
+            self.cmd.append(str(self.mcs_timeout))
 
         if self.gmx_lib:
             self.env_vars_dict["GMXLIB"] = self.gmx_lib
