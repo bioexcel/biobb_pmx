@@ -97,8 +97,6 @@ class Pmxcreate_top(BiobbObject):
         # ff itp
         fp.write('#include "%s/forcefield.itp"\n\n' % self.force_field)
         # additional itp
-        # for i in self.itps:
-        #    fp.write('#include "%s"\n' % i)
         fp.write('#include "%s"\n' % itp)
         fp.write('#include "%s"\n\n' % itp2)
         # water itp
@@ -120,9 +118,6 @@ class Pmxcreate_top(BiobbObject):
         fu.zip_top(zip_file=top_final, top_file=top_local, out_log=self.out_log, remove_original_files=self.remove_tmp)
 
         fu.log("Exit code 0\n", self.out_log)
-
-        # Run Biobb block
-        # self.run_biobb()
 
 
 pmxcreate_top = launcher(Pmxcreate_top)

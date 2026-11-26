@@ -101,7 +101,7 @@ class Pmxligand_hybrid(BiobbObject):
         check_binary(self.binary_path, self.container_path)
 
     def run(self) -> None:
-        """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
+        """Execute the :class:`Pmxligand_hybrid <pmx.pmxligand_hybrid.Pmxligand_hybrid>` pmx.pmxligand_hybrid.Pmxligand_hybrid object."""
 
         self.cmd = [
             self.binary_path,

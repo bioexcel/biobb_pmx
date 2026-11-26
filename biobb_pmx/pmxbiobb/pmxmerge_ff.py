@@ -55,9 +55,6 @@ class Pmxmerge_ff(BiobbObject):
     ) -> None:
         super().__init__(**locals())
 
-        # Properties specific for BB
-        # None yet
-
     def stage_files(self) -> None:
         """The block does not use the sandbox: there are no files to stage."""
 
@@ -81,12 +78,8 @@ class Pmxmerge_ff(BiobbObject):
         ligand_alchemy._merge_FF_files(
             self.io_dict["out"]["output_topology_path"], ffsIn=ffsIn_list
         )
-        # ffsIn=[self.io_dict["in"]["input_topology1_path"],self.io_dict["in"]["input_topology2_path"]] )
 
         fu.log("Exit code 0\n", self.out_log)
-
-        # Run Biobb block
-        # self.run_biobb()
 
 
 pmxmerge_ff = launcher(Pmxmerge_ff)

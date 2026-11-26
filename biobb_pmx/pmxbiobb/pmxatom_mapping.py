@@ -103,7 +103,7 @@ class Pmxatom_mapping(BiobbObject):
         check_binary(self.binary_path, self.container_path)
 
     def run(self) -> None:
-        """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
+        """Execute the :class:`Pmxatom_mapping <pmx.pmxatom_mapping.Pmxatom_mapping>` pmx.pmxatom_mapping.Pmxatom_mapping object."""
 
         self.cmd = [
             self.binary_path,

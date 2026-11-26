@@ -119,6 +119,3 @@ def create_mutations_file(
                 mut_file.write("\n")
 
     return input_mutations_path
-
-
-# TODO: Move this function to biobb_common.tools.file_utils
