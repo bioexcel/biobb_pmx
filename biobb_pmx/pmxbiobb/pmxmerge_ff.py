@@ -3,9 +3,6 @@
 """Module containing the PMX merge_ff class and the command line interface."""
 
 import glob
-import os
-import sys
-from pathlib import Path
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
@@ -61,22 +58,6 @@ class Pmxmerge_ff(BiobbObject):
         # Properties specific for BB
         # None yet
 
-        # Properties common in all PMX BB
-        self.gmx_lib = self.properties.get("gmx_lib", None)
-        if not self.gmx_lib and os.environ.get("CONDA_PREFIX", ""):
-            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-            self.gmx_lib = str(
-                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
-                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
-                )
-            )
-            if self.container_path:
-                self.gmx_lib = str(
-                    Path("/usr/local/").joinpath(
-                        "lib/python3.7/site-packages/pmx/data/mutff/"
-                    )
-                )
-
     def stage_files(self) -> None:
         """The block does not use the sandbox: there are no files to stage."""
 
@@ -103,9 +84,6 @@ class Pmxmerge_ff(BiobbObject):
         # ffsIn=[self.io_dict["in"]["input_topology1_path"],self.io_dict["in"]["input_topology2_path"]] )
 
         fu.log("Exit code 0\n", self.out_log)
-
-        if self.gmx_lib:
-            self.env_vars_dict["GMXLIB"] = self.gmx_lib
 
         # Run Biobb block
         # self.run_biobb()

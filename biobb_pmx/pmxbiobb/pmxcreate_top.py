@@ -4,8 +4,7 @@
 
 import os
 import shutil
-import sys
-from pathlib import Path, PurePath
+from pathlib import PurePath
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
@@ -63,22 +62,6 @@ class Pmxcreate_top(BiobbObject):
         **kwargs,
     ) -> None:
         super().__init__(**locals())
-
-        # Properties common in all PMX BB
-        self.gmx_lib = self.properties.get("gmx_lib", None)
-        if not self.gmx_lib and os.environ.get("CONDA_PREFIX", ""):
-            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-            self.gmx_lib = str(
-                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
-                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
-                )
-            )
-            if self.container_path:
-                self.gmx_lib = str(
-                    Path("/usr/local/").joinpath(
-                        "lib/python3.7/site-packages/pmx/data/mutff/"
-                    )
-                )
 
     def stage_files(self) -> None:
         """The block does not use the sandbox: there are no files to stage."""
