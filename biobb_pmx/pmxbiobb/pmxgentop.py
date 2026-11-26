@@ -34,7 +34,6 @@ class Pmxgentop(BiobbObject):
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
             * **container_image** (*str*) - ("gromacs/gromacs:latest") Container Image identifier.
             * **container_volume_path** (*str*) - ("/inout") Path to an internal directory in the container.
-            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
             * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
 
@@ -85,11 +84,6 @@ class Pmxgentop(BiobbObject):
     def run(self) -> None:
         """Execute the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` pmx.pmxgentop.Pmxgentop object."""
 
-        if self.container_path:
-            working_dir = self.container_volume_path if self.container_volume_path else "/data"
-        else:
-            working_dir = self.stage_io_dict.get("unique_dir", "")
-
         # Check if executable exists
         if not self.container_path:
             if not Path(self.binary_path).is_file():
@@ -99,20 +93,9 @@ class Pmxgentop(BiobbObject):
                         % self.binary_path
                     )
 
-        # Unzip topology to topology_out
-        top_file = str(
-            Path(
-                fu.unzip_top(zip_file=self.input_top_zip_path, out_log=self.out_log)
-            ).resolve()
-        )
-        top_dir = str(Path(top_file).parent)
-
-        # Copy extra files to sandbox: topology folder
-        top_dir_in_sandbox = Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
-            Path(top_dir).name
-        )
-        shutil.copytree(top_dir, str(top_dir_in_sandbox))
-        top_file = str(Path(Path(top_dir).name).joinpath(Path(top_file).name))
+        # Unzip the topology in a folder of the sandbox
+        top_dir = self.create_tmp_dir()
+        top_file = fu.unzip_top(zip_file=self.input_top_zip_path, out_log=self.out_log, unique_dir=top_dir)
 
         output_file_name = fu.create_name(
             prefix=self.prefix, step=self.step, name=str(Path(top_file).name)
@@ -123,9 +106,6 @@ class Pmxgentop(BiobbObject):
         fu.log(f"unique_dir_output_file: {unique_dir_output_file}", self.out_log)
 
         self.cmd = [
-            "cd",
-            working_dir,
-            ";",
             self.binary_path,
             "gentop",
             "-o",
@@ -133,7 +113,7 @@ class Pmxgentop(BiobbObject):
             "-ff",
             self.force_field,
             "-p",
-            top_file,
+            self.staged_path(top_file),
         ]
 
         if self.split:
@@ -144,13 +124,10 @@ class Pmxgentop(BiobbObject):
         if self.gmx_lib:
             self.env_vars_dict["GMXLIB"] = self.gmx_lib
         elif self.container_path:
-            # after "cd working_dir ;"
-            self.cmd[3:3] = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"]
+            self.cmd = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"] + self.cmd
 
         # Run Biobb block
         self.run_biobb()
-
-        self.tmp_files.extend([top_dir])
 
         # Remove the sandbox paths from the output topology, add the itp files of the input topology that pmx did not change and zip it.
         # Remove paths from top file

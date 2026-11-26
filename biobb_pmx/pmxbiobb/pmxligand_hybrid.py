@@ -5,7 +5,7 @@
 import os
 import shutil
 import sys
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
@@ -47,7 +47,6 @@ class Pmxligand_hybrid(BiobbObject):
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
             * **container_image** (*str*) - (None) Container Image identifier.
             * **container_volume_path** (*str*) - ("/inout") Path to an internal directory in the container.
-            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
             * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
 
@@ -114,11 +113,6 @@ class Pmxligand_hybrid(BiobbObject):
     def run(self) -> None:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
 
-        if self.container_path:
-            working_dir = self.container_volume_path if self.container_volume_path else "/data"
-        else:
-            working_dir = self.stage_io_dict.get("unique_dir", "")
-
         # Check if executable exists
         if not self.container_path:
             if not Path(self.binary_path).is_file():
@@ -129,42 +123,39 @@ class Pmxligand_hybrid(BiobbObject):
                     )
 
         self.cmd = [
-            "cd",
-            working_dir,
-            ";",
             self.binary_path,
             "ligandHybrid",
             "-i1",
-            PurePath(self.stage_io_dict["in"]["input_structure1_path"]).name,
+            self.stage_io_dict["in"]["input_structure1_path"],
             "-i2",
-            PurePath(self.stage_io_dict["in"]["input_structure2_path"]).name,
+            self.stage_io_dict["in"]["input_structure2_path"],
             "-itp1",
-            PurePath(self.stage_io_dict["in"]["input_topology1_path"]).name,
+            self.stage_io_dict["in"]["input_topology1_path"],
             "-itp2",
-            PurePath(self.stage_io_dict["in"]["input_topology2_path"]).name,
+            self.stage_io_dict["in"]["input_topology2_path"],
             "-oA",
-            PurePath(self.stage_io_dict["out"]["output_structure1_path"]).name,
+            self.stage_io_dict["out"]["output_structure1_path"],
             "-oB",
-            PurePath(self.stage_io_dict["out"]["output_structure2_path"]).name,
+            self.stage_io_dict["out"]["output_structure2_path"],
             "-oitp",
-            PurePath(self.stage_io_dict["out"]["output_topology_path"]).name,
+            self.stage_io_dict["out"]["output_topology_path"],
             "-offitp",
-            PurePath(self.stage_io_dict["out"]["output_atomtypes_path"]).name,
+            self.stage_io_dict["out"]["output_atomtypes_path"],
             "-log",
-            PurePath(self.stage_io_dict["out"]["output_log_path"]).name,
+            self.stage_io_dict["out"]["output_log_path"],
         ]
 
         if self.stage_io_dict["in"].get("input_pairs_path"):
             self.cmd.append("-pairs")
-            self.cmd.append(PurePath(self.stage_io_dict["in"]["input_pairs_path"]).name)
+            self.cmd.append(self.stage_io_dict["in"]["input_pairs_path"])
 
         if self.stage_io_dict["in"].get("input_scaffold1_path"):
             self.cmd.append("-n1")
-            self.cmd.append(PurePath(self.stage_io_dict["in"]["input_scaffold1_path"]).name)
+            self.cmd.append(self.stage_io_dict["in"]["input_scaffold1_path"])
 
         if self.stage_io_dict["in"].get("input_scaffold2_path"):
             self.cmd.append("-n2")
-            self.cmd.append(PurePath(self.stage_io_dict["in"]["input_scaffold2_path"]).name)
+            self.cmd.append(self.stage_io_dict["in"]["input_scaffold2_path"])
 
         if self.fit:
             self.cmd.append("--fit")
@@ -188,8 +179,7 @@ class Pmxligand_hybrid(BiobbObject):
         if self.gmx_lib:
             self.env_vars_dict["GMXLIB"] = self.gmx_lib
         elif self.container_path:
-            # after "cd working_dir ;"
-            self.cmd[3:3] = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"]
+            self.cmd = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"] + self.cmd
 
         # Run Biobb block
         self.run_biobb()

@@ -5,7 +5,7 @@
 import os
 import shutil
 import sys
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
@@ -35,7 +35,6 @@ class Pmxmutate(BiobbObject):
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
             * **container_image** (*str*) - (None) Container Image identifier.
             * **container_volume_path** (*str*) - ("/inout") Path to an internal directory in the container.
-            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
             * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
 
@@ -89,11 +88,6 @@ class Pmxmutate(BiobbObject):
     def run(self) -> None:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
 
-        if self.container_path:
-            working_dir = self.container_volume_path if self.container_volume_path else "/data"
-        else:
-            working_dir = self.stage_io_dict.get("unique_dir", "")
-
         # Check if executable exists
         if not self.container_path:
             if not Path(self.binary_path).is_file():
@@ -112,36 +106,29 @@ class Pmxmutate(BiobbObject):
             mutation_dict=MUTATION_DICT,
         )
 
-        # Copy extra files to sandbox: mutations file
-        shutil.copy2(self.input_mutations_file, self.stage_io_dict.get("unique_dir", ""))
-
         self.cmd = [
-            "cd",
-            working_dir,
-            ";",
             self.binary_path,
             "mutate",
             "-f",
-            PurePath(self.stage_io_dict["in"]["input_structure_path"]).name,
+            self.stage_io_dict["in"]["input_structure_path"],
             "-o",
-            PurePath(self.stage_io_dict["out"]["output_structure_path"]).name,
+            self.stage_io_dict["out"]["output_structure_path"],
             "-ff",
             self.force_field,
             "--script",
-            PurePath(self.input_mutations_file).name,
+            self.staged_path(self.input_mutations_file),
         ]
 
         if self.stage_io_dict["in"].get("input_b_structure_path"):
             self.cmd.append("-fB")
-            self.cmd.append(PurePath(self.stage_io_dict["in"]["input_b_structure_path"]).name)
+            self.cmd.append(self.stage_io_dict["in"]["input_b_structure_path"])
         if self.resinfo:
             self.cmd.append("-resinfo")
 
         if self.gmx_lib:
             self.env_vars_dict["GMXLIB"] = self.gmx_lib
         elif self.container_path:
-            # after "cd working_dir ;"
-            self.cmd[3:3] = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"]
+            self.cmd = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"] + self.cmd
 
         # Run Biobb block
         self.run_biobb()

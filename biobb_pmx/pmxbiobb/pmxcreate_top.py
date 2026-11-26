@@ -115,15 +115,9 @@ class Pmxcreate_top(BiobbObject):
         fp.close()
 
         # zip topology
-        current_cwd = os.getcwd()
-        top_final = str(
-            PurePath(current_cwd).joinpath(self.io_dict["out"]["output_topology_path"])
-        )
-
-        os.chdir(tmp_folder)
+        top_final = self.sandbox_file("output_topology_path")
         fu.log("Compressing topology to: %s" % top_final, self.out_log, self.global_log)
-        fu.zip_top(zip_file=top_final, top_file="topology.top", out_log=self.out_log, remove_original_files=self.remove_tmp)
-        os.chdir(current_cwd)
+        fu.zip_top(zip_file=top_final, top_file=top_local, out_log=self.out_log, remove_original_files=self.remove_tmp)
 
         fu.log("Exit code 0\n", self.out_log)
 

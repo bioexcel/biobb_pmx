@@ -5,7 +5,7 @@
 import os
 import shutil
 import sys
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
@@ -50,7 +50,6 @@ class Pmxatom_mapping(BiobbObject):
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
             * **container_image** (*str*) - (None) Container Image identifier.
             * **container_volume_path** (*str*) - ("/inout") Path to an internal directory in the container.
-            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
             * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
 
@@ -116,11 +115,6 @@ class Pmxatom_mapping(BiobbObject):
     def run(self) -> None:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
 
-        if self.container_path:
-            working_dir = self.container_volume_path if self.container_volume_path else "/data"
-        else:
-            working_dir = self.stage_io_dict.get("unique_dir", "")
-
         # Check if executable exists
         if not self.container_path:
             if not Path(self.binary_path).is_file():
@@ -131,50 +125,47 @@ class Pmxatom_mapping(BiobbObject):
                     )
 
         self.cmd = [
-            "cd",
-            working_dir,
-            ";",
             self.binary_path,
             "atomMapping",
             "-i1",
-            PurePath(self.stage_io_dict["in"]["input_structure1_path"]).name,
+            self.stage_io_dict["in"]["input_structure1_path"],
             "-i2",
-            PurePath(self.stage_io_dict["in"]["input_structure2_path"]).name,
+            self.stage_io_dict["in"]["input_structure2_path"],
             "-o1",
-            PurePath(self.stage_io_dict["out"]["output_pairs1_path"]).name,
+            self.stage_io_dict["out"]["output_pairs1_path"],
             "-o2",
-            PurePath(self.stage_io_dict["out"]["output_pairs2_path"]).name,
+            self.stage_io_dict["out"]["output_pairs2_path"],
             "-log",
-            PurePath(self.stage_io_dict["out"]["output_log_path"]).name,
+            self.stage_io_dict["out"]["output_log_path"],
         ]
 
         if self.stage_io_dict["out"].get("output_structure1_path"):
             self.cmd.append("-opdb1")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_structure1_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_structure1_path"])
 
         if self.stage_io_dict["out"].get("output_structure2_path"):
             self.cmd.append("-opdb2")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_structure2_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_structure2_path"])
 
         if self.stage_io_dict["out"].get("output_morph1_path"):
             self.cmd.append("-opdbm1")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_morph1_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_morph1_path"])
 
         if self.stage_io_dict["out"].get("output_morph2_path"):
             self.cmd.append("-opdbm2")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_morph2_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_morph2_path"])
 
         if self.stage_io_dict["out"].get("output_scaffold1_path"):
             self.cmd.append("-n1")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_scaffold1_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_scaffold1_path"])
 
         if self.stage_io_dict["out"].get("output_scaffold2_path"):
             self.cmd.append("-n2")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_scaffold2_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_scaffold2_path"])
 
         if self.stage_io_dict["out"].get("output_score_path"):
             self.cmd.append("-score")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_score_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_score_path"])
 
         if self.noalignment:
             self.cmd.append("--no-alignment")
@@ -204,8 +195,7 @@ class Pmxatom_mapping(BiobbObject):
         if self.gmx_lib:
             self.env_vars_dict["GMXLIB"] = self.gmx_lib
         elif self.container_path:
-            # after "cd working_dir ;"
-            self.cmd[3:3] = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"]
+            self.cmd = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"] + self.cmd
 
         # Run Biobb block
         self.run_biobb()

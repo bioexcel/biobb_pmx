@@ -3,7 +3,7 @@
 """Module containing the PMX analyse class and the command line interface."""
 
 import shutil
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
@@ -44,7 +44,6 @@ class Pmxanalyse(BiobbObject):
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
             * **container_image** (*str*) - ("gromacs/gromacs:latest") Container Image identifier.
             * **container_volume_path** (*str*) - ("/data") Path to an internal directory in the container.
-            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
             * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
 
@@ -92,11 +91,6 @@ class Pmxanalyse(BiobbObject):
     def run(self) -> None:
         """Execute the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` pmx.pmxanalyse.Pmxanalyse object."""
 
-        if self.container_path:
-            working_dir = self.container_volume_path if self.container_volume_path else "/data"
-        else:
-            working_dir = self.stage_io_dict.get("unique_dir", "")
-
         # Check if executable is exists
         if not self.container_path:
             if not Path(self.binary_path).is_file():
@@ -127,9 +121,6 @@ class Pmxanalyse(BiobbObject):
         string_b = " ".join(self.staged_path(path) for path in list_b)
 
         self.cmd = [
-            "cd",
-            working_dir,
-            ";",
             self.binary_path,
             "analyse",
             "-fA",
@@ -137,9 +128,9 @@ class Pmxanalyse(BiobbObject):
             "-fB",
             string_b,
             "-o",
-            PurePath(self.stage_io_dict["out"]["output_result_path"]).name,
+            self.stage_io_dict["out"]["output_result_path"],
             "-w",
-            PurePath(self.stage_io_dict["out"]["output_work_plot_path"]).name,
+            self.stage_io_dict["out"]["output_work_plot_path"],
         ]
 
         if self.method:
