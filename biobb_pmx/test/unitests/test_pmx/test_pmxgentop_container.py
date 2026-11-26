@@ -19,6 +19,20 @@ class TestPmxgentopDocker:
         assert fx.equal(self.paths['output_top_zip_path'], self.paths['ref_output_top_zip_path'])
 
 
+class TestPmxgentopDockerGmxlib:
+    """No gmx_lib: GMXLIB is the mutff folder of the pmx package of the image."""
+    def setup_class(self):
+        fx.test_setup(self, 'pmxgentop_docker_gmxlib')
+
+    def teardown_class(self):
+        fx.test_teardown(self)
+
+    def test_pmxgentop_docker_gmxlib(self):
+        pmxgentop(properties=self.properties, **self.paths)
+        assert fx.not_empty(self.paths['output_top_zip_path'])
+        assert fx.equal(self.paths['output_top_zip_path'], self.paths['ref_output_top_zip_path'])
+
+
 @pytest.mark.skipif(sys.platform == 'darwin', reason="singularity not available on macOS")
 class TestPmxgentopSingularity:
     def setup_class(self):

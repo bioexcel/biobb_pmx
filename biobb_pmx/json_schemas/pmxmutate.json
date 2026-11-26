@@ -112,7 +112,7 @@
                     "type": "string",
                     "default": null,
                     "wf_prop": false,
-                    "description": "Path to the GMXLIB folder in your computer. If not set, the mutff folder of the pmx package of the conda environment."
+                    "description": "Path to the GMXLIB folder in your computer. If not set, the mutff folder of the pmx package of the conda environment (in a container, of the image)."
                 },
                 "binary_path": {
                     "type": "string",

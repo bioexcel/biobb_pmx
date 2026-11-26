@@ -22,6 +22,17 @@ pmxmutate_docker:
     container_path: docker
     container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
 
+pmxmutate_docker_gmxlib:
+  paths:
+    input_structure_path: file:test_data_dir/pmx/frameA0.pdb
+    output_structure_path: output_structure.pdb
+    ref_output_structure_path: file:test_reference_dir/pmx/ref_output_structure.pdb
+  properties:
+    mutation_list: 10Ala
+    force_field: amber99sb-star-ildn-mut
+    container_path: docker
+    container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
+
 pmxmutate_singularity:
   paths:
     input_structure_path: file:test_data_dir/pmx/frameA0.pdb
@@ -50,6 +61,17 @@ pmxgentop_docker:
   properties:
     force_field: amber99sb-star-ildn-mut
     gmx_lib: /usr/local/lib/python3.12/site-packages/pmx/data/mutff
+    container_path: docker
+    container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
+    container_user_id: "1001"
+
+pmxgentop_docker_gmxlib:
+  paths:
+    input_top_zip_path: file:test_data_dir/pmx/mut_gmx.top.zip
+    output_top_zip_path: output_topology.zip
+    ref_output_top_zip_path: file:test_reference_dir/pmx/ref_output_topology_container.zip
+  properties:
+    force_field: amber99sb-star-ildn-mut
     container_path: docker
     container_image: quay.io/biocontainers/biobb_pmx:5.2.2--pyhdfd78af_0
     container_user_id: "1001"

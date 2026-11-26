@@ -3,6 +3,10 @@
 import re
 from typing import Iterable, Mapping, Optional, Union
 
+# GMXLIB in a container: the mutff folder of the pmx package of the image, found by the image's
+# own Python (its version is not known on the host). "\$" is expanded in the container, not on the host.
+CONTAINER_GMXLIB = "\\$(python -c 'import os, pmx; print(os.path.dirname(pmx.__file__))')/data/mutff"
+
 MUTATION_DICT = {
     "ALA": "A",
     "ARG": "R",

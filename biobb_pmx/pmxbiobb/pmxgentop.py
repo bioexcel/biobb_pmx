@@ -10,6 +10,7 @@ from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
 from biobb_common.tools import file_utils as fu
+from biobb_pmx.pmxbiobb.common import CONTAINER_GMXLIB
 
 
 class Pmxgentop(BiobbObject):
@@ -25,7 +26,7 @@ class Pmxgentop(BiobbObject):
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Force field to use. If **input_top_zip_path** is a top file, it's not necessary to specify the forcefield, as it will be determined automatically. If **input_top_zip_path** is an itp file, then it's needed.
             * **split** (*bool*) - (False) Write separate topologies for the vdW and charge transformations.
             * **scale_mass** (*bool*) - (False) Scale the masses of morphing atoms so that dummies have a mass of 1.
-            * **gmx_lib** (*str*) - (None) Path to the GMXLIB folder in your computer. If not set, the mutff folder of the pmx package of the conda environment.
+            * **gmx_lib** (*str*) - (None) Path to the GMXLIB folder in your computer. If not set, the mutff folder of the pmx package of the conda environment (in a container, of the image).
             * **binary_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -73,19 +74,13 @@ class Pmxgentop(BiobbObject):
         self.input_top_zip_path = self.io_dict["in"].pop("input_top_zip_path")
 
         # Properties common in all PMX BB
-        if not self.gmx_lib and os.environ.get("CONDA_PREFIX", ""):
+        if not self.gmx_lib and not self.container_path and os.environ.get("CONDA_PREFIX", ""):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
             self.gmx_lib = str(
                 Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
                     f"lib/python{python_version}/site-packages/pmx/data/mutff/"
                 )
             )
-            if self.container_path:
-                self.gmx_lib = str(
-                    Path("/usr/local/").joinpath(
-                        "lib/python3.8/site-packages/pmx/data/mutff/"
-                    )
-                )
 
     def run(self) -> None:
         """Execute the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` pmx.pmxgentop.Pmxgentop object."""
@@ -148,6 +143,9 @@ class Pmxgentop(BiobbObject):
 
         if self.gmx_lib:
             self.env_vars_dict["GMXLIB"] = self.gmx_lib
+        elif self.container_path:
+            # after "cd working_dir ;"
+            self.cmd[3:3] = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"]
 
         # Run Biobb block
         self.run_biobb()
