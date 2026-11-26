@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changes
+
+* [UPDATE] pmxmutate and pmxgentop: without the `gmx_lib` property, GMXLIB is the mutff folder of the pmx package of the Python environment that runs the block, also outside a conda environment (before, it was set only when `CONDA_PREFIX` was set)
+
 ## What's new in version [5.3.1](https://github.com/bioexcel/biobb_pmx/releases/tag/v5.3.1)?
 
 ### Changes

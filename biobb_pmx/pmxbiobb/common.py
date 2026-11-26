@@ -1,8 +1,12 @@
 """Common functions for package biobb_pmx.pmx"""
 
+import importlib.util
 import re
 import shutil
+from pathlib import Path
 from typing import Iterable, Mapping, Optional, Union
+
+from biobb_common.generic.biobb_object import BiobbObject
 
 # GMXLIB in a container: the mutff folder of the pmx package of the image, found by the image's
 # own Python (its version is not known on the host). "\$" is expanded in the container, not on the host.
@@ -15,6 +19,23 @@ def check_binary(binary_path: str, container_path: Optional[str]) -> None:
         raise FileNotFoundError(
             f"Executable {binary_path} not found. Check if it is installed in your system and correctly defined in the properties"
         )
+
+
+def set_gmxlib(block: BiobbObject) -> None:
+    """Go from the gmx_lib property of the block to the GMXLIB of its command: gmx_lib (an absolute path on
+    the host), or else the mutff folder of the pmx package of the Python environment (in a container, of the image)."""
+    if block.container_path:
+        if block.gmx_lib:
+            block.env_vars_dict["GMXLIB"] = block.gmx_lib
+        else:
+            block.cmd = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"] + block.cmd
+    elif block.gmx_lib:
+        # The command runs in the sandbox: a relative path is relative to the working directory
+        block.env_vars_dict["GMXLIB"] = str(Path(block.gmx_lib).resolve())
+    else:
+        pmx_spec = importlib.util.find_spec("pmx")
+        if pmx_spec and pmx_spec.origin:
+            block.env_vars_dict["GMXLIB"] = str(Path(pmx_spec.origin).parent.joinpath("data", "mutff"))
 
 
 MUTATION_DICT = {

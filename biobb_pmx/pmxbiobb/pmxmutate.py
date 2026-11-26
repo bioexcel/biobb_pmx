@@ -2,14 +2,11 @@
 
 """Module containing the PMX mutate class and the command line interface."""
 
-import os
-import sys
-from pathlib import Path
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
 
-from biobb_pmx.pmxbiobb.common import CONTAINER_GMXLIB, MUTATION_DICT, check_binary, create_mutations_file
+from biobb_pmx.pmxbiobb.common import MUTATION_DICT, check_binary, create_mutations_file, set_gmxlib
 
 
 class Pmxmutate(BiobbObject):
@@ -26,7 +23,7 @@ class Pmxmutate(BiobbObject):
             * **mutation_list** (*str*) - ("2Ala") Mutation list in the format "Chain:Resnum MUT_AA_Code" or "Chain:Resnum MUT_NA_Code"  (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:15CYS". Possible MUT_AA_Code: 'ALA', 'ARG', 'ASN', 'ASP', 'ASPH', 'ASPP', 'ASH', 'CYS', 'CYS2', 'CYN', 'CYX', 'CYM', 'CYSH', 'GLU', 'GLUH', 'GLUP', 'GLH', 'GLN', 'GLY', 'HIS', 'HIE', 'HISE', 'HSE', 'HIP', 'HSP', 'HISH', 'HID', 'HSD', 'ILE', 'LEU', 'LYS', 'LYSH', 'LYP', 'LYN', 'LSN', 'MET', 'PHE', 'PRO', 'SER', 'SP1', 'SP2', 'THR', 'TRP', 'TYR', 'VAL'. Possible MUT_NA_Codes: 'A', 'T', 'C', 'G', 'U'.
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield to use.
             * **resinfo** (*bool*) - (False) Show the list of 3-letter -> 1-letter residues.
-            * **gmx_lib** (*str*) - (None) Path to the GMXLIB folder in your computer. If not set, the mutff folder of the pmx package of the conda environment (in a container, of the image).
+            * **gmx_lib** (*str*) - (None) Path to the GMXLIB folder in your computer. If not set, the mutff folder of the pmx package of the Python environment (in a container, of the image).
             * **binary_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -72,15 +69,6 @@ class Pmxmutate(BiobbObject):
     ) -> None:
         super().__init__(**locals())
 
-        # Properties common in all PMX BB
-        if not self.gmx_lib and not self.container_path and os.environ.get("CONDA_PREFIX"):
-            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-            self.gmx_lib = str(
-                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
-                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
-                )
-            )
-
     def prepare(self) -> None:
         """Check that the pmx executable is installed and write the mutations file of the
         mutation_list property, staged with the inputs."""
@@ -113,10 +101,7 @@ class Pmxmutate(BiobbObject):
         if self.resinfo:
             self.cmd.append("-resinfo")
 
-        if self.gmx_lib:
-            self.env_vars_dict["GMXLIB"] = self.gmx_lib
-        elif self.container_path:
-            self.cmd = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"] + self.cmd
+        set_gmxlib(self)
 
         # Run Biobb block
         self.run_biobb()
