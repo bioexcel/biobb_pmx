@@ -23,6 +23,8 @@ class TestPmxgentopDockerGmxlib:
     """No gmx_lib: GMXLIB is the mutff folder of the pmx package of the image."""
     def setup_class(self):
         fx.test_setup(self, 'pmxgentop_docker_gmxlib')
+        # the files in the output zip are named after the step, as in the reference zip
+        self.properties['step'] = 'pmxgentop_docker'
 
     def teardown_class(self):
         fx.test_teardown(self)
