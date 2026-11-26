@@ -73,9 +73,6 @@ class Pmxmutate(BiobbObject):
     ) -> None:
         super().__init__(**locals())
 
-        # Properties specific for BB
-        self.input_mutations_file = self.properties.get("mutations_file")
-
         # Properties common in all PMX BB
         if not self.gmx_lib and not self.container_path and os.environ.get("CONDA_PREFIX"):
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
