@@ -82,6 +82,14 @@ class Pmxmutate(BiobbObject):
                 )
             )
 
+    def prepare(self) -> None:
+        """Write the mutations file of the mutation_list property, staged with the inputs."""
+        self.io_dict["in"]["input_mutations_path"] = create_mutations_file(
+            input_mutations_path=self.create_tmp_file(".txt"),
+            mutation_list=self.mutation_list,
+            mutation_dict=MUTATION_DICT,
+        )
+
     def run(self) -> None:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
 
@@ -94,15 +102,6 @@ class Pmxmutate(BiobbObject):
                         % self.binary_path
                     )
 
-        # Generate mutations file
-
-        mutations_dir = self.create_tmp_dir()
-        self.input_mutations_file = create_mutations_file(
-            input_mutations_path=str(Path(mutations_dir).joinpath("mutations.txt")),
-            mutation_list=self.mutation_list,
-            mutation_dict=MUTATION_DICT,
-        )
-
         self.cmd = [
             self.binary_path,
             "mutate",
@@ -113,7 +112,7 @@ class Pmxmutate(BiobbObject):
             "-ff",
             self.force_field,
             "--script",
-            self.staged_path(self.input_mutations_file),
+            self.stage_io_dict["in"]["input_mutations_path"],
         ]
 
         if self.stage_io_dict["in"].get("input_b_structure_path"):
