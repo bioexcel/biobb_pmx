@@ -2,13 +2,10 @@
 
 """Module containing the PMX ligand_hybrid class and the command line interface."""
 
-import os
-import sys
-from pathlib import Path
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
-from biobb_pmx.pmxbiobb.common import CONTAINER_GMXLIB, check_binary
+from biobb_pmx.pmxbiobb.common import check_binary
 
 
 class Pmxligand_hybrid(BiobbObject):
@@ -99,16 +96,6 @@ class Pmxligand_hybrid(BiobbObject):
     ) -> None:
         super().__init__(**locals())
 
-        # Properties common in all PMX BB
-        self.gmx_lib = self.properties.get("gmx_lib", None)
-        if not self.gmx_lib and not self.container_path and os.environ.get("CONDA_PREFIX", ""):
-            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-            self.gmx_lib = str(
-                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
-                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
-                )
-            )
-
     def prepare(self) -> None:
         """Check that the pmx executable is installed."""
         check_binary(self.binary_path, self.container_path)
@@ -169,11 +156,6 @@ class Pmxligand_hybrid(BiobbObject):
         if self.scDUMd:
             self.cmd.append("--scDUMd")
             self.cmd.append(str(self.scDUMd))
-
-        if self.gmx_lib:
-            self.env_vars_dict["GMXLIB"] = self.gmx_lib
-        elif self.container_path:
-            self.cmd = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"] + self.cmd
 
         # Run Biobb block
         self.run_biobb()

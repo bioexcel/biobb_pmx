@@ -2,13 +2,10 @@
 
 """Module containing the PMX atom_mapping class and the command line interface."""
 
-import os
-import sys
-from pathlib import Path
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
-from biobb_pmx.pmxbiobb.common import CONTAINER_GMXLIB, check_binary
+from biobb_pmx.pmxbiobb.common import check_binary
 
 
 class Pmxatom_mapping(BiobbObject):
@@ -101,16 +98,6 @@ class Pmxatom_mapping(BiobbObject):
         self.mcs_timeout = self.properties.get("timeout")
         self.timeout = None
 
-        # Properties common in all PMX BB
-        self.gmx_lib = self.properties.get("gmx_lib", None)
-        if not self.gmx_lib and not self.container_path and os.environ.get("CONDA_PREFIX", ""):
-            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-            self.gmx_lib = str(
-                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
-                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
-                )
-            )
-
     def prepare(self) -> None:
         """Check that the pmx executable is installed."""
         check_binary(self.binary_path, self.container_path)
@@ -185,11 +172,6 @@ class Pmxatom_mapping(BiobbObject):
         if self.mcs_timeout:
             self.cmd.append("--timeout")
             self.cmd.append(str(self.mcs_timeout))
-
-        if self.gmx_lib:
-            self.env_vars_dict["GMXLIB"] = self.gmx_lib
-        elif self.container_path:
-            self.cmd = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"] + self.cmd
 
         # Run Biobb block
         self.run_biobb()
