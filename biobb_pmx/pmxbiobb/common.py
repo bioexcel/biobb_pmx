@@ -1,11 +1,21 @@
 """Common functions for package biobb_pmx.pmx"""
 
 import re
-from typing import Iterable, Mapping, Union
+import shutil
+from typing import Iterable, Mapping, Optional, Union
 
 # GMXLIB in a container: the mutff folder of the pmx package of the image, found by the image's
 # own Python (its version is not known on the host). "\$" is expanded in the container, not on the host.
 CONTAINER_GMXLIB = "\\$(python -c 'import os, pmx; print(os.path.dirname(pmx.__file__))')/data/mutff"
+
+
+def check_binary(binary_path: str, container_path: Optional[str]) -> None:
+    """Raise FileNotFoundError if the pmx executable (binary_path) is not on the host. Not checked with a container."""
+    if not container_path and not shutil.which(binary_path):
+        raise FileNotFoundError(
+            f"Executable {binary_path} not found. Check if it is installed in your system and correctly defined in the properties"
+        )
+
 
 MUTATION_DICT = {
     "ALA": "A",

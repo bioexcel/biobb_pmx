@@ -3,14 +3,13 @@
 """Module containing the PMX mutate class and the command line interface."""
 
 import os
-import shutil
 import sys
 from pathlib import Path
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
 
-from biobb_pmx.pmxbiobb.common import CONTAINER_GMXLIB, MUTATION_DICT, create_mutations_file
+from biobb_pmx.pmxbiobb.common import CONTAINER_GMXLIB, MUTATION_DICT, check_binary, create_mutations_file
 
 
 class Pmxmutate(BiobbObject):
@@ -83,7 +82,9 @@ class Pmxmutate(BiobbObject):
             )
 
     def prepare(self) -> None:
-        """Write the mutations file of the mutation_list property, staged with the inputs."""
+        """Check that the pmx executable is installed and write the mutations file of the
+        mutation_list property, staged with the inputs."""
+        check_binary(self.binary_path, self.container_path)
         self.io_dict["in"]["input_mutations_path"] = create_mutations_file(
             input_mutations_path=self.create_tmp_file(".txt"),
             mutation_list=self.mutation_list,
@@ -92,15 +93,6 @@ class Pmxmutate(BiobbObject):
 
     def run(self) -> None:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
-
-        # Check if executable exists
-        if not self.container_path:
-            if not Path(self.binary_path).is_file():
-                if not shutil.which(self.binary_path):
-                    raise FileNotFoundError(
-                        "Executable %s not found. Check if it is installed in your system and correctly defined in the properties"
-                        % self.binary_path
-                    )
 
         self.cmd = [
             self.binary_path,

@@ -3,13 +3,12 @@
 """Module containing the PMX atom_mapping class and the command line interface."""
 
 import os
-import shutil
 import sys
 from pathlib import Path
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
-from biobb_pmx.pmxbiobb.common import CONTAINER_GMXLIB
+from biobb_pmx.pmxbiobb.common import CONTAINER_GMXLIB, check_binary
 
 
 class Pmxatom_mapping(BiobbObject):
@@ -112,17 +111,12 @@ class Pmxatom_mapping(BiobbObject):
                 )
             )
 
+    def prepare(self) -> None:
+        """Check that the pmx executable is installed."""
+        check_binary(self.binary_path, self.container_path)
+
     def run(self) -> None:
         """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
-
-        # Check if executable exists
-        if not self.container_path:
-            if not Path(self.binary_path).is_file():
-                if not shutil.which(self.binary_path):
-                    raise FileNotFoundError(
-                        "Executable %s not found. Check if it is installed in your system and correctly defined in the properties"
-                        % self.binary_path
-                    )
 
         self.cmd = [
             self.binary_path,

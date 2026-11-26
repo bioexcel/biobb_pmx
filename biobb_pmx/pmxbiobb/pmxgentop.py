@@ -10,7 +10,7 @@ from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
 from biobb_common.tools import file_utils as fu
-from biobb_pmx.pmxbiobb.common import CONTAINER_GMXLIB
+from biobb_pmx.pmxbiobb.common import CONTAINER_GMXLIB, check_binary
 
 
 class Pmxgentop(BiobbObject):
@@ -81,17 +81,12 @@ class Pmxgentop(BiobbObject):
                 )
             )
 
+    def prepare(self) -> None:
+        """Check that the pmx executable is installed."""
+        check_binary(self.binary_path, self.container_path)
+
     def run(self) -> None:
         """Execute the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` pmx.pmxgentop.Pmxgentop object."""
-
-        # Check if executable exists
-        if not self.container_path:
-            if not Path(self.binary_path).is_file():
-                if not shutil.which(self.binary_path):
-                    raise FileNotFoundError(
-                        "Executable %s not found. Check if it is installed in your system and correctly defined in the properties"
-                        % self.binary_path
-                    )
 
         # Unzip the topology in a folder of the sandbox
         top_dir = self.create_tmp_dir()

@@ -2,12 +2,12 @@
 
 """Module containing the PMX analyse class and the command line interface."""
 
-import shutil
 from pathlib import Path
 from typing import Optional
 
 from biobb_common.generic.biobb_object import BiobbObject, launcher
 from biobb_common.tools import file_utils as fu
+from biobb_pmx.pmxbiobb.common import check_binary
 
 
 class Pmxanalyse(BiobbObject):
@@ -88,17 +88,12 @@ class Pmxanalyse(BiobbObject):
         self.input_a_xvg_zip_path = self.io_dict["in"].pop("input_a_xvg_zip_path")
         self.input_b_xvg_zip_path = self.io_dict["in"].pop("input_b_xvg_zip_path")
 
+    def prepare(self) -> None:
+        """Check that the pmx executable is installed."""
+        check_binary(self.binary_path, self.container_path)
+
     def run(self) -> None:
         """Execute the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` pmx.pmxanalyse.Pmxanalyse object."""
-
-        # Check if executable is exists
-        if not self.container_path:
-            if not Path(self.binary_path).is_file():
-                if not shutil.which(self.binary_path):
-                    raise FileNotFoundError(
-                        "Executable %s not found. Check if it is installed in your system and correctly defined in the properties"
-                        % self.binary_path
-                    )
 
         # Two folders of the sandbox with the xvg files
         list_a_dir = self.create_tmp_dir()
