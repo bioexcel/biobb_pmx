@@ -8,7 +8,7 @@ import sys
 from pathlib import Path, PurePath
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
+from biobb_common.generic.biobb_object import BiobbObject, launcher
 from biobb_common.tools import file_utils as fu
 
 
@@ -148,20 +148,7 @@ class Pmxcreate_top(BiobbObject):
         # self.run_biobb()
 
 
-def pmxcreate_top(
-    input_topology1_path: str,
-    input_topology2_path: str,
-    output_topology_path: str,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxcreate_top <pmx.pmxcreate_top.Pmxcreate_top>` class and
-    execute the :meth:`launch() <pmx.pmxmcreate_top.Pmxmcreate_top.launch> method."""
-    return Pmxcreate_top(**dict(locals())).launch()
-
-
-pmxcreate_top.__doc__ = Pmxcreate_top.__doc__
-main = Pmxcreate_top.get_main(pmxcreate_top, "Run PMX create_top module")
+pmxcreate_top = launcher(Pmxcreate_top)
 
 if __name__ == "__main__":
-    main()
+    Pmxcreate_top.main()

@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
+from biobb_common.generic.biobb_object import BiobbObject, launcher
 from biobb_common.tools import file_utils as fu
 
 
@@ -196,19 +196,7 @@ class Pmxgentop(BiobbObject):
         )
 
 
-def pmxgentop(
-    input_top_zip_path: str,
-    output_top_zip_path: str,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` class and
-    execute the :meth:`launch() <pmx.pmxgentop.Pmxgentop.launch> method."""
-    return Pmxgentop(**dict(locals())).launch()
-
-
-pmxgentop.__doc__ = Pmxgentop.__doc__
-main = Pmxgentop.get_main(pmxgentop, "Wrapper class for the PMX gentop module")
+pmxgentop = launcher(Pmxgentop)
 
 if __name__ == "__main__":
-    main()
+    Pmxgentop.main()

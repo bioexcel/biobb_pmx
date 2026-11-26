@@ -8,7 +8,7 @@ import sys
 from pathlib import Path, PurePath
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
+from biobb_common.generic.biobb_object import BiobbObject, launcher
 
 
 class Pmxatom_mapping(BiobbObject):
@@ -213,29 +213,7 @@ class Pmxatom_mapping(BiobbObject):
         self.run_biobb()
 
 
-def pmxatom_mapping(
-    input_structure1_path: str,
-    input_structure2_path: str,
-    output_pairs1_path: str,
-    output_pairs2_path: str,
-    output_log_path: str,
-    output_structure1_path: Optional[str] = None,
-    output_structure2_path: Optional[str] = None,
-    output_morph1_path: Optional[str] = None,
-    output_morph2_path: Optional[str] = None,
-    output_scaffold1_path: Optional[str] = None,
-    output_scaffold2_path: Optional[str] = None,
-    output_score_path: Optional[str] = None,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxatom_mapping <pmx.pmxmutate.Pmxatom_mapping>` class and
-    execute the :meth:`launch() <pmx.pmxatom_mapping.Pmxatom_mapping.launch> method."""
-    return Pmxatom_mapping(**dict(locals())).launch()
-
-
-pmxatom_mapping.__doc__ = Pmxatom_mapping.__doc__
-main = Pmxatom_mapping.get_main(pmxatom_mapping, "Run PMX atom mapping module")
+pmxatom_mapping = launcher(Pmxatom_mapping)
 
 if __name__ == "__main__":
-    main()
+    Pmxatom_mapping.main()

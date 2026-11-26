@@ -8,7 +8,7 @@ import sys
 from pathlib import Path, PurePath
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
+from biobb_common.generic.biobb_object import BiobbObject, launcher
 
 from biobb_pmx.pmxbiobb.common import MUTATION_DICT, create_mutations_file
 
@@ -150,20 +150,7 @@ class Pmxmutate(BiobbObject):
         self.run_biobb()
 
 
-def pmxmutate(
-    input_structure_path: str,
-    output_structure_path: str,
-    input_b_structure_path: Optional[str] = None,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` class and
-    execute the :meth:`launch() <pmx.pmxmutate.Pmxmutate.launch> method."""
-    return Pmxmutate(**dict(locals())).launch()
-
-
-pmxmutate.__doc__ = Pmxmutate.__doc__
-main = Pmxmutate.get_main(pmxmutate, "Run PMX mutate module")
+pmxmutate = launcher(Pmxmutate)
 
 if __name__ == "__main__":
-    main()
+    Pmxmutate.main()

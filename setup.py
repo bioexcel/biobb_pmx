@@ -24,13 +24,13 @@ setuptools.setup(
     python_requires=">=3.10",
     entry_points={
         "console_scripts": [
-            "pmxanalyse = biobb_pmx.pmxbiobb.pmxanalyse:main",
-            "pmxgentop = biobb_pmx.pmxbiobb.pmxgentop:main",
-            "pmxmutate = biobb_pmx.pmxbiobb.pmxmutate:main",
-            "pmxatom_mapping = biobb_pmx.pmxbiobb.pmxatom_mapping:main",
-            "pmxcreate_top = biobb_pmx.pmxbiobb.pmxcreate_top:main",
-            "pmxligand_hybrid = biobb_pmx.pmxbiobb.pmxligand_hybrid:main",
-            "pmxmerge_ff = biobb_pmx.pmxbiobb.pmxmerge_ff:main",
+            "pmxanalyse = biobb_pmx.pmxbiobb.pmxanalyse:Pmxanalyse.main",
+            "pmxgentop = biobb_pmx.pmxbiobb.pmxgentop:Pmxgentop.main",
+            "pmxmutate = biobb_pmx.pmxbiobb.pmxmutate:Pmxmutate.main",
+            "pmxatom_mapping = biobb_pmx.pmxbiobb.pmxatom_mapping:Pmxatom_mapping.main",
+            "pmxcreate_top = biobb_pmx.pmxbiobb.pmxcreate_top:Pmxcreate_top.main",
+            "pmxligand_hybrid = biobb_pmx.pmxbiobb.pmxligand_hybrid:Pmxligand_hybrid.main",
+            "pmxmerge_ff = biobb_pmx.pmxbiobb.pmxmerge_ff:Pmxmerge_ff.main",
         ]
     },
     classifiers=[

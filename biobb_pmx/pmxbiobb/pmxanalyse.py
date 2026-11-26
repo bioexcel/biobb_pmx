@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path, PurePath
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
+from biobb_common.generic.biobb_object import BiobbObject, launcher
 from biobb_common.tools import file_utils as fu
 
 
@@ -189,21 +189,7 @@ class Pmxanalyse(BiobbObject):
         self.run_biobb()
 
 
-def pmxanalyse(
-    input_a_xvg_zip_path: str,
-    input_b_xvg_zip_path: str,
-    output_result_path: str,
-    output_work_plot_path: str,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` class and
-    execute the :meth:`launch() <pmx.pmxanalyse.Pmxanalyse.launch> method."""
-    return Pmxanalyse(**dict(locals())).launch()
-
-
-pmxanalyse.__doc__ = Pmxanalyse.__doc__
-main = Pmxanalyse.get_main(pmxanalyse, "Wrapper class for the PMX analyse module.")
+pmxanalyse = launcher(Pmxanalyse)
 
 if __name__ == "__main__":
-    main()
+    Pmxanalyse.main()

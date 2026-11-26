@@ -8,7 +8,7 @@ import sys
 from pathlib import Path, PurePath
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
+from biobb_common.generic.biobb_object import BiobbObject, launcher
 
 
 class Pmxligand_hybrid(BiobbObject):
@@ -197,29 +197,7 @@ class Pmxligand_hybrid(BiobbObject):
         self.run_biobb()
 
 
-def pmxligand_hybrid(
-    input_structure1_path: str,
-    input_structure2_path: str,
-    input_topology1_path: str,
-    input_topology2_path: str,
-    output_log_path: str,
-    output_structure1_path: str,
-    output_structure2_path: str,
-    output_topology_path: str,
-    output_atomtypes_path: str,
-    input_scaffold1_path: Optional[str] = None,
-    input_scaffold2_path: Optional[str] = None,
-    input_pairs_path: Optional[str] = None,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxligand_hybrid <pmx.pmxmutate.Pmxligand_hybrid>` class and
-    execute the :meth:`launch() <pmx.pmxligand_hybrid.Pmxligand_hybrid.launch> method."""
-    return Pmxligand_hybrid(**dict(locals())).launch()
-
-
-pmxligand_hybrid.__doc__ = Pmxligand_hybrid.__doc__
-main = Pmxligand_hybrid.get_main(pmxligand_hybrid, "Run PMX ligand hybrid module")
+pmxligand_hybrid = launcher(Pmxligand_hybrid)
 
 if __name__ == "__main__":
-    main()
+    Pmxligand_hybrid.main()

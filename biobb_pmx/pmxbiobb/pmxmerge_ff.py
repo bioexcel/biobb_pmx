@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
+from biobb_common.generic.biobb_object import BiobbObject, launcher
 from biobb_common.tools import file_utils as fu
 from pmx import ligand_alchemy  # type: ignore
 
@@ -111,19 +111,7 @@ class Pmxmerge_ff(BiobbObject):
         # self.run_biobb()
 
 
-def pmxmerge_ff(
-    input_topology_path: str,
-    output_topology_path: str,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxmerge_ff <pmx.pmxmerge_ff.Pmxmerge_ff>` class and
-    execute the :meth:`launch() <pmx.pmxmerge_ff.Pmxmerge_ff.launch> method."""
-    return Pmxmerge_ff(**dict(locals())).launch()
-
-
-pmxmerge_ff.__doc__ = Pmxmerge_ff.__doc__
-main = Pmxmerge_ff.get_main(pmxmerge_ff, "Run PMX merge_ff module")
+pmxmerge_ff = launcher(Pmxmerge_ff)
 
 if __name__ == "__main__":
-    main()
+    Pmxmerge_ff.main()
