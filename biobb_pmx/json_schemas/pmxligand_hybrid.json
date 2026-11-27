@@ -255,21 +255,21 @@
                 },
                 "scDUMm": {
                     "type": "number",
-                    "default": 1.0,
+                    "default": null,
                     "wf_prop": false,
-                    "description": "Scale dummy masses using the counterpart atoms."
+                    "description": "Scale dummy masses using the counterpart atoms. If not set, the tool uses its own default."
                 },
                 "scDUMa": {
                     "type": "number",
-                    "default": 1.0,
+                    "default": null,
                     "wf_prop": false,
-                    "description": "Scale bonded dummy angle parameters."
+                    "description": "Scale bonded dummy angle parameters. If not set, the tool uses its own default."
                 },
                 "scDUMd": {
                     "type": "number",
-                    "default": 1.0,
+                    "default": null,
                     "wf_prop": false,
-                    "description": "Scale bonded dummy dihedral parameters."
+                    "description": "Scale bonded dummy dihedral parameters. If not set, the tool uses its own default."
                 },
                 "deAng": {
                     "type": "boolean",
@@ -279,9 +279,9 @@
                 },
                 "distance": {
                     "type": "number",
-                    "default": 0.05,
+                    "default": null,
                     "wf_prop": false,
-                    "description": "Distance (nm) between atoms to consider them morphable for alignment approach (Only used if input_pairs_path is not provided)."
+                    "description": "Distance (nm) between atoms to consider them morphable for alignment approach (Only used if input_pairs_path is not provided). If not set, the tool uses its own default."
                 },
                 "binary_path": {
                     "type": "string",
@@ -324,12 +324,6 @@
                     "default": "/inout",
                     "wf_prop": false,
                     "description": "Path to an internal directory in the container."
-                },
-                "container_working_dir": {
-                    "type": "string",
-                    "default": null,
-                    "wf_prop": false,
-                    "description": "Path to the internal CWD in the container."
                 },
                 "container_user_id": {
                     "type": "string",

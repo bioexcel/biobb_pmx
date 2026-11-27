@@ -2,13 +2,12 @@
 
 """Module containing the PMX analyse class and the command line interface."""
 
-import shutil
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
+from biobb_common.generic.biobb_object import BiobbObject, launcher
 from biobb_common.tools import file_utils as fu
-from biobb_common.tools.file_utils import launchlogger
+from biobb_pmx.pmxbiobb.common import check_binary
 
 
 class Pmxanalyse(BiobbObject):
@@ -45,7 +44,6 @@ class Pmxanalyse(BiobbObject):
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
             * **container_image** (*str*) - ("gromacs/gromacs:latest") Container Image identifier.
             * **container_volume_path** (*str*) - ("/data") Path to an internal directory in the container.
-            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
             * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
 
@@ -84,73 +82,22 @@ class Pmxanalyse(BiobbObject):
         properties: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        properties = properties or {}
+        super().__init__(**locals())
 
-        # Call parent class constructor
-        super().__init__(properties)
-        self.locals_var_dict = locals().copy()
-
-        # Input/Output files
-        self.io_dict = {
-            "in": {},
-            "out": {
-                "output_result_path": output_result_path,
-                "output_work_plot_path": output_work_plot_path,
-            },
-        }
         # Should not be copied inside container
-        self.input_a_xvg_zip_path = input_a_xvg_zip_path
-        self.input_b_xvg_zip_path = input_b_xvg_zip_path
+        self.input_a_xvg_zip_path = self.io_dict["in"].pop("input_a_xvg_zip_path")
+        self.input_b_xvg_zip_path = self.io_dict["in"].pop("input_b_xvg_zip_path")
 
-        # Properties specific for BB
-        self.method = properties.get("method", "CGI BAR JARZ")
-        self.temperature = properties.get("temperature", 298.15)
-        self.nboots = properties.get("nboots", 0)
-        self.nblocks = properties.get("nblocks", 1)
-        self.integ_only = properties.get("integ_only", False)
-        self.reverseB = properties.get("reverseB", False)
-        self.skip = properties.get("skip", 1)
-        self.slice = properties.get("slice", None)
-        self.rand = properties.get("rand", None)
-        self.index = properties.get("index", None)
-        self.prec = properties.get("prec", 2)
-        self.units = properties.get("units", "kJ")
-        self.no_ks = properties.get("no_ks", False)
-        self.nbins = properties.get("nbins", 20)
-        self.dpi = properties.get("dpi", 300)
+    def prepare(self) -> None:
+        """Check that the pmx executable is installed."""
+        check_binary(self.binary_path, self.container_path)
 
-        # Properties common in all PMX BB
-        self.binary_path = properties.get("binary_path", "pmx")
-
-        # Check the properties
-        self.check_properties(properties)
-        self.check_arguments()
-
-    @launchlogger
-    def launch(self) -> int:
+    def run(self) -> None:
         """Execute the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` pmx.pmxanalyse.Pmxanalyse object."""
 
-        # Setup Biobb
-        if self.check_restart():
-            return 0
-        self.stage_files()
-
-        if self.container_path:
-            working_dir = self.container_volume_path if self.container_volume_path else "/data"
-        else:
-            working_dir = self.stage_io_dict.get("unique_dir", "")
-
-        # Check if executable is exists
-        if not self.container_path:
-            if not Path(self.binary_path).is_file():
-                if not shutil.which(self.binary_path):
-                    raise FileNotFoundError(
-                        "Executable %s not found. Check if it is installed in your system and correctly defined in the properties"
-                        % self.binary_path
-                    )
-
-        list_a_dir = fu.create_unique_dir()
-        list_b_dir = fu.create_unique_dir()
+        # Two folders of the sandbox with the xvg files
+        list_a_dir = self.create_tmp_dir()
+        list_b_dir = self.create_tmp_dir()
         list_a = list(
             filter(
                 lambda f: Path(f).exists() and Path(f).stat().st_size > 10,
@@ -164,24 +111,11 @@ class Pmxanalyse(BiobbObject):
             )
         )
 
-        # Copy extra files to sandbox: two directories containing the xvg files
-        list_a_dir_in_sandbox = Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
-            Path(list_a_dir).name
-        )
-        list_b_dir_in_sandbox = Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
-            Path(list_b_dir).name
-        )
-        shutil.copytree(list_a_dir, list_a_dir_in_sandbox)
-        shutil.copytree(list_b_dir, list_b_dir_in_sandbox)
-
-        # Keep the full relative paths returned by unzip_list (including frame*/ subfolders).
-        string_a = " ".join(list_a)
-        string_b = " ".join(list_b)
+        # Paths of the xvg files for the command (including frame*/ subfolders)
+        string_a = " ".join(self.staged_path(path) for path in list_a)
+        string_b = " ".join(self.staged_path(path) for path in list_b)
 
         self.cmd = [
-            "cd",
-            working_dir,
-            ";",
             self.binary_path,
             "analyse",
             "-fA",
@@ -189,9 +123,9 @@ class Pmxanalyse(BiobbObject):
             "-fB",
             string_b,
             "-o",
-            PurePath(self.stage_io_dict["out"]["output_result_path"]).name,
+            self.stage_io_dict["out"]["output_result_path"],
             "-w",
-            PurePath(self.stage_io_dict["out"]["output_work_plot_path"]).name,
+            self.stage_io_dict["out"]["output_work_plot_path"],
         ]
 
         if self.method:
@@ -218,6 +152,7 @@ class Pmxanalyse(BiobbObject):
             self.cmd.append(self.slice)
         if self.rand:
             self.cmd.append("--rand")
+            self.cmd.append(str(self.rand))
         if self.index:
             self.cmd.append("--index")
             self.cmd.append(self.index)
@@ -239,31 +174,8 @@ class Pmxanalyse(BiobbObject):
         # Run Biobb block
         self.run_biobb()
 
-        # Copy files to host
-        self.copy_to_host()
 
-        self.tmp_files.extend([list_a_dir, list_b_dir])
-        self.remove_tmp_files()
-
-        self.check_arguments(output_files_created=True, raise_exception=False)
-        return self.return_code
-
-
-def pmxanalyse(
-    input_a_xvg_zip_path: str,
-    input_b_xvg_zip_path: str,
-    output_result_path: str,
-    output_work_plot_path: str,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxanalyse <pmx.pmxanalyse.Pmxanalyse>` class and
-    execute the :meth:`launch() <pmx.pmxanalyse.Pmxanalyse.launch> method."""
-    return Pmxanalyse(**dict(locals())).launch()
-
-
-pmxanalyse.__doc__ = Pmxanalyse.__doc__
-main = Pmxanalyse.get_main(pmxanalyse, "Wrapper class for the PMX analyse module.")
+pmxanalyse = launcher(Pmxanalyse)
 
 if __name__ == "__main__":
-    main()
+    Pmxanalyse.main()

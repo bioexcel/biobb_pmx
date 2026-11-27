@@ -65,7 +65,6 @@ Config parameters for this building block:
 * **container_path** (*string*): (None) Path to the binary executable of your container.
 * **container_image** (*string*): (gromacs/gromacs:latest) Container Image identifier.
 * **container_volume_path** (*string*): (/data) Path to an internal directory in the container.
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
 * **container_user_id** (*string*): (None) User number id to be mapped inside the container.
 * **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
@@ -222,7 +221,6 @@ Config parameters for this building block:
 * **container_path** (*string*): (None) Path to the binary executable of your container.
 * **container_image** (*string*): (None) Container Image identifier.
 * **container_volume_path** (*string*): (/inout) Path to an internal directory in the container.
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
 * **container_user_id** (*string*): (None) User number id to be mapped inside the container.
 * **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
@@ -405,7 +403,7 @@ Config parameters for this building block:
 * **force_field** (*string*): (amber99sb-star-ildn-mut) Force field to use. If **input_top_zip_path** is a top file, it's not necessary to specify the forcefield, as it will be determined automatically. If **input_top_zip_path** is an itp file, then it's needed.
 * **split** (*boolean*): (False) Write separate topologies for the vdW and charge transformations.
 * **scale_mass** (*boolean*): (False) Scale the masses of morphing atoms so that dummies have a mass of 1.
-* **gmx_lib** (*string*): ($CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff/) Path to the GMXLIB folder in your computer.
+* **gmx_lib** (*string*): (None) Path to the GMXLIB folder in your computer. If not set, the mutff folder of the pmx package of the Python environment (in a container, of the image).
 * **binary_path** (*string*): (pmx) Path to the PMX command line interface.
 * **remove_tmp** (*boolean*): (True) Remove temporal files.
 * **restart** (*boolean*): (False) Do not execute if output files exist.
@@ -413,7 +411,6 @@ Config parameters for this building block:
 * **container_path** (*string*): (None) Path to the binary executable of your container.
 * **container_image** (*string*): (gromacs/gromacs:latest) Container Image identifier.
 * **container_volume_path** (*string*): (/inout) Path to an internal directory in the container.
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
 * **container_user_id** (*string*): (None) User number id to be mapped inside the container.
 * **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
@@ -560,7 +557,6 @@ Config parameters for this building block:
 * **container_path** (*string*): (None) Path to the binary executable of your container.
 * **container_image** (*string*): (None) Container Image identifier.
 * **container_volume_path** (*string*): (/inout) Path to an internal directory in the container.
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
 * **container_user_id** (*string*): (None) User number id to be mapped inside the container.
 * **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML
@@ -728,7 +724,7 @@ Config parameters for this building block:
 * **mutation_list** (*string*): (2Ala) Mutation list in the format "Chain:Resnum MUT_AA_Code" or "Chain:Resnum MUT_NA_Code"  (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:15CYS". Possible MUT_AA_Code: 'ALA', 'ARG', 'ASN', 'ASP', 'ASPH', 'ASPP', 'ASH', 'CYS', 'CYS2', 'CYN', 'CYX', 'CYM', 'CYSH', 'GLU', 'GLUH', 'GLUP', 'GLH', 'GLN', 'GLY', 'HIS', 'HIE', 'HISE', 'HSE', 'HIP', 'HSP', 'HISH', 'HID', 'HSD', 'ILE', 'LEU', 'LYS', 'LYSH', 'LYP', 'LYN', 'LSN', 'MET', 'PHE', 'PRO', 'SER', 'SP1', 'SP2', 'THR', 'TRP', 'TYR', 'VAL'. Possible MUT_NA_Codes: 'A', 'T', 'C', 'G', 'U'.
 * **force_field** (*string*): (amber99sb-star-ildn-mut) Forcefield to use.
 * **resinfo** (*boolean*): (False) Show the list of 3-letter -> 1-letter residues.
-* **gmx_lib** (*string*): ($CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff/) Path to the GMXLIB folder in your computer.
+* **gmx_lib** (*string*): (None) Path to the GMXLIB folder in your computer. If not set, the mutff folder of the pmx package of the Python environment (in a container, of the image).
 * **binary_path** (*string*): (pmx) Path to the PMX command line interface.
 * **remove_tmp** (*boolean*): (True) Remove temporal files.
 * **restart** (*boolean*): (False) Do not execute if output files exist.
@@ -736,7 +732,6 @@ Config parameters for this building block:
 * **container_path** (*string*): (None) Path to the binary executable of your container.
 * **container_image** (*string*): (None) Container Image identifier.
 * **container_volume_path** (*string*): (/inout) Path to an internal directory in the container.
-* **container_working_dir** (*string*): (None) Path to the internal CWD in the container.
 * **container_user_id** (*string*): (None) User number id to be mapped inside the container.
 * **container_shell_path** (*string*): (/bin/bash) Path to the binary executable of the container shell.
 ### YAML

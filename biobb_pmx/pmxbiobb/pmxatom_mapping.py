@@ -2,14 +2,10 @@
 
 """Module containing the PMX atom_mapping class and the command line interface."""
 
-import os
-import shutil
-import sys
-from pathlib import Path, PurePath
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
-from biobb_common.tools.file_utils import launchlogger
+from biobb_common.generic.biobb_object import BiobbObject, launcher
+from biobb_pmx.pmxbiobb.common import check_binary
 
 
 class Pmxatom_mapping(BiobbObject):
@@ -34,14 +30,14 @@ class Pmxatom_mapping(BiobbObject):
         properties (dic):
             * **noalignment** (*bool*) - (False) Should the alignment method be disabled.
             * **nomcs** (*bool*) - (False) Should the MCS method be disabled.
-            * **noH2H** (*bool*) - (True) Should non-polar hydrogens be discarded from morphing into any other hydrogen.
+            * **noH2H** (*bool*) - (False) Should non-polar hydrogens be discarded from morphing into any other hydrogen.
             * **H2Hpolar** (*bool*) - (False) Should polar hydrogens be morphed into polar hydrogens.
             * **H2Heavy** (*bool*) - (False) Should hydrogen be morphed into a heavy atom.
             * **RingsOnly** (*bool*) - (False) Should rings only be used in the MCS search and alignemnt.
             * **dMCS** (*bool*) - (False) Should the distance criterium be also applied in the MCS based search.
             * **swap** (*bool*) - (False) Try swapping the molecule order which would be a cross-check and require double execution time.
-            * **nochirality** (*bool*) - (True) Perform chirality check for MCS mapping.
-            * **distance** (*float*) - (0.05) Distance (nm) between atoms to consider them morphable for alignment approach.
+            * **nochirality** (*bool*) - (False) Perform chirality check for MCS mapping.
+            * **distance** (*float*) - (None) Distance (nm) between atoms to consider them morphable for alignment approach. If not set, the tool uses its own default.
             * **timeout** (*int*) - (10) Maximum time (s) for an MCS search.
             * **binary_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
@@ -50,7 +46,6 @@ class Pmxatom_mapping(BiobbObject):
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
             * **container_image** (*str*) - (None) Container Image identifier.
             * **container_volume_path** (*str*) - ("/inout") Path to an internal directory in the container.
-            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
             * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
 
@@ -97,146 +92,61 @@ class Pmxatom_mapping(BiobbObject):
         properties: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        properties = properties or {}
+        super().__init__(**locals())
 
-        # Call parent class constructor
-        super().__init__(properties)
-        self.locals_var_dict = locals().copy()
+        # The timeout property is the time of the MCS search, not the timeout of the command (BiobbObject)
+        self.mcs_timeout = self.properties.get("timeout")
+        self.timeout = None
 
-        # Input/Output files
-        self.io_dict = {
-            "in": {
-                "input_structure1_path": input_structure1_path,
-                "input_structure2_path": input_structure2_path,
-            },
-            "out": {
-                "output_pairs1_path": output_pairs1_path,
-                "output_pairs2_path": output_pairs2_path,
-                "output_log_path": output_log_path,
-                "output_structure1_path": output_structure1_path,
-                "output_structure2_path": output_structure2_path,
-                "output_morph1_path": output_morph1_path,
-                "output_morph2_path": output_morph2_path,
-                "output_scaffold1_path": output_scaffold1_path,
-                "output_scaffold2_path": output_scaffold2_path,
-                "output_score_path": output_score_path,
-            },
-        }
+    def prepare(self) -> None:
+        """Check that the pmx executable is installed."""
+        check_binary(self.binary_path, self.container_path)
 
-        # Properties specific for BB
-        # self.noalignment = properties.get('noalignment', False)
-        # self.nomcs = properties.get('nomcs', False)
-        # self.noH2H = properties.get('noH2H', True)
-        # self.H2Hpolar = properties.get('H2Hpolar', False)
-        # self.H2Heavy = properties.get('H2Heavy', False)
-        # self.RingsOnly = properties.get('RingsOnly', False)
-        # self.dMCS = properties.get('dMCS', False)
-        # self.swap = properties.get('swap', False)
-        # self.nochirality = properties.get('nochirality', True)
-        # self.distance = properties.get('distance', 0.05)
-        # self.timeout = properties.get('timeout', 10)
-
-        self.noalignment = properties.get("noalignment")
-        self.nomcs = properties.get("nomcs")
-        self.noH2H = properties.get("noH2H")
-        self.H2Hpolar = properties.get("H2Hpolar")
-        self.H2Heavy = properties.get("H2Heavy")
-        self.RingsOnly = properties.get("RingsOnly")
-        self.dMCS = properties.get("dMCS")
-        self.swap = properties.get("swap")
-        self.nochirality = properties.get("nochirality")
-        self.distance = properties.get("distance")
-        self.timeout = properties.get("timeout")
-
-        # Properties common in all PMX BB
-        self.gmx_lib = properties.get("gmx_lib", None)
-        if not self.gmx_lib and os.environ.get("CONDA_PREFIX", ""):
-            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-            self.gmx_lib = str(
-                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
-                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
-                )
-            )
-            if properties.get("container_path"):
-                self.gmx_lib = str(
-                    Path("/usr/local/").joinpath(
-                        "lib/python3.7/site-packages/pmx/data/mutff/"
-                    )
-                )
-        self.binary_path = properties.get("binary_path", "pmx")
-
-        # Check the properties
-        self.check_properties(properties)
-        self.check_arguments()
-
-    @launchlogger
-    def launch(self) -> int:
-        """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
-
-        # Setup Biobb
-        if self.check_restart():
-            return 0
-        self.stage_files()
-
-        if self.container_path:
-            working_dir = self.container_volume_path if self.container_volume_path else "/data"
-        else:
-            working_dir = self.stage_io_dict.get("unique_dir", "")
-
-        # Check if executable exists
-        if not self.container_path:
-            if not Path(self.binary_path).is_file():
-                if not shutil.which(self.binary_path):
-                    raise FileNotFoundError(
-                        "Executable %s not found. Check if it is installed in your system and correctly defined in the properties"
-                        % self.binary_path
-                    )
+    def run(self) -> None:
+        """Execute the :class:`Pmxatom_mapping <pmx.pmxatom_mapping.Pmxatom_mapping>` pmx.pmxatom_mapping.Pmxatom_mapping object."""
 
         self.cmd = [
-            "cd",
-            working_dir,
-            ";",
             self.binary_path,
             "atomMapping",
             "-i1",
-            PurePath(self.stage_io_dict["in"]["input_structure1_path"]).name,
+            self.stage_io_dict["in"]["input_structure1_path"],
             "-i2",
-            PurePath(self.stage_io_dict["in"]["input_structure2_path"]).name,
+            self.stage_io_dict["in"]["input_structure2_path"],
             "-o1",
-            PurePath(self.stage_io_dict["out"]["output_pairs1_path"]).name,
+            self.stage_io_dict["out"]["output_pairs1_path"],
             "-o2",
-            PurePath(self.stage_io_dict["out"]["output_pairs2_path"]).name,
+            self.stage_io_dict["out"]["output_pairs2_path"],
             "-log",
-            PurePath(self.stage_io_dict["out"]["output_log_path"]).name,
+            self.stage_io_dict["out"]["output_log_path"],
         ]
 
         if self.stage_io_dict["out"].get("output_structure1_path"):
             self.cmd.append("-opdb1")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_structure1_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_structure1_path"])
 
         if self.stage_io_dict["out"].get("output_structure2_path"):
             self.cmd.append("-opdb2")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_structure2_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_structure2_path"])
 
         if self.stage_io_dict["out"].get("output_morph1_path"):
             self.cmd.append("-opdbm1")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_morph1_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_morph1_path"])
 
         if self.stage_io_dict["out"].get("output_morph2_path"):
             self.cmd.append("-opdbm2")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_morph2_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_morph2_path"])
 
         if self.stage_io_dict["out"].get("output_scaffold1_path"):
             self.cmd.append("-n1")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_scaffold1_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_scaffold1_path"])
 
         if self.stage_io_dict["out"].get("output_scaffold2_path"):
             self.cmd.append("-n2")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_scaffold2_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_scaffold2_path"])
 
         if self.stage_io_dict["out"].get("output_score_path"):
             self.cmd.append("-score")
-            self.cmd.append(PurePath(self.stage_io_dict["out"]["output_score_path"]).name)
+            self.cmd.append(self.stage_io_dict["out"]["output_score_path"])
 
         if self.noalignment:
             self.cmd.append("--no-alignment")
@@ -259,48 +169,15 @@ class Pmxatom_mapping(BiobbObject):
         if self.distance:
             self.cmd.append("--d")
             self.cmd.append(str(self.distance))
-        if self.timeout:
+        if self.mcs_timeout:
             self.cmd.append("--timeout")
-            self.cmd.append(str(self.timeout))
-
-        if self.gmx_lib:
-            self.env_vars_dict["GMXLIB"] = self.gmx_lib
+            self.cmd.append(str(self.mcs_timeout))
 
         # Run Biobb block
         self.run_biobb()
 
-        # Copy files to host
-        self.copy_to_host()
 
-        self.remove_tmp_files()
-
-        self.check_arguments(output_files_created=True, raise_exception=False)
-        return self.return_code
-
-
-def pmxatom_mapping(
-    input_structure1_path: str,
-    input_structure2_path: str,
-    output_pairs1_path: str,
-    output_pairs2_path: str,
-    output_log_path: str,
-    output_structure1_path: Optional[str] = None,
-    output_structure2_path: Optional[str] = None,
-    output_morph1_path: Optional[str] = None,
-    output_morph2_path: Optional[str] = None,
-    output_scaffold1_path: Optional[str] = None,
-    output_scaffold2_path: Optional[str] = None,
-    output_score_path: Optional[str] = None,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxatom_mapping <pmx.pmxmutate.Pmxatom_mapping>` class and
-    execute the :meth:`launch() <pmx.pmxatom_mapping.Pmxatom_mapping.launch> method."""
-    return Pmxatom_mapping(**dict(locals())).launch()
-
-
-pmxatom_mapping.__doc__ = Pmxatom_mapping.__doc__
-main = Pmxatom_mapping.get_main(pmxatom_mapping, "Run PMX atom mapping module")
+pmxatom_mapping = launcher(Pmxatom_mapping)
 
 if __name__ == "__main__":
-    main()
+    Pmxatom_mapping.main()

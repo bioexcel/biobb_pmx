@@ -1,7 +1,42 @@
 """Common functions for package biobb_pmx.pmx"""
 
+import importlib.util
 import re
+import shutil
+from pathlib import Path
 from typing import Iterable, Mapping, Optional, Union
+
+from biobb_common.generic.biobb_object import BiobbObject
+
+# GMXLIB in a container: the mutff folder of the pmx package of the image, found by the image's
+# own Python (its version is not known on the host). "\$" is expanded in the container, not on the host.
+CONTAINER_GMXLIB = "\\$(python -c 'import os, pmx; print(os.path.dirname(pmx.__file__))')/data/mutff"
+
+
+def check_binary(binary_path: str, container_path: Optional[str]) -> None:
+    """Raise FileNotFoundError if the pmx executable (binary_path) is not on the host. Not checked with a container."""
+    if not container_path and not shutil.which(binary_path):
+        raise FileNotFoundError(
+            f"Executable {binary_path} not found. Check if it is installed in your system and correctly defined in the properties"
+        )
+
+
+def set_gmxlib(block: BiobbObject) -> None:
+    """Go from the gmx_lib property of the block to the GMXLIB of its command: gmx_lib (an absolute path on
+    the host), or else the mutff folder of the pmx package of the Python environment (in a container, of the image)."""
+    if block.container_path:
+        if block.gmx_lib:
+            block.env_vars_dict["GMXLIB"] = block.gmx_lib
+        else:
+            block.cmd = ["export", f"GMXLIB={CONTAINER_GMXLIB}", ";"] + block.cmd
+    elif block.gmx_lib:
+        # The command runs in the sandbox: a relative path is relative to the working directory
+        block.env_vars_dict["GMXLIB"] = str(Path(block.gmx_lib).resolve())
+    else:
+        pmx_spec = importlib.util.find_spec("pmx")
+        if pmx_spec and pmx_spec.origin:
+            block.env_vars_dict["GMXLIB"] = str(Path(pmx_spec.origin).parent.joinpath("data", "mutff"))
+
 
 MUTATION_DICT = {
     "ALA": "A",
@@ -84,32 +119,3 @@ def create_mutations_file(
                 mut_file.write("\n")
 
     return input_mutations_path
-
-
-# TODO: Move this function to biobb_common.tools.file_utils
-def _from_string_to_list(input_data: Optional[Union[str, list[str]]]) -> list[str]:
-    """
-    Converts a string to a list, splitting by commas or spaces. If the input is already a list, returns it as is.
-    Returns an empty list if input_data is None.
-
-    Parameters:
-        input_data (str, list, or None): The string, list, or None value to convert.
-
-    Returns:
-        list: A list of string elements or an empty list if input_data is None.
-    """
-    if input_data is None:
-        return []
-
-    if isinstance(input_data, list):
-        # If input is already a list, return it
-        return input_data
-
-    # If input is a string, determine the delimiter based on presence of commas
-    delimiter = "," if "," in input_data else " "
-    items = input_data.split(delimiter)
-
-    # Remove whitespace from each item and ignore empty strings
-    processed_items = [item.strip() for item in items if item.strip()]
-
-    return processed_items

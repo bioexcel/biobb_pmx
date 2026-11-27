@@ -2,17 +2,11 @@
 
 """Module containing the PMX mutate class and the command line interface."""
 
-import os
-import shutil
-import sys
-from pathlib import Path, PurePath
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
-from biobb_common.tools import file_utils as fu
-from biobb_common.tools.file_utils import launchlogger
+from biobb_common.generic.biobb_object import BiobbObject, launcher
 
-from biobb_pmx.pmxbiobb.common import MUTATION_DICT, create_mutations_file
+from biobb_pmx.pmxbiobb.common import MUTATION_DICT, check_binary, create_mutations_file, set_gmxlib
 
 
 class Pmxmutate(BiobbObject):
@@ -29,7 +23,7 @@ class Pmxmutate(BiobbObject):
             * **mutation_list** (*str*) - ("2Ala") Mutation list in the format "Chain:Resnum MUT_AA_Code" or "Chain:Resnum MUT_NA_Code"  (no spaces between the elements) separated by commas. If no chain is provided as chain code all the chains in the pdb file will be mutated. ie: "A:15CYS". Possible MUT_AA_Code: 'ALA', 'ARG', 'ASN', 'ASP', 'ASPH', 'ASPP', 'ASH', 'CYS', 'CYS2', 'CYN', 'CYX', 'CYM', 'CYSH', 'GLU', 'GLUH', 'GLUP', 'GLH', 'GLN', 'GLY', 'HIS', 'HIE', 'HISE', 'HSE', 'HIP', 'HSP', 'HISH', 'HID', 'HSD', 'ILE', 'LEU', 'LYS', 'LYSH', 'LYP', 'LYN', 'LSN', 'MET', 'PHE', 'PRO', 'SER', 'SP1', 'SP2', 'THR', 'TRP', 'TYR', 'VAL'. Possible MUT_NA_Codes: 'A', 'T', 'C', 'G', 'U'.
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Forcefield to use.
             * **resinfo** (*bool*) - (False) Show the list of 3-letter -> 1-letter residues.
-            * **gmx_lib** (*str*) - ("$CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff/") Path to the GMXLIB folder in your computer.
+            * **gmx_lib** (*str*) - (None) Path to the GMXLIB folder in your computer. If not set, the mutff folder of the pmx package of the Python environment (in a container, of the image).
             * **binary_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -37,7 +31,6 @@ class Pmxmutate(BiobbObject):
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
             * **container_image** (*str*) - (None) Container Image identifier.
             * **container_volume_path** (*str*) - ("/inout") Path to an internal directory in the container.
-            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
             * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
 
@@ -74,135 +67,47 @@ class Pmxmutate(BiobbObject):
         properties: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        properties = properties or {}
+        super().__init__(**locals())
 
-        # Call parent class constructor
-        super().__init__(properties)
-        self.locals_var_dict = locals().copy()
-
-        # Input/Output files
-        self.io_dict = {
-            "in": {
-                "input_structure_path": input_structure_path,
-                "input_b_structure_path": input_b_structure_path,
-            },
-            "out": {"output_structure_path": output_structure_path},
-        }
-
-        # Properties specific for BB
-        self.force_field = properties.get("force_field", "amber99sb-star-ildn-mut")
-        self.resinfo = properties.get("resinfo", False)
-        self.mutation_list = properties.get("mutation_list", "2Ala")
-        self.input_mutations_file = properties.get("mutations_file")
-
-        # Properties common in all PMX BB
-        self.gmx_lib = properties.get("gmx_lib", None)
-        if not self.gmx_lib and os.environ.get("CONDA_PREFIX"):
-            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-            self.gmx_lib = str(
-                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
-                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
-                )
-            )
-            if properties.get("container_path"):
-                self.gmx_lib = str(
-                    Path("/usr/local/").joinpath(
-                        "lib/python3.8/site-packages/pmx/data/mutff/"
-                    )
-                )
-        self.binary_path = properties.get("binary_path", "pmx")
-
-        # Check the properties
-        self.check_properties(properties)
-        self.check_arguments()
-
-    @launchlogger
-    def launch(self) -> int:
-        """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
-
-        # Setup Biobb
-        if self.check_restart():
-            return 0
-        self.stage_files()
-
-        if self.container_path:
-            working_dir = self.container_volume_path if self.container_volume_path else "/data"
-        else:
-            working_dir = self.stage_io_dict.get("unique_dir", "")
-
-        # Check if executable exists
-        if not self.container_path:
-            if not Path(self.binary_path).is_file():
-                if not shutil.which(self.binary_path):
-                    raise FileNotFoundError(
-                        "Executable %s not found. Check if it is installed in your system and correctly defined in the properties"
-                        % self.binary_path
-                    )
-
-        # Generate mutations file
-
-        mutations_dir = fu.create_unique_dir()
-        self.input_mutations_file = create_mutations_file(
-            input_mutations_path=str(Path(mutations_dir).joinpath("mutations.txt")),
+    def prepare(self) -> None:
+        """Check that the pmx executable is installed and write the mutations file of the
+        mutation_list property, staged with the inputs."""
+        check_binary(self.binary_path, self.container_path)
+        self.io_dict["in"]["input_mutations_path"] = create_mutations_file(
+            input_mutations_path=self.create_tmp_file(".txt"),
             mutation_list=self.mutation_list,
             mutation_dict=MUTATION_DICT,
         )
 
-        # Copy extra files to sandbox: mutations file
-        shutil.copy2(self.input_mutations_file, self.stage_io_dict.get("unique_dir", ""))
+    def run(self) -> None:
+        """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
 
         self.cmd = [
-            "cd",
-            working_dir,
-            ";",
             self.binary_path,
             "mutate",
             "-f",
-            PurePath(self.stage_io_dict["in"]["input_structure_path"]).name,
+            self.stage_io_dict["in"]["input_structure_path"],
             "-o",
-            PurePath(self.stage_io_dict["out"]["output_structure_path"]).name,
+            self.stage_io_dict["out"]["output_structure_path"],
             "-ff",
             self.force_field,
             "--script",
-            PurePath(self.input_mutations_file).name,
+            self.stage_io_dict["in"]["input_mutations_path"],
         ]
 
         if self.stage_io_dict["in"].get("input_b_structure_path"):
             self.cmd.append("-fB")
-            self.cmd.append(PurePath(self.stage_io_dict["in"]["input_b_structure_path"]).name)
+            self.cmd.append(self.stage_io_dict["in"]["input_b_structure_path"])
         if self.resinfo:
             self.cmd.append("-resinfo")
 
-        if self.gmx_lib:
-            self.env_vars_dict["GMXLIB"] = self.gmx_lib
+        set_gmxlib(self)
 
         # Run Biobb block
         self.run_biobb()
 
-        # Copy files to host
-        self.copy_to_host()
 
-        self.tmp_files.append(mutations_dir)
-        self.remove_tmp_files()
-
-        self.check_arguments(output_files_created=True, raise_exception=False)
-        return self.return_code
-
-
-def pmxmutate(
-    input_structure_path: str,
-    output_structure_path: str,
-    input_b_structure_path: Optional[str] = None,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` class and
-    execute the :meth:`launch() <pmx.pmxmutate.Pmxmutate.launch> method."""
-    return Pmxmutate(**dict(locals())).launch()
-
-
-pmxmutate.__doc__ = Pmxmutate.__doc__
-main = Pmxmutate.get_main(pmxmutate, "Run PMX mutate module")
+pmxmutate = launcher(Pmxmutate)
 
 if __name__ == "__main__":
-    main()
+    Pmxmutate.main()

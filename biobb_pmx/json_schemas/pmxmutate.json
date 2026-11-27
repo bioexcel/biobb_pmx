@@ -110,9 +110,9 @@
                 },
                 "gmx_lib": {
                     "type": "string",
-                    "default": "$CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff/",
+                    "default": null,
                     "wf_prop": false,
-                    "description": "Path to the GMXLIB folder in your computer."
+                    "description": "Path to the GMXLIB folder in your computer. If not set, the mutff folder of the pmx package of the Python environment (in a container, of the image)."
                 },
                 "binary_path": {
                     "type": "string",
@@ -155,12 +155,6 @@
                     "default": "/inout",
                     "wf_prop": false,
                     "description": "Path to an internal directory in the container."
-                },
-                "container_working_dir": {
-                    "type": "string",
-                    "default": null,
-                    "wf_prop": false,
-                    "description": "Path to the internal CWD in the container."
                 },
                 "container_user_id": {
                     "type": "string",

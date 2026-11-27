@@ -2,15 +2,13 @@
 
 """Module containing the PMX gentop class and the command line interface."""
 
-import os
 import shutil
-import sys
 from pathlib import Path
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
+from biobb_common.generic.biobb_object import BiobbObject, launcher
 from biobb_common.tools import file_utils as fu
-from biobb_common.tools.file_utils import launchlogger
+from biobb_pmx.pmxbiobb.common import check_binary, set_gmxlib
 
 
 class Pmxgentop(BiobbObject):
@@ -26,7 +24,7 @@ class Pmxgentop(BiobbObject):
             * **force_field** (*str*) - ("amber99sb-star-ildn-mut") Force field to use. If **input_top_zip_path** is a top file, it's not necessary to specify the forcefield, as it will be determined automatically. If **input_top_zip_path** is an itp file, then it's needed.
             * **split** (*bool*) - (False) Write separate topologies for the vdW and charge transformations.
             * **scale_mass** (*bool*) - (False) Scale the masses of morphing atoms so that dummies have a mass of 1.
-            * **gmx_lib** (*str*) - ("$CONDA_PREFIX/lib/python3.7/site-packages/pmx/data/mutff/") Path to the GMXLIB folder in your computer.
+            * **gmx_lib** (*str*) - (None) Path to the GMXLIB folder in your computer. If not set, the mutff folder of the pmx package of the Python environment (in a container, of the image).
             * **binary_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -34,7 +32,6 @@ class Pmxgentop(BiobbObject):
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
             * **container_image** (*str*) - ("gromacs/gromacs:latest") Container Image identifier.
             * **container_volume_path** (*str*) - ("/inout") Path to an internal directory in the container.
-            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
             * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
 
@@ -68,80 +65,21 @@ class Pmxgentop(BiobbObject):
         properties: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        properties = properties or {}
+        super().__init__(**locals())
 
-        # Call parent class constructor
-        super().__init__(properties)
-        self.locals_var_dict = locals().copy()
-
-        # Input/Output files
-        self.io_dict = {"in": {}, "out": {"output_top_zip_path": output_top_zip_path}}
         # Should not be copied inside container
-        self.input_top_zip_path = input_top_zip_path
+        self.input_top_zip_path = self.io_dict["in"].pop("input_top_zip_path")
 
-        # Properties specific for BB
-        self.force_field = properties.get("force_field", "amber99sb-star-ildn-mut")
-        self.split = properties.get("split", False)
-        self.scale_mass = properties.get("scale_mass", False)
+    def prepare(self) -> None:
+        """Check that the pmx executable is installed."""
+        check_binary(self.binary_path, self.container_path)
 
-        # Properties common in all PMX BB
-        self.gmx_lib = properties.get("gmx_lib", None)
-        if not self.gmx_lib and os.environ.get("CONDA_PREFIX", ""):
-            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-            self.gmx_lib = str(
-                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
-                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
-                )
-            )
-            if properties.get("container_path"):
-                self.gmx_lib = str(
-                    Path("/usr/local/").joinpath(
-                        "lib/python3.8/site-packages/pmx/data/mutff/"
-                    )
-                )
-        self.binary_path = properties.get("binary_path", "pmx")
-
-        # Check the properties
-        self.check_properties(properties)
-        self.check_arguments()
-
-    @launchlogger
-    def launch(self) -> int:
+    def run(self) -> None:
         """Execute the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` pmx.pmxgentop.Pmxgentop object."""
 
-        # Setup Biobb
-        if self.check_restart():
-            return 0
-        self.stage_files()
-
-        if self.container_path:
-            working_dir = self.container_volume_path if self.container_volume_path else "/data"
-        else:
-            working_dir = self.stage_io_dict.get("unique_dir", "")
-
-        # Check if executable exists
-        if not self.container_path:
-            if not Path(self.binary_path).is_file():
-                if not shutil.which(self.binary_path):
-                    raise FileNotFoundError(
-                        "Executable %s not found. Check if it is installed in your system and correctly defined in the properties"
-                        % self.binary_path
-                    )
-
-        # Unzip topology to topology_out
-        top_file = str(
-            Path(
-                fu.unzip_top(zip_file=self.input_top_zip_path, out_log=self.out_log)
-            ).resolve()
-        )
-        top_dir = str(Path(top_file).parent)
-
-        # Copy extra files to sandbox: topology folder
-        top_dir_in_sandbox = Path(self.stage_io_dict.get("unique_dir", "")).joinpath(
-            Path(top_dir).name
-        )
-        shutil.copytree(top_dir, str(top_dir_in_sandbox))
-        top_file = str(Path(Path(top_dir).name).joinpath(Path(top_file).name))
+        # Unzip the topology in a folder of the sandbox
+        top_dir = self.create_tmp_dir()
+        top_file = fu.unzip_top(zip_file=self.input_top_zip_path, out_log=self.out_log, unique_dir=top_dir)
 
         output_file_name = fu.create_name(
             prefix=self.prefix, step=self.step, name=str(Path(top_file).name)
@@ -152,9 +90,6 @@ class Pmxgentop(BiobbObject):
         fu.log(f"unique_dir_output_file: {unique_dir_output_file}", self.out_log)
 
         self.cmd = [
-            "cd",
-            working_dir,
-            ";",
             self.binary_path,
             "gentop",
             "-o",
@@ -162,7 +97,7 @@ class Pmxgentop(BiobbObject):
             "-ff",
             self.force_field,
             "-p",
-            top_file,
+            self.staged_path(top_file),
         ]
 
         if self.split:
@@ -170,15 +105,12 @@ class Pmxgentop(BiobbObject):
         if self.scale_mass:
             self.cmd.append("--scale_mass")
 
-        if self.gmx_lib:
-            self.env_vars_dict["GMXLIB"] = self.gmx_lib
+        set_gmxlib(self)
 
         # Run Biobb block
         self.run_biobb()
 
-        # Copy files to host
-        self.copy_to_host()
-
+        # Remove the sandbox paths from the output topology, add the itp files of the input topology that pmx did not change and zip it.
         # Remove paths from top file
         with open(Path(unique_dir_output_file)) as top_fh:
             top_lines = top_fh.readlines()
@@ -213,32 +145,14 @@ class Pmxgentop(BiobbObject):
             self.global_log,
         )
         fu.zip_top(
-            zip_file=self.io_dict["out"]["output_top_zip_path"],
+            zip_file=self.sandbox_file("output_top_zip_path"),
             top_file=str(Path(unique_dir_output_file)),
             out_log=self.out_log,
             remove_original_files=self.remove_tmp
         )
 
-        self.tmp_files.extend([top_dir])
-        self.remove_tmp_files()
 
-        self.check_arguments(output_files_created=True, raise_exception=False)
-        return self.return_code
-
-
-def pmxgentop(
-    input_top_zip_path: str,
-    output_top_zip_path: str,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxgentop <pmx.pmxgentop.Pmxgentop>` class and
-    execute the :meth:`launch() <pmx.pmxgentop.Pmxgentop.launch> method."""
-    return Pmxgentop(**dict(locals())).launch()
-
-
-pmxgentop.__doc__ = Pmxgentop.__doc__
-main = Pmxgentop.get_main(pmxgentop, "Wrapper class for the PMX gentop module")
+pmxgentop = launcher(Pmxgentop)
 
 if __name__ == "__main__":
-    main()
+    Pmxgentop.main()

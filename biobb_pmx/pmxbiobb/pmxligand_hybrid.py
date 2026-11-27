@@ -2,14 +2,10 @@
 
 """Module containing the PMX ligand_hybrid class and the command line interface."""
 
-import os
-import shutil
-import sys
-from pathlib import Path, PurePath
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
-from biobb_common.tools.file_utils import launchlogger
+from biobb_common.generic.biobb_object import BiobbObject, launcher
+from biobb_pmx.pmxbiobb.common import check_binary
 
 
 class Pmxligand_hybrid(BiobbObject):
@@ -35,11 +31,11 @@ class Pmxligand_hybrid(BiobbObject):
         properties (dic):
             * **fit** (*bool*) - (False) Fit ligand structure 1 onto ligand structure 2 (Only used if input_pairs_path is provided).
             * **split** (*bool*) - (False) Split the topology into separate transitions.
-            * **scDUMm** (*float*) - (1.0) Scale dummy masses using the counterpart atoms.
-            * **scDUMa** (*float*) - (1.0) Scale bonded dummy angle parameters.
-            * **scDUMd** (*float*) - (1.0) Scale bonded dummy dihedral parameters.
+            * **scDUMm** (*float*) - (None) Scale dummy masses using the counterpart atoms. If not set, the tool uses its own default.
+            * **scDUMa** (*float*) - (None) Scale bonded dummy angle parameters. If not set, the tool uses its own default.
+            * **scDUMd** (*float*) - (None) Scale bonded dummy dihedral parameters. If not set, the tool uses its own default.
             * **deAng** (*bool*) - (False) Decouple angles composed of 1 dummy and 2 non-dummies.
-            * **distance** (*float*) - (0.05) Distance (nm) between atoms to consider them morphable for alignment approach (Only used if input_pairs_path is not provided).
+            * **distance** (*float*) - (None) Distance (nm) between atoms to consider them morphable for alignment approach (Only used if input_pairs_path is not provided). If not set, the tool uses its own default.
             * **binary_path** (*str*) - ("pmx") Path to the PMX command line interface.
             * **remove_tmp** (*bool*) - (True) [WF property] Remove temporal files.
             * **restart** (*bool*) - (False) [WF property] Do not execute if output files exist.
@@ -47,7 +43,6 @@ class Pmxligand_hybrid(BiobbObject):
             * **container_path** (*str*) - (None)  Path to the binary executable of your container.
             * **container_image** (*str*) - (None) Container Image identifier.
             * **container_volume_path** (*str*) - ("/inout") Path to an internal directory in the container.
-            * **container_working_dir** (*str*) - (None) Path to the internal CWD in the container.
             * **container_user_id** (*str*) - (None) User number id to be mapped inside the container.
             * **container_shell_path** (*str*) - ("/bin/bash") Path to the binary executable of the container shell.
 
@@ -99,130 +94,49 @@ class Pmxligand_hybrid(BiobbObject):
         properties: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        properties = properties or {}
+        super().__init__(**locals())
 
-        # Call parent class constructor
-        super().__init__(properties)
-        self.locals_var_dict = locals().copy()
+    def prepare(self) -> None:
+        """Check that the pmx executable is installed."""
+        check_binary(self.binary_path, self.container_path)
 
-        # Input/Output files
-        self.io_dict = {
-            "in": {
-                "input_structure1_path": input_structure1_path,
-                "input_structure2_path": input_structure2_path,
-                "input_topology1_path": input_topology1_path,
-                "input_topology2_path": input_topology2_path,
-                "input_scaffold1_path": input_scaffold1_path,
-                "input_scaffold2_path": input_scaffold2_path,
-                "input_pairs_path": input_pairs_path,
-            },
-            "out": {
-                "output_structure1_path": output_structure1_path,
-                "output_structure2_path": output_structure2_path,
-                "output_topology_path": output_topology_path,
-                "output_atomtypes_path": output_atomtypes_path,
-                "output_log_path": output_log_path,
-            },
-        }
-
-        # Properties specific for BB
-        # self.fit = properties.get('fit', False)
-        # self.split = properties.get('split', False)
-        # self.scDUMm = properties.get('scDUMm', 1.0)
-        # self.scDUMa = properties.get('scDUMa', 1.0)
-        # self.scDUMd = properties.get('scDUMd', 1.0)
-        # self.deAng = properties.get('deAng', False)
-        # self.distance = properties.get('distance', 0.05)
-
-        self.fit = properties.get("fit")
-        self.split = properties.get("split")
-        self.scDUMm = properties.get("scDUMm")
-        self.scDUMa = properties.get("scDUMa")
-        self.scDUMd = properties.get("scDUMd")
-        self.deAng = properties.get("deAng")
-        self.distance = properties.get("distance")
-
-        # Properties common in all PMX BB
-        self.gmx_lib = properties.get("gmx_lib", None)
-        if not self.gmx_lib and os.environ.get("CONDA_PREFIX", ""):
-            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-            self.gmx_lib = str(
-                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
-                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
-                )
-            )
-            if properties.get("container_path"):
-                self.gmx_lib = str(
-                    Path("/usr/local/").joinpath(
-                        "lib/python3.7/site-packages/pmx/data/mutff/"
-                    )
-                )
-        self.binary_path = properties.get("binary_path", "pmx")
-
-        # Check the properties
-        self.check_properties(properties)
-        self.check_arguments()
-
-    @launchlogger
-    def launch(self) -> int:
-        """Execute the :class:`Pmxmutate <pmx.pmxmutate.Pmxmutate>` pmx.pmxmutate.Pmxmutate object."""
-
-        # Setup Biobb
-        if self.check_restart():
-            return 0
-        self.stage_files()
-
-        if self.container_path:
-            working_dir = self.container_volume_path if self.container_volume_path else "/data"
-        else:
-            working_dir = self.stage_io_dict.get("unique_dir", "")
-
-        # Check if executable exists
-        if not self.container_path:
-            if not Path(self.binary_path).is_file():
-                if not shutil.which(self.binary_path):
-                    raise FileNotFoundError(
-                        "Executable %s not found. Check if it is installed in your system and correctly defined in the properties"
-                        % self.binary_path
-                    )
+    def run(self) -> None:
+        """Execute the :class:`Pmxligand_hybrid <pmx.pmxligand_hybrid.Pmxligand_hybrid>` pmx.pmxligand_hybrid.Pmxligand_hybrid object."""
 
         self.cmd = [
-            "cd",
-            working_dir,
-            ";",
             self.binary_path,
             "ligandHybrid",
             "-i1",
-            PurePath(self.stage_io_dict["in"]["input_structure1_path"]).name,
+            self.stage_io_dict["in"]["input_structure1_path"],
             "-i2",
-            PurePath(self.stage_io_dict["in"]["input_structure2_path"]).name,
+            self.stage_io_dict["in"]["input_structure2_path"],
             "-itp1",
-            PurePath(self.stage_io_dict["in"]["input_topology1_path"]).name,
+            self.stage_io_dict["in"]["input_topology1_path"],
             "-itp2",
-            PurePath(self.stage_io_dict["in"]["input_topology2_path"]).name,
+            self.stage_io_dict["in"]["input_topology2_path"],
             "-oA",
-            PurePath(self.stage_io_dict["out"]["output_structure1_path"]).name,
+            self.stage_io_dict["out"]["output_structure1_path"],
             "-oB",
-            PurePath(self.stage_io_dict["out"]["output_structure2_path"]).name,
+            self.stage_io_dict["out"]["output_structure2_path"],
             "-oitp",
-            PurePath(self.stage_io_dict["out"]["output_topology_path"]).name,
+            self.stage_io_dict["out"]["output_topology_path"],
             "-offitp",
-            PurePath(self.stage_io_dict["out"]["output_atomtypes_path"]).name,
+            self.stage_io_dict["out"]["output_atomtypes_path"],
             "-log",
-            PurePath(self.stage_io_dict["out"]["output_log_path"]).name,
+            self.stage_io_dict["out"]["output_log_path"],
         ]
 
         if self.stage_io_dict["in"].get("input_pairs_path"):
             self.cmd.append("-pairs")
-            self.cmd.append(PurePath(self.stage_io_dict["in"]["input_pairs_path"]).name)
+            self.cmd.append(self.stage_io_dict["in"]["input_pairs_path"])
 
         if self.stage_io_dict["in"].get("input_scaffold1_path"):
             self.cmd.append("-n1")
-            self.cmd.append(PurePath(self.stage_io_dict["in"]["input_scaffold1_path"]).name)
+            self.cmd.append(self.stage_io_dict["in"]["input_scaffold1_path"])
 
         if self.stage_io_dict["in"].get("input_scaffold2_path"):
             self.cmd.append("-n2")
-            self.cmd.append(PurePath(self.stage_io_dict["in"]["input_scaffold2_path"]).name)
+            self.cmd.append(self.stage_io_dict["in"]["input_scaffold2_path"])
 
         if self.fit:
             self.cmd.append("--fit")
@@ -243,44 +157,11 @@ class Pmxligand_hybrid(BiobbObject):
             self.cmd.append("--scDUMd")
             self.cmd.append(str(self.scDUMd))
 
-        if self.gmx_lib:
-            self.env_vars_dict["GMXLIB"] = self.gmx_lib
-
         # Run Biobb block
         self.run_biobb()
 
-        # Copy files to host
-        self.copy_to_host()
 
-        self.remove_tmp_files()
-
-        self.check_arguments(output_files_created=True, raise_exception=False)
-        return self.return_code
-
-
-def pmxligand_hybrid(
-    input_structure1_path: str,
-    input_structure2_path: str,
-    input_topology1_path: str,
-    input_topology2_path: str,
-    output_log_path: str,
-    output_structure1_path: str,
-    output_structure2_path: str,
-    output_topology_path: str,
-    output_atomtypes_path: str,
-    input_scaffold1_path: Optional[str] = None,
-    input_scaffold2_path: Optional[str] = None,
-    input_pairs_path: Optional[str] = None,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxligand_hybrid <pmx.pmxmutate.Pmxligand_hybrid>` class and
-    execute the :meth:`launch() <pmx.pmxligand_hybrid.Pmxligand_hybrid.launch> method."""
-    return Pmxligand_hybrid(**dict(locals())).launch()
-
-
-pmxligand_hybrid.__doc__ = Pmxligand_hybrid.__doc__
-main = Pmxligand_hybrid.get_main(pmxligand_hybrid, "Run PMX ligand hybrid module")
+pmxligand_hybrid = launcher(Pmxligand_hybrid)
 
 if __name__ == "__main__":
-    main()
+    Pmxligand_hybrid.main()

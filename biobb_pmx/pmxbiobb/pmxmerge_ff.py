@@ -3,14 +3,10 @@
 """Module containing the PMX merge_ff class and the command line interface."""
 
 import glob
-import os
-import sys
-from pathlib import Path
 from typing import Optional
 
-from biobb_common.generic.biobb_object import BiobbObject
+from biobb_common.generic.biobb_object import BiobbObject, launcher
 from biobb_common.tools import file_utils as fu
-from biobb_common.tools.file_utils import launchlogger
 from pmx import ligand_alchemy  # type: ignore
 
 
@@ -57,56 +53,19 @@ class Pmxmerge_ff(BiobbObject):
         properties: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        properties = properties or {}
+        super().__init__(**locals())
 
-        # Call parent class constructor
-        super().__init__(properties)
-        self.locals_var_dict = locals().copy()
+    def stage_files(self) -> None:
+        """The block does not use the sandbox: there are no files to stage."""
 
-        # Input/Output files
-        self.io_dict = {
-            "in": {"input_topology_path": input_topology_path},
-            "out": {"output_topology_path": output_topology_path},
-        }
-
-        # Properties specific for BB
-        # None yet
-
-        # Properties common in all PMX BB
-        self.gmx_lib = properties.get("gmx_lib", None)
-        if not self.gmx_lib and os.environ.get("CONDA_PREFIX", ""):
-            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-            self.gmx_lib = str(
-                Path(os.environ.get("CONDA_PREFIX", "")).joinpath(
-                    f"lib/python{python_version}/site-packages/pmx/data/mutff/"
-                )
-            )
-            if properties.get("container_path"):
-                self.gmx_lib = str(
-                    Path("/usr/local/").joinpath(
-                        "lib/python3.7/site-packages/pmx/data/mutff/"
-                    )
-                )
-
-        # Check the properties
-        self.check_properties(properties)
-        self.check_arguments()
-
-    @launchlogger
-    def launch(self) -> int:
+    def run(self) -> None:
         """Execute the :class:`Pmxmerge_ff <pmx.pmxmerge_ff.Pmxmerge_ff>` pmx.pmxmerge_ff.Pmxmerge_ff object."""
 
-        # Setup Biobb
-        if self.check_restart():
-            return 0
-        self.stage_files()
-
         # Creating temporary folder
-        tmp_folder = fu.create_unique_dir()
-        fu.log("Creating %s temporary folder" % tmp_folder, self.out_log)
+        tmp_folder = self.create_tmp_dir(log=True)
 
         fu.unzip_list(
-            self.stage_io_dict["in"]["input_topology_path"],
+            self.io_dict["in"]["input_topology_path"],
             tmp_folder,
             out_log=self.out_log,
         )
@@ -117,41 +76,13 @@ class Pmxmerge_ff(BiobbObject):
 
         fu.log("Running merge_FF_files from pmx package...\n", self.out_log)
         ligand_alchemy._merge_FF_files(
-            self.stage_io_dict["out"]["output_topology_path"], ffsIn=ffsIn_list
+            self.io_dict["out"]["output_topology_path"], ffsIn=ffsIn_list
         )
-        # ffsIn=[self.stage_io_dict["in"]["input_topology1_path"],self.stage_io_dict["in"]["input_topology2_path"]] )
 
         fu.log("Exit code 0\n", self.out_log)
 
-        if self.gmx_lib:
-            self.env_vars_dict["GMXLIB"] = self.gmx_lib
 
-        # Run Biobb block
-        # self.run_biobb()
-
-        # Copy files to host
-        self.copy_to_host()
-
-        self.tmp_files.append(tmp_folder)
-        self.remove_tmp_files()
-
-        self.check_arguments(output_files_created=True, raise_exception=False)
-        return self.return_code
-
-
-def pmxmerge_ff(
-    input_topology_path: str,
-    output_topology_path: str,
-    properties: Optional[dict] = None,
-    **kwargs,
-) -> int:
-    """Create the :class:`Pmxmerge_ff <pmx.pmxmerge_ff.Pmxmerge_ff>` class and
-    execute the :meth:`launch() <pmx.pmxmerge_ff.Pmxmerge_ff.launch> method."""
-    return Pmxmerge_ff(**dict(locals())).launch()
-
-
-pmxmerge_ff.__doc__ = Pmxmerge_ff.__doc__
-main = Pmxmerge_ff.get_main(pmxmerge_ff, "Run PMX merge_ff module")
+pmxmerge_ff = launcher(Pmxmerge_ff)
 
 if __name__ == "__main__":
-    main()
+    Pmxmerge_ff.main()
