@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="biobb_pmx",
-    version="5.3.1",
+    version="5.4.0",
     author="Biobb developers",
     author_email="pau.andrio@bsc.es",
     description="Biobb_pmx is the Biobb module collection to perform PMX (http://pmx.mpibpc.mpg.de) executions.",
@@ -20,7 +20,7 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=["docs"]),
     package_data={"biobb_pmx": ["py.typed"]},
     # numpy<2.4: pmx-biobb 5.2.2 BAR estimator (pmxanalyse) calls float() on a 1-d array, an error since numpy 2.4
-    install_requires=["biobb_common==5.3.1", "pmx-biobb==5.2.2", "scipy", "numpy<2.4"],
+    install_requires=["biobb_common==5.4.0", "pmx-biobb==5.2.2", "scipy", "numpy<2.4"],
     python_requires=">=3.11",
     entry_points={
         "console_scripts": [

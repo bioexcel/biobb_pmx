@@ -2,9 +2,19 @@
 
 ## [Unreleased]
 
+## What's new in version [5.4.0](https://github.com/bioexcel/biobb_pmx/releases/tag/v5.4.0)?
+
 ### Changes
 
-* [UPDATE] pmxmutate and pmxgentop: without the `gmx_lib` property, GMXLIB is the mutff folder of the pmx package of the Python environment that runs the block, also outside a conda environment (before, it was set only when `CONDA_PREFIX` was set)
+* [UPDATE] Update to biobb_common 5.4.0.
+* [UPDATE] pmxmutate and pmxgentop: without the `gmx_lib` property, GMXLIB is the mutff folder of the pmx package of the Python environment that runs the block, also outside a conda environment (before, it was set only when `CONDA_PREFIX` was set).
+* [FIX] pmxmutate and pmxgentop in containers: without the `gmx_lib` property, GMXLIB is the mutff folder of the pmx package of the container image. It was a fixed Python 3.7/3.8 path that the current images do not have.
+* [FIX] pmxatom_mapping: the `timeout` property only sets the time of the MCS search (`--timeout` of pmx atomMapping). It was also the time limit of the whole command, which was stopped when it ran longer.
+* [FIX] pmxanalyse: the value of the `rand` property reaches pmx analyse (`--rand N`); the command got `--rand` without it.
+* [UPDATE] pmxatom_mapping, pmxligand_hybrid, pmxcreate_top and pmxmerge_ff: the undocumented `gmx_lib` property is removed; these pmx tools do not read GMXLIB.
+* [UPDATE] `container_working_dir` removed from the docs and the JSON schemas: the commands run in the sandbox, mounted in `container_volume_path` in containers.
+* [DOCS] pmxatom_mapping and pmxligand_hybrid: the `run()` docstrings name their own class (they said Pmxmutate).
+* [UPDATE] Python 3.11 to 3.13.
 
 ## What's new in version [5.3.1](https://github.com/bioexcel/biobb_pmx/releases/tag/v5.3.1)?
 
