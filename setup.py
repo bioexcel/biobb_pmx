@@ -21,7 +21,7 @@ setuptools.setup(
     package_data={"biobb_pmx": ["py.typed"]},
     # numpy<2.4: pmx-biobb 5.2.2 BAR estimator (pmxanalyse) calls float() on a 1-d array, an error since numpy 2.4
     install_requires=["biobb_common==5.3.1", "pmx-biobb==5.2.2", "scipy", "numpy<2.4"],
-    python_requires=">=3.10",
+    python_requires=">=3.11",
     entry_points={
         "console_scripts": [
             "pmxanalyse = biobb_pmx.pmxbiobb.pmxanalyse:Pmxanalyse.main",
@@ -35,9 +35,9 @@ setuptools.setup(
     },
     classifiers=[
         "Development Status :: 5 - Production/Stable",
-        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: POSIX",
